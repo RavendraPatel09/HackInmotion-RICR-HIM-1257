@@ -1,0 +1,20 @@
+# Standalone compose file for the AI service during development.
+# When integrated with the Admin API's full stack (Phase 20), this
+# service is added as an `ai-service` entry in that root compose file.
+
+version: '3.9'
+
+services:
+  ai-service:
+    build: .
+    container_name: smartcity-ai-service
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - '8000:8000'
+    healthcheck:
+      test: ['CMD', 'python', '-c', "import httpx; httpx.get('http://localhost:8000/api/v1/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
