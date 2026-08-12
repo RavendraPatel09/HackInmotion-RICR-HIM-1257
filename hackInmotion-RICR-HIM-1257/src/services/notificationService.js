@@ -124,5 +124,25 @@ export const notificationService = {
     notifs = notifs.map(n => ({ ...n, isRead: true }));
     localStorage.setItem(STORAGE_KEY, JSON.stringify(notifs));
     return notifs;
+  },
+
+  async addNotification(payload) {
+    initStorage();
+    const notifs = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    const newNotif = {
+      id: `notif-${Date.now()}`,
+      type: payload.type || 'System',
+      title: payload.title,
+      message: payload.message,
+      isRead: false,
+      timestamp: new Date().toISOString(),
+      issueId: payload.issueId || null
+    };
+    notifs.unshift(newNotif);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(notifs));
+    
+    // Dispatch a custom event so the UI can update the bell icon real-time
+    window.dispatchEvent(new CustomEvent('notification-added'));
+    return newNotif;
   }
 };

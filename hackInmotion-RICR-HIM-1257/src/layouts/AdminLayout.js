@@ -14,6 +14,8 @@ export function renderAdminLayout(contentHtml, activeRoute = '/admin') {
           <a href="#/admin/issues" class="sidebar-link ${activeRoute === '/admin/issues' ? 'active' : ''}">Manage Issues</a>
           <a href="#/admin/map" class="sidebar-link ${activeRoute === '/admin/map' ? 'active' : ''}">Command Map</a>
           <a href="#/admin/analytics" class="sidebar-link ${activeRoute === '/admin/analytics' ? 'active' : ''}">Analytics</a>
+          <a href="#/admin/hotspots" class="sidebar-link ${activeRoute === '/admin/hotspots' ? 'active' : ''}">Hotspots</a>
+          <a href="#/admin/sla" class="sidebar-link ${activeRoute === '/admin/sla' ? 'active' : ''}">SLA Tracking</a>
           <a href="#/admin/settings" class="sidebar-link ${activeRoute === '/admin/settings' ? 'active' : ''}">Settings</a>
         </nav>
       </aside>

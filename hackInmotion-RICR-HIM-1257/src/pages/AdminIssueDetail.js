@@ -199,21 +199,37 @@ export async function initAdminIssueDetail(id) {
 
           <!-- AI Analysis Panel -->
           <div class="card ai-panel mb-lg" style="padding: var(--spacing-md);">
-            <div class="flex items-center gap-sm mb-md">
+            <div class="flex items-center gap-sm mb-md pb-sm" style="border-bottom: 1px solid rgba(139, 92, 246, 0.2);">
               <span style="font-size: 20px;">✨</span>
               <h3 class="title-md m-0" style="color: #8b5cf6;">AI Context Analysis</h3>
             </div>
-            <div class="body-sm text-muted mb-md" style="line-height: 1.5;">
-              Based on historical data and semantic analysis of the description, this report is highly actionable. The evidence appears valid and matches structural degradation patterns common in this ward.
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md);">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md) var(--spacing-sm);">
+              <div>
+                <div class="caption text-muted mb-xs uppercase">Category Prediction</div>
+                <div class="body-md font-weight-bold">\${issue.category}</div>
+              </div>
+              <div>
+                <div class="caption text-muted mb-xs uppercase">Confidence Score</div>
+                <div class="body-md font-weight-bold" style="color: #8b5cf6;">94%</div>
+              </div>
+              
+              <div>
+                <div class="caption text-muted mb-xs uppercase">Recommended Priority</div>
+                <div class="body-md font-weight-bold">\${issue.priority}</div>
+              </div>
+              <div>
+                <div class="caption text-muted mb-xs uppercase">Recommended Dept</div>
+                <div class="body-md font-weight-bold">\${recDept}</div>
+              </div>
+
               <div>
                 <div class="caption text-muted mb-xs uppercase">Duplicate Probability</div>
                 <div class="body-md font-weight-bold" style="color: var(--success);">12% (Low)</div>
               </div>
               <div>
-                <div class="caption text-muted mb-xs uppercase">Recommended Dept</div>
-                <div class="body-md font-weight-bold">\${recDept}</div>
+                <div class="caption text-muted mb-xs uppercase">Photo Evidence</div>
+                <div class="body-md font-weight-bold" style="color: var(--success);">Likely Valid</div>
               </div>
             </div>
           </div>

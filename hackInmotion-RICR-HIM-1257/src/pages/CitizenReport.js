@@ -145,10 +145,46 @@ export function renderCitizenReport() {
         <!-- Injected via JS -->
       </div>
 
-      <!-- STEP 5: REVIEW -->
+      <!-- REVIEW (STEP 5) -->
       <div class="wizard-step" id="step-5">
         <h3 class="title-lg mb-sm">Review & Submit</h3>
         <p class="body-md text-muted mb-lg">Ensure all details are correct before submitting.</p>
+
+        <!-- AI Assistant Panel -->
+        <div class="card mb-lg" style="padding: var(--spacing-md); background: linear-gradient(to right, rgba(139, 92, 246, 0.05), rgba(139, 92, 246, 0.02)); border: 1px solid rgba(139, 92, 246, 0.3); border-left: 4px solid #8b5cf6;">
+          <div class="flex items-center gap-sm mb-md pb-sm" style="border-bottom: 1px solid rgba(139, 92, 246, 0.2);">
+            <span style="font-size: 20px;">✨</span>
+            <h3 class="title-md m-0" style="color: #8b5cf6;">AI Analysis</h3>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md) var(--spacing-sm);">
+            <div>
+              <div class="caption text-muted mb-xs uppercase">Category</div>
+              <div class="body-md font-weight-bold" id="ai-cat">Processing...</div>
+            </div>
+            <div>
+              <div class="caption text-muted mb-xs uppercase">Confidence</div>
+              <div class="body-md font-weight-bold" style="color: #8b5cf6;" id="ai-conf">94%</div>
+            </div>
+            
+            <div>
+              <div class="caption text-muted mb-xs uppercase">Priority</div>
+              <div class="body-md font-weight-bold" id="ai-prio">Processing...</div>
+            </div>
+            <div>
+              <div class="caption text-muted mb-xs uppercase">Department</div>
+              <div class="body-md font-weight-bold" id="ai-dept">Processing...</div>
+            </div>
+
+            <div>
+              <div class="caption text-muted mb-xs uppercase">Duplicate Probability</div>
+              <div class="body-md font-weight-bold" style="color: var(--success);" id="ai-dup">12%</div>
+            </div>
+            <div>
+              <div class="caption text-muted mb-xs uppercase">Photo Evidence</div>
+              <div class="body-md font-weight-bold" style="color: var(--success);" id="ai-photo">Likely Valid</div>
+            </div>
+          </div>
+        </div>
         
         <div class="card" style="padding: 0; overflow: hidden; margin-bottom: var(--spacing-xl);">
           <div style="height: 120px; background: #000; position: relative;">
@@ -329,6 +365,33 @@ export function initCitizenReport() {
       document.getElementById('review-loc').textContent = state.location;
       document.getElementById('review-desc').textContent = state.description;
       document.getElementById('review-img').src = state.evidenceDataUrl;
+      
+      // Populate AI Analysis
+      document.getElementById('ai-cat').textContent = state.category;
+      document.getElementById('ai-conf').textContent = (Math.floor(Math.random() * 15) + 85) + '%'; // 85-99% mock
+      
+      // Derive mock priority and dept
+      let mockPrio = 'Medium';
+      let mockDept = 'General Municipal Services';
+      if (['Roads', 'Infrastructure'].includes(state.category)) mockDept = 'PWD - Roads Division';
+      if (['Sanitation', 'Waste'].includes(state.category)) mockDept = 'Solid Waste Management';
+      if (['Electricity'].includes(state.category)) mockDept = 'Electricity Board';
+      
+      const descLower = state.description.toLowerCase();
+      if (descLower.includes('urgent') || descLower.includes('dangerous') || descLower.includes('leak')) mockPrio = 'High';
+      
+      document.getElementById('ai-prio').textContent = mockPrio;
+      document.getElementById('ai-prio').style.color = mockPrio === 'High' ? 'var(--error)' : 'var(--on-surface)';
+      document.getElementById('ai-dept').textContent = mockDept;
+      
+      // Duplicate prob logic based on length (mock)
+      const dupProb = Math.min(Math.floor(state.description.length / 5), 89);
+      document.getElementById('ai-dup').textContent = dupProb + '%';
+      document.getElementById('ai-dup').style.color = dupProb > 50 ? 'var(--warning)' : 'var(--success)';
+      
+      // Store derived priority in state to send on submit
+      state.derivedPriority = mockPrio;
+
     } else {
       btnBack.style.display = 'block';
       btnNext.textContent = 'Next';
@@ -408,23 +471,24 @@ export function initCitizenReport() {
             description: state.description,
             location: state.location,
             imageUrl: state.evidenceDataUrl,
-            priority: "Medium"
+            priority: state.derivedPriority || "Medium"
           };
           
           const newIssue = await issueService.createIssue(payload);
           
-          // Show Success State
+          // Clear notification indicator if needed
+          
           document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
           document.getElementById('step-success').classList.add('active');
           wizardActions.style.display = 'none';
           wizardProgress.style.display = 'none';
-          document.getElementById('success-id').textContent = newIssue.id;
           
-        } catch (error) {
-          console.error("Submission failed", error);
-          alert("Submission failed. Please try again.");
+          document.getElementById('success-id').textContent = newIssue.id;
+        } catch (e) {
+          console.error("Submission failed", e);
           btnNext.disabled = false;
-          btnNext.textContent = 'Submit Report';
+          btnNext.innerHTML = 'Submit Report';
+          alert('Failed to submit report. Please try again.');
         }
       }
     });
