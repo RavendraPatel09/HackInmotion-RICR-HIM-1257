@@ -1,4 +1,5 @@
 import { issueService } from '../services/issueService.js';
+import { Icons } from '../utils/icons.js';
 
 export function renderAdminSla() {
   return `
@@ -18,16 +19,16 @@ export function renderAdminSla() {
         gap: var(--spacing-md);
       }
       
-      .sla-card {
+      .metric-card {
         padding: var(--spacing-md);
         background: var(--surface-container-lowest);
         border-radius: var(--radius-sm);
         border-left: 4px solid var(--outline-variant);
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       }
-      .sla-card.critical { border-left-color: var(--error); }
-      .sla-card.risk { border-left-color: var(--warning); }
-      .sla-card.track { border-left-color: var(--brand-navy); }
+      .metric-card.critical { border-left-color: var(--error); }
+      .metric-card.risk { border-left-color: var(--warning); }
+      .metric-card.track { border-left-color: var(--brand-navy); }
       
       .sla-time {
         font-size: 20px;
@@ -40,8 +41,8 @@ export function renderAdminSla() {
       .sla-time.track { color: var(--brand-navy); }
     </style>
 
-    <div class="mb-lg pb-xl" style="animation: fadeIn 0.4s ease;">
-      <div class="mb-lg">
+    <div class="mb-lg pb-xl page-enter" >
+      <div class="mb-lg page-enter" >
         <h2 class="headline-md m-0">SLA Enforcement</h2>
         <p class="body-sm text-muted">Real-time service level agreement tracking for active issues.</p>
       </div>
@@ -65,7 +66,7 @@ export function renderAdminSla() {
         <!-- At Risk -->
         <div class="card" style="padding: var(--spacing-md); background: rgba(217, 119, 6, 0.02); border-color: rgba(217, 119, 6, 0.2);">
           <div class="flex items-center gap-sm mb-md pb-sm" style="border-bottom: 1px solid rgba(217, 119, 6, 0.1);">
-            <span style="font-size: 20px;">⚠️</span>
+            <span style="font-size: 20px;">${Icons.warning}</span>
             <h3 class="title-md m-0" style="color: var(--warning);">At Risk (&lt; 25% Time)</h3>
             <span class="badge badge-warning ml-auto" id="count-risk">0</span>
           </div>
@@ -75,7 +76,7 @@ export function renderAdminSla() {
         <!-- On Track -->
         <div class="card" style="padding: var(--spacing-md);">
           <div class="flex items-center gap-sm mb-md pb-sm" style="border-bottom: 1px solid var(--outline-variant);">
-            <span style="font-size: 20px;">✅</span>
+            <span style="font-size: 20px;">${Icons.check}</span>
             <h3 class="title-md m-0">On Track</h3>
             <span class="badge badge-neutral ml-auto" id="count-track">0</span>
           </div>
@@ -140,7 +141,7 @@ export async function initAdminSla() {
       else timeText = \`\${Math.round(issue.remainingHours)}h Left\`;
 
       return \`
-        <div class="sla-card \${type}">
+        <div class="metric-card \${type}">
           <div class="flex justify-between items-start mb-sm">
             <a href="#/admin/issue/\${issue.id}" class="font-monospace font-weight-bold" style="color: var(--brand-navy); text-decoration: none;">\${issue.id}</a>
             <span class="priority-indicator \${pClass}">\${issue.priority}</span>

@@ -1,9 +1,10 @@
 import { notificationService } from '../services/notificationService.js';
+import { Icons } from '../utils/icons.js';
 
 export function renderCitizenNotifications() {
   return `
-    <div class="mb-lg pb-xl">
-      <div class="flex items-center justify-between mb-lg">
+    <div class="mb-lg pb-xl page-enter" >
+      <div class="flex items-center justify-between mb-lg page-enter" >
         <div class="flex items-center gap-md">
           <a href="#/citizen" class="btn-icon" style="text-decoration: none; font-size: 20px;">←</a>
           <h2 class="headline-md m-0">Notifications</h2>
@@ -35,14 +36,14 @@ export async function initCitizenNotifications() {
 
   const getIconForType = (type) => {
     switch(type) {
-      case 'Issue submitted': return '✅';
+      case 'Issue submitted': return Icons.check;
       case 'Issue acknowledged': return '👀';
-      case 'Issue assigned': return '👤';
+      case 'Issue assigned': return Icons.user;
       case 'Issue in progress': return '🚧';
       case 'Issue resolved': return '🎉';
       case 'Verification requested': return '❓';
       case 'Issue reopened': return '🔄';
-      case 'Duplicate detected': return '⚠️';
+      case 'Duplicate detected': return Icons.warning;
       case 'SLA warning': return '⏳';
       default: return '🔔';
     }
@@ -62,7 +63,7 @@ export async function initCitizenNotifications() {
   const renderList = (notifs) => {
     if (notifs.length === 0) {
       listContainer.innerHTML = `
-        <div class="empty-state">
+        <div class="empty-state page-enter" >
           <div class="empty-state-icon" style="font-size: 32px;">📭</div>
           <div class="body-md text-muted">You have no notifications.</div>
         </div>

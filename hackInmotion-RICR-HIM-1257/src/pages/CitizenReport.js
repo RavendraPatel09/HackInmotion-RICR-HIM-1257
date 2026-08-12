@@ -1,11 +1,12 @@
 import { issueService } from '../services/issueService.js';
 import { duplicateDetectionService } from '../services/duplicateDetectionService.js';
 import { renderDuplicateDetectionPanel } from '../components/DuplicateDetectionPanel.js';
+import { Icons } from '../utils/icons.js';
 
 export function renderCitizenReport() {
   return `
     <style>
-      .wizard-step { display: none; animation: fadeIn 0.3s ease; }
+      .wizard-step { display: none; }
       .wizard-step.active { display: block; }
       @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
       
@@ -26,8 +27,8 @@ export function renderCitizenReport() {
       .preview-actions { position: absolute; bottom: 0; left: 0; right: 0; padding: var(--spacing-sm); background: linear-gradient(transparent, rgba(0,0,0,0.7)); display: flex; justify-content: space-between; }
     </style>
 
-    <div class="mb-lg">
-      <div class="flex items-center gap-md mb-lg">
+    <div class="mb-lg page-enter" >
+      <div class="flex items-center gap-md mb-lg page-enter" >
         <a href="#/citizen" class="btn-icon" style="text-decoration: none; font-size: 20px;">←</a>
         <h2 class="headline-md m-0">Report Issue</h2>
       </div>
@@ -44,19 +45,19 @@ export function renderCitizenReport() {
       <!-- STEP 1: CATEGORY -->
       <div class="wizard-step active" id="step-1">
         <h3 class="title-lg mb-sm">What type of issue is it?</h3>
-        <p class="body-md text-muted mb-lg">Select the category that best fits.</p>
+        <p class="body-md text-muted mb-lg page-enter" >Select the category that best fits.</p>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md);">
           <div class="card category-card" data-category="Roads">
-            <div class="display-sm mb-xs">🛣️</div>
+            <div class="display-sm mb-xs">${Icons.roads}</div>
             <div class="label-md">Roads</div>
           </div>
           <div class="card category-card" data-category="Waste">
-            <div class="display-sm mb-xs">🗑️</div>
+            <div class="display-sm mb-xs">${Icons.trash}</div>
             <div class="label-md">Waste</div>
           </div>
           <div class="card category-card" data-category="Water">
-            <div class="display-sm mb-xs">🚰</div>
+            <div class="display-sm mb-xs">${Icons.water}</div>
             <div class="label-md">Water</div>
           </div>
           <div class="card category-card" data-category="Drainage">
@@ -80,14 +81,14 @@ export function renderCitizenReport() {
       <!-- STEP 2: LOCATION -->
       <div class="wizard-step" id="step-2">
         <h3 class="title-lg mb-sm">Where is the issue?</h3>
-        <p class="body-md text-muted mb-lg">Pinpoint the exact location for faster resolution.</p>
+        <p class="body-md text-muted mb-lg page-enter" >Pinpoint the exact location for faster resolution.</p>
         
         <div class="input-group mb-md">
           <input type="text" id="loc-search" class="input" placeholder="Search location (e.g. MP Nagar, Zone 1)" />
         </div>
         
         <button class="btn btn-secondary mb-md" id="loc-current" style="width: 100%;">
-          <span style="font-size: 18px;">📍</span> Use Current Location
+          <span style="font-size: 18px;">${Icons.location}</span> Use Current Location
         </button>
 
         <div class="card" style="padding: 0; overflow: hidden; border: 1px solid var(--outline-variant); height: 200px; position: relative;">
@@ -103,12 +104,12 @@ export function renderCitizenReport() {
       <!-- STEP 3: EVIDENCE -->
       <div class="wizard-step" id="step-3">
         <h3 class="title-lg mb-sm">Upload Evidence</h3>
-        <p class="body-md text-muted mb-lg">Clear photos help authorities understand the severity.</p>
+        <p class="body-md text-muted mb-lg page-enter" >Clear photos help authorities understand the severity.</p>
         
         <!-- Upload Dropzone -->
         <label class="file-upload" id="evidence-upload-zone" style="display: block;">
           <input type="file" id="evidence-input" accept="image/*" style="display: none;" />
-          <div class="file-upload-icon mb-sm">📸</div>
+          <div class="file-upload-icon mb-sm">${Icons.camera}</div>
           <div class="body-md font-weight-bold">Tap to take photo or upload</div>
           <div class="caption text-muted mt-xs">Max size: 5MB</div>
         </label>
@@ -129,7 +130,7 @@ export function renderCitizenReport() {
       <!-- STEP 4: DESCRIPTION -->
       <div class="wizard-step" id="step-4">
         <h3 class="title-lg mb-sm">Describe the issue</h3>
-        <p class="body-md text-muted mb-lg">Provide any additional context or details.</p>
+        <p class="body-md text-muted mb-lg page-enter" >Provide any additional context or details.</p>
         
         <div class="input-group">
           <textarea id="desc-input" class="textarea" placeholder="E.g., The pothole is on the left side of the road heading north. It is causing severe traffic." style="height: 150px;"></textarea>
@@ -148,12 +149,12 @@ export function renderCitizenReport() {
       <!-- REVIEW (STEP 5) -->
       <div class="wizard-step" id="step-5">
         <h3 class="title-lg mb-sm">Review & Submit</h3>
-        <p class="body-md text-muted mb-lg">Ensure all details are correct before submitting.</p>
+        <p class="body-md text-muted mb-lg page-enter" >Ensure all details are correct before submitting.</p>
 
         <!-- AI Assistant Panel -->
         <div class="card mb-lg" style="padding: var(--spacing-md); background: linear-gradient(to right, rgba(139, 92, 246, 0.05), rgba(139, 92, 246, 0.02)); border: 1px solid rgba(139, 92, 246, 0.3); border-left: 4px solid #8b5cf6;">
           <div class="flex items-center gap-sm mb-md pb-sm" style="border-bottom: 1px solid rgba(139, 92, 246, 0.2);">
-            <span style="font-size: 20px;">✨</span>
+            <span style="font-size: 20px;">${Icons.sparkles}</span>
             <h3 class="title-md m-0" style="color: #8b5cf6;">AI Analysis</h3>
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md) var(--spacing-sm);">
@@ -193,7 +194,7 @@ export function renderCitizenReport() {
           </div>
           <div style="padding: var(--spacing-md);">
             <div class="flex items-start gap-sm mb-sm">
-              <div style="font-size: 20px;">📍</div>
+              <div style="font-size: 20px;">${Icons.location}</div>
               <div id="review-loc" style="font-weight: 600;">Location</div>
             </div>
             <div class="body-md text-muted" id="review-desc" style="white-space: pre-wrap;">Description goes here...</div>
@@ -204,7 +205,7 @@ export function renderCitizenReport() {
       <!-- SUCCESS STATE (STEP 6) -->
       <div class="wizard-step" id="step-success" style="padding-top: var(--spacing-xl);">
         <div class="empty-state" style="border: none; background: transparent;">
-          <div class="empty-state-icon" style="color: var(--success); font-size: 64px; animation: fadeIn 0.5s ease;">✅</div>
+          <div class="empty-state-icon" style="color: var(--success); font-size: 64px; ">${Icons.check}</div>
           <h2 class="display-sm mb-xs">Report Submitted!</h2>
           <p class="body-lg text-muted mb-xl">Thank you for making Bhopal better.</p>
           

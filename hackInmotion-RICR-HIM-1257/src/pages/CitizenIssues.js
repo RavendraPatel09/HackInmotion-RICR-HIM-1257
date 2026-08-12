@@ -1,15 +1,16 @@
 import { issueService } from '../services/issueService.js';
+import { Icons } from '../utils/icons.js';
 
 export function renderCitizenIssues() {
   return `
-    <div class="mb-lg">
-      <div class="flex items-center gap-md mb-lg">
+    <div class="mb-lg page-enter" >
+      <div class="flex items-center gap-md mb-lg page-enter" >
         <a href="#/citizen" class="btn-icon" style="text-decoration: none; font-size: 20px;">←</a>
         <h2 class="headline-md m-0">My Issues</h2>
       </div>
 
       <!-- Controls: Search, Filter, Sort -->
-      <div class="flex flex-column gap-sm mb-lg">
+      <div class="flex flex-column gap-sm mb-lg page-enter" >
         <div class="input-group" style="margin-bottom: 0;">
           <input type="text" id="issues-search" class="input" placeholder="Search by ID, title, or location..." />
         </div>
@@ -106,7 +107,7 @@ export async function initCitizenIssues() {
       listContainer.innerHTML = `
         <div class="empty-state" style="padding: var(--spacing-2xl) var(--spacing-md);">
           <div class="empty-state-icon" style="font-size: 32px; margin-bottom: 8px;">📄</div>
-          <div class="empty-state-title">No issues found</div>
+          <div class="empty-state-title page-enter" >No issues found</div>
           <div class="body-md text-muted">Try adjusting your filters or search.</div>
         </div>
       `;
@@ -124,8 +125,8 @@ export async function initCitizenIssues() {
       if (issue.priority === 'Medium') priorityClass = 'priority-medium';
 
       let icon = '📝';
-      if (issue.category === 'Roads' || issue.category === 'Infrastructure') icon = '🛣️';
-      if (issue.category === 'Sanitation' || issue.category === 'Waste') icon = '🗑️';
+      if (issue.category === 'Roads' || issue.category === 'Infrastructure') icon = Icons.roads;
+      if (issue.category === 'Sanitation' || issue.category === 'Waste') icon = Icons.trash;
       if (issue.category === 'Electricity') icon = '💡';
       if (issue.category === 'Water' || issue.category === 'Water Supply') icon = '💧';
       
@@ -158,7 +159,7 @@ export async function initCitizenIssues() {
 
             <!-- Existing meta layout: Location & Status -->
             <div class="issue-card-meta mb-sm">
-              <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;">📍 ${issue.location}</span>
+              <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;">${Icons.location} ${issue.location}</span>
               <span class="flex items-center"><span class="status-dot ${statusClass}"></span> ${issue.status}</span>
             </div>
             
@@ -177,7 +178,7 @@ export async function initCitizenIssues() {
     renderList();
   } catch (e) {
     console.error("Failed to load issues", e);
-    listContainer.innerHTML = `<div class="error-state"><div class="empty-state-title">Failed to load issues</div></div>`;
+    listContainer.innerHTML = `<div class="error-state"><div class="empty-state-title page-enter" >Failed to load issues</div></div>`;
   }
 
   // --- Event Listeners ---

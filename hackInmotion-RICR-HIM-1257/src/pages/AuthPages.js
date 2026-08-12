@@ -7,7 +7,7 @@ export function renderLogin() {
     <div style="max-width: 400px; margin: var(--spacing-2xl) auto;">
       <div class="card" style="padding: var(--spacing-xl);">
         <h2 class="headline-md mb-sm text-center">Welcome Back</h2>
-        <p class="body-md text-muted text-center mb-lg">Log in to Smart Bhopal Civic Connect.</p>
+        <p class="body-md text-muted text-center mb-lg page-enter" >Log in to Smart Bhopal Civic Connect.</p>
         
         <div id="login-error" class="badge badge-error hidden mb-md" style="width: 100%; justify-content: center; padding: 8px;"></div>
         
@@ -22,7 +22,7 @@ export function renderLogin() {
             <input type="password" id="login-password" class="input" placeholder="Enter your password" required />
           </div>
           
-          <div class="flex justify-between items-center mb-lg">
+          <div class="flex justify-between items-center mb-lg page-enter" >
             <label class="flex items-center gap-xs body-md"><input type="checkbox"> Remember me</label>
             <a href="#/forgot-password" class="body-md" style="color: var(--brand-green); font-weight: 600;">Forgot Password?</a>
           </div>
@@ -81,7 +81,7 @@ export function renderRegister() {
     <div style="max-width: 450px; margin: var(--spacing-2xl) auto;">
       <div class="card" style="padding: var(--spacing-xl);">
         <h2 class="headline-md mb-sm text-center">Create an Account</h2>
-        <p class="body-md text-muted text-center mb-lg">Join Smart Bhopal to start reporting.</p>
+        <p class="body-md text-muted text-center mb-lg page-enter" >Join Smart Bhopal to start reporting.</p>
         
         <div id="reg-error" class="badge badge-error hidden mb-md" style="width: 100%; justify-content: center; padding: 8px;"></div>
         
@@ -114,7 +114,7 @@ export function renderRegister() {
             <input type="password" id="reg-password" class="input" placeholder="Create a password" required minlength="6" />
           </div>
 
-          <div class="input-group mb-lg">
+          <div class="input-group mb-lg page-enter" >
             <label class="input-label">Confirm Password</label>
             <input type="password" id="reg-confirm" class="input" placeholder="Confirm your password" required minlength="6" />
           </div>
@@ -174,12 +174,12 @@ export function renderForgotPassword() {
     <div style="max-width: 400px; margin: var(--spacing-2xl) auto;">
       <div class="card" style="padding: var(--spacing-xl);">
         <h2 class="headline-md mb-sm text-center">Reset Password</h2>
-        <p class="body-md text-muted text-center mb-lg">Enter your email and we'll send a link to reset your password.</p>
+        <p class="body-md text-muted text-center mb-lg page-enter" >Enter your email and we'll send a link to reset your password.</p>
         
         <div id="reset-msg" class="badge hidden mb-md" style="width: 100%; justify-content: center; padding: 8px;"></div>
         
         <form id="reset-form">
-          <div class="input-group mb-lg">
+          <div class="input-group mb-lg page-enter" >
             <label class="input-label">Email Address</label>
             <input type="email" id="reset-email" class="input" placeholder="Enter your email" required />
           </div>

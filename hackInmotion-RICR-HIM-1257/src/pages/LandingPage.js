@@ -1,3 +1,4 @@
+import { Icons } from '../utils/icons.js';
 export function renderLandingPage() {
   return `
     <style>
@@ -55,7 +56,7 @@ export function renderLandingPage() {
       
       <!-- 2. Civic Map Preview -->
       <section class="landing-section">
-        <div class="flex justify-between items-end mb-lg">
+        <div class="flex justify-between items-end mb-lg page-enter" >
           <div>
             <h2 class="headline-lg mb-sm">Live City Map</h2>
             <p class="body-lg text-muted">See what's happening around Bhopal in real-time.</p>
@@ -71,7 +72,7 @@ export function renderLandingPage() {
           
           <!-- Simulated Issue Card Overlay -->
           <div class="issue-card" style="position: absolute; bottom: 20px; left: 20px; width: 300px; box-shadow: var(--elevation-3);">
-            <div class="issue-card-icon">🚰</div>
+            <div class="issue-card-icon">${Icons.water}</div>
             <div class="issue-card-content">
               <div style="font-weight: 600;">Water Leakage</div>
               <div class="issue-card-meta"><span>Arera Colony</span> <span class="badge badge-warning">Pending</span></div>
@@ -104,14 +105,14 @@ export function renderLandingPage() {
 
       <!-- 4. Issue Categories -->
       <section class="landing-section">
-        <h2 class="headline-lg mb-lg">What can you report?</h2>
+        <h2 class="headline-lg mb-lg page-enter" >What can you report?</h2>
         <div class="grid-4">
           <div class="category-card">
-            <div class="category-icon">🛣️</div>
+            <div class="category-icon">${Icons.roads}</div>
             <div class="label-md">Infrastructure</div>
           </div>
           <div class="category-card">
-            <div class="category-icon">🗑️</div>
+            <div class="category-icon">${Icons.trash}</div>
             <div class="label-md">Sanitation</div>
           </div>
           <div class="category-card">
@@ -133,10 +134,10 @@ export function renderLandingPage() {
       <section class="landing-section">
         <div class="grid-3">
           <div style="grid-column: span 2;">
-            <h2 class="headline-lg mb-lg">Live City Activity</h2>
+            <h2 class="headline-lg mb-lg page-enter" >Live City Activity</h2>
             <div class="flex flex-column gap-md">
               <div class="issue-card">
-                <div class="issue-card-icon" style="background: color-mix(in srgb, var(--success) 15%, transparent);">✅</div>
+                <div class="issue-card-icon" style="background: color-mix(in srgb, var(--success) 15%, transparent);">${Icons.check}</div>
                 <div class="issue-card-content">
                   <div style="font-weight: 600;">Streetlight Fixed</div>
                   <div class="issue-card-meta"><span>MP Nagar Zone 1</span> <span class="body-md text-muted">2 mins ago</span></div>
@@ -160,7 +161,7 @@ export function renderLandingPage() {
           </div>
           
           <div>
-            <h2 class="headline-lg mb-lg">Transparency</h2>
+            <h2 class="headline-lg mb-lg page-enter" >Transparency</h2>
             <div class="flex flex-column gap-md">
               <div class="stat-card">
                 <div class="stat-number">1,204</div>
@@ -177,7 +178,7 @@ export function renderLandingPage() {
 
       <!-- 7. Before / After Resolution -->
       <section class="landing-section">
-        <h2 class="headline-lg mb-lg">Real Impact</h2>
+        <h2 class="headline-lg mb-lg page-enter" >Real Impact</h2>
         <div class="before-after-container">
           <div class="ba-img ba-before">
             <div><span class="badge badge-error mb-xs">Before</span><br>Overflowing bins at Kolar Road</div>
@@ -190,7 +191,7 @@ export function renderLandingPage() {
 
       <!-- 8. Community Impact -->
       <section class="landing-section">
-        <h2 class="headline-lg mb-lg">Community Voices</h2>
+        <h2 class="headline-lg mb-lg page-enter" >Community Voices</h2>
         <div class="grid-3">
           <div class="card">
             <p class="testimonial mb-md">"I reported a broken streetlight in our colony. It was fixed the very next evening. Smart Bhopal actually works!"</p>
@@ -212,7 +213,7 @@ export function renderLandingPage() {
       <!-- 9. Final CTA -->
       <section class="final-cta">
         <h2 class="display-lg mb-md">Ready to make a difference?</h2>
-        <p class="body-lg text-muted mb-lg">Join thousands of citizens improving Bhopal daily.</p>
+        <p class="body-lg text-muted mb-lg page-enter" >Join thousands of citizens improving Bhopal daily.</p>
         <a href="#/citizen/report" class="btn btn-primary" style="padding: var(--spacing-md) var(--spacing-xl); font-size: 18px;">Start Reporting</a>
       </section>
       

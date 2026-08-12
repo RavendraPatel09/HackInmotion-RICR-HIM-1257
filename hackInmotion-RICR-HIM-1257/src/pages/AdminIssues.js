@@ -1,4 +1,5 @@
 import { issueService } from '../services/issueService.js';
+import { Icons } from '../utils/icons.js';
 
 export function renderAdminIssues() {
   return `
@@ -55,8 +56,8 @@ export function renderAdminIssues() {
       }
     </style>
 
-    <div class="mb-lg pb-xl" style="animation: fadeIn 0.4s ease;">
-      <div class="flex items-center justify-between mb-lg">
+    <div class="mb-lg pb-xl page-enter" >
+      <div class="flex items-center justify-between mb-lg page-enter" >
         <div>
           <h2 class="headline-md m-0">Issue Management</h2>
           <p class="body-sm text-muted">Global queue of civic complaints</p>
@@ -278,7 +279,7 @@ export async function initAdminIssues() {
             <span class="flex items-center gap-xs caption"><span class="status-dot \${statusDot}"></span> \${i.status}</span>
           </div>
           <h3 class="title-md mb-xs">\${i.title}</h3>
-          <div class="body-sm text-muted mb-sm truncate">📍 \${i.location}</div>
+          <div class="body-sm text-muted mb-sm truncate">${Icons.location} \${i.location}</div>
           
           <div class="flex flex-wrap gap-xs mb-md">
             <span class="priority-indicator \${pClass}">\${i.priority}</span>

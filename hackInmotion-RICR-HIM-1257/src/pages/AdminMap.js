@@ -1,4 +1,5 @@
 import { issueService } from '../services/issueService.js';
+import { Icons } from '../utils/icons.js';
 
 export function renderAdminMap() {
   return `
@@ -176,10 +177,10 @@ export function renderAdminMap() {
           </div>
 
           <div class="caption text-muted mb-xs uppercase">Location</div>
-          <div class="body-md mb-md">📍 <span id="preview-loc">Location</span></div>
+          <div class="body-md mb-md">${Icons.location} <span id="preview-loc">Location</span></div>
 
           <div class="caption text-muted mb-xs uppercase">Reported By</div>
-          <div class="body-md mb-md">👤 Citizen #<span id="preview-citizen">xxxx</span></div>
+          <div class="body-md mb-md">${Icons.user} Citizen #<span id="preview-citizen">xxxx</span></div>
 
           <a href="#" id="preview-link" class="btn btn-primary w-full" style="justify-content: center;">Open Command Detail</a>
         </div>
@@ -252,8 +253,8 @@ export async function initAdminMap() {
       else if (issue.status === 'Resolved' || issue.status === 'Verified') bgColor = 'var(--success)';
       
       let icon = '';
-      if (issue.category === 'Roads') icon = '🛣️';
-      if (issue.category === 'Sanitation') icon = '🗑️';
+      if (issue.category === 'Roads') icon = Icons.roads;
+      if (issue.category === 'Sanitation') icon = Icons.trash;
       if (issue.category === 'Electricity') icon = '⚡';
 
       const pin = document.createElement('div');

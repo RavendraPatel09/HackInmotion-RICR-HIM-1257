@@ -1,9 +1,10 @@
 import { issueService } from '../services/issueService.js';
+import { Icons } from '../utils/icons.js';
 
 export function renderAdminDashboard() {
   return `
     <style>
-      .admin-kpi-card {
+      .metric-card {
         padding: var(--spacing-md);
         border-radius: var(--radius-md);
         background: var(--surface-container-lowest);
@@ -59,7 +60,7 @@ export function renderAdminDashboard() {
       }
     </style>
 
-    <div class="mb-lg pb-xl" style="animation: fadeIn 0.4s ease;">
+    <div class="mb-lg pb-xl page-enter" >
       <div class="mb-xl">
         <h2 class="headline-md m-0" style="color: var(--brand-navy);">Bhopal Civic Command Center</h2>
         <p class="body-md text-muted">Real-time overview of civic infrastructure and operations.</p>
@@ -67,27 +68,27 @@ export function renderAdminDashboard() {
 
       <!-- KPI Grid -->
       <div class="dashboard-kpi-grid">
-        <div class="admin-kpi-card" style="border-left: 4px solid var(--brand-navy);">
+        <div class="metric-card metric-card--accent">
           <div class="caption text-muted font-weight-bold uppercase">Total Issues</div>
           <div class="admin-kpi-value" id="kpi-total">-</div>
         </div>
-        <div class="admin-kpi-card" style="border-left: 4px solid var(--warning);">
+        <div class="metric-card metric-card--warning">
           <div class="caption text-muted font-weight-bold uppercase">Open Issues</div>
           <div class="admin-kpi-value" id="kpi-open" style="color: var(--warning);">-</div>
         </div>
-        <div class="admin-kpi-card" style="border-left: 4px solid var(--success);">
+        <div class="metric-card metric-card--success">
           <div class="caption text-muted font-weight-bold uppercase">Resolved</div>
           <div class="admin-kpi-value" id="kpi-resolved" style="color: var(--success);">-</div>
         </div>
-        <div class="admin-kpi-card" style="border-left: 4px solid var(--error);">
+        <div class="metric-card metric-card--error">
           <div class="caption text-muted font-weight-bold uppercase">Critical Issues</div>
           <div class="admin-kpi-value" id="kpi-critical" style="color: var(--error);">-</div>
         </div>
-        <div class="admin-kpi-card" style="border-left: 4px solid var(--brand-green);">
+        <div class="metric-card" style="border-left: 4px solid var(--brand-green);">
           <div class="caption text-muted font-weight-bold uppercase">SLA Compliance</div>
           <div class="admin-kpi-value" id="kpi-sla">-</div>
         </div>
-        <div class="admin-kpi-card" style="border-left: 4px solid #8b5cf6;">
+        <div class="metric-card" style="border-left: 4px solid #8b5cf6;">
           <div class="caption text-muted font-weight-bold uppercase">Avg Resolution</div>
           <div class="admin-kpi-value" id="kpi-avg-time">-</div>
         </div>
@@ -286,7 +287,7 @@ export async function initAdminDashboard() {
       locCounts[zone] = (locCounts[zone] || 0) + 1;
     });
     const sortedLocs = Object.entries(locCounts).sort((a,b) => b[1] - a[1]).slice(0, 2);
-    let locHtml = sortedLocs.map(([loc, count]) => \`📍 \${loc} (\${count} reports)\`).join(' • ');
+    let locHtml = sortedLocs.map(([loc, count]) => \`${Icons.location} \${loc} (\${count} reports)\`).join(' • ');
     document.getElementById('list-hotspots').innerHTML = locHtml || 'No location data.';
 
     // --- 6. Recent Activity ---

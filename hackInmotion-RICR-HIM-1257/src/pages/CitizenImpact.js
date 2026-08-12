@@ -1,9 +1,10 @@
 import { issueService } from '../services/issueService.js';
+import { Icons } from '../utils/icons.js';
 
 export function renderCitizenImpact() {
   return `
-    <div class="mb-lg pb-xl" style="animation: fadeIn 0.4s ease;">
-      <div class="flex items-center gap-md mb-lg">
+    <div class="mb-lg pb-xl page-enter" >
+      <div class="flex items-center gap-md mb-lg page-enter" >
         <a href="#/citizen" class="btn-icon" style="text-decoration: none; font-size: 20px;">←</a>
         <h2 class="headline-md m-0">My Civic Impact</h2>
       </div>
@@ -45,9 +46,9 @@ export function renderCitizenImpact() {
         
         <div class="flex flex-column gap-sm">
           
-          <div class="card flex gap-md items-center" style="padding: var(--spacing-md); border-left: 4px solid var(--brand-navy);">
+          <div class="card flex items-center gap-md">
             <div style="width: 48px; height: 48px; border-radius: var(--radius-sm); background: var(--surface-base); display: flex; align-items: center; justify-content: center; font-size: 24px;">
-              👁️
+              ${Icons.eye}
             </div>
             <div style="flex: 1;">
               <div class="title-md m-0">Early Identifier</div>
@@ -56,9 +57,9 @@ export function renderCitizenImpact() {
             <span class="badge badge-neutral" style="background: var(--surface-container-high); border: none;">Unlocked</span>
           </div>
 
-          <div class="card flex gap-md items-center" style="padding: var(--spacing-md); border-left: 4px solid var(--success);">
+          <div class="card flex items-center gap-md">
             <div style="width: 48px; height: 48px; border-radius: var(--radius-sm); background: var(--surface-base); display: flex; align-items: center; justify-content: center; font-size: 24px;">
-              ⏱️
+              ${Icons.clock}
             </div>
             <div style="flex: 1;">
               <div class="title-md m-0">Resolution Catalyst</div>
@@ -67,9 +68,9 @@ export function renderCitizenImpact() {
             <span class="badge badge-neutral" style="background: var(--surface-container-high); border: none;">Unlocked</span>
           </div>
 
-          <div class="card flex gap-md items-center" style="padding: var(--spacing-md); border-left: 4px solid var(--warning);">
+          <div class="card flex items-center gap-md">
             <div style="width: 48px; height: 48px; border-radius: var(--radius-sm); background: var(--surface-base); display: flex; align-items: center; justify-content: center; font-size: 24px;">
-              🤝
+              ${Icons.heart}
             </div>
             <div style="flex: 1;">
               <div class="title-md m-0">Civic Supporter</div>
@@ -81,7 +82,7 @@ export function renderCitizenImpact() {
           <!-- Locked Milestone -->
           <div class="card flex gap-md items-center" style="padding: var(--spacing-md); border: 1px dashed var(--outline-variant); opacity: 0.6; background: transparent;">
             <div style="width: 48px; height: 48px; border-radius: var(--radius-sm); background: transparent; border: 1px solid var(--outline-variant); display: flex; align-items: center; justify-content: center; font-size: 24px; filter: grayscale(1);">
-              ⭐
+              ${Icons.star}
             </div>
             <div style="flex: 1;">
               <div class="title-md m-0" style="color: var(--on-surface-variant);">Community Leader</div>

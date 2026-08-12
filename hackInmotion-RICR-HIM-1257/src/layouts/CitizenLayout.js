@@ -1,4 +1,5 @@
 import { notificationService } from '../services/notificationService.js';
+import { Icons } from '../utils/icons.js';
 
 export function renderCitizenLayout(contentHtml, activeRoute = '/citizen') {
   return `
@@ -58,7 +59,7 @@ export function renderCitizenLayout(contentHtml, activeRoute = '/citizen') {
           <span>Report</span>
         </a>
         <a href="#/citizen/track" class="mobile-nav-item ${activeRoute === '/citizen/track' ? 'active' : ''}">
-          <span style="font-size: 20px;">📍</span>
+          <span style="font-size: 20px;">${Icons.location}</span>
           <span>Track</span>
         </a>
       </nav>

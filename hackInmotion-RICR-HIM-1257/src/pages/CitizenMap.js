@@ -1,4 +1,5 @@
 import { issueService } from '../services/issueService.js';
+import { Icons } from '../utils/icons.js';
 
 export function renderCitizenMap() {
   return `
@@ -165,7 +166,7 @@ export function renderCitizenMap() {
 
       <!-- Map Controls -->
       <div class="map-controls">
-        <div class="map-btn" id="btn-my-location">📍</div>
+        <div class="map-btn" id="btn-my-location">${Icons.location}</div>
         <div class="map-btn" id="btn-zoom-in">+</div>
         <div class="map-btn" id="btn-zoom-out">-</div>
       </div>
@@ -186,7 +187,7 @@ export function renderCitizenMap() {
           <span class="caption text-muted" id="preview-category">Category</span>
         </div>
         
-        <p class="body-sm text-muted mb-md" id="preview-loc" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">📍 Location details</p>
+        <p class="body-sm text-muted mb-md" id="preview-loc" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${Icons.location} Location details</p>
         
         <a href="#/citizen/issues" id="preview-link" class="btn btn-primary" style="width: 100%; justify-content: center;">View Full Details</a>
       </div>
@@ -300,8 +301,8 @@ export async function initCitizenMap() {
       else if (issue.priority === 'High') bgColor = 'var(--error)';
       
       let icon = '📝';
-      if (issue.category === 'Roads' || issue.category === 'Infrastructure') icon = '🛣️';
-      if (issue.category === 'Sanitation' || issue.category === 'Waste') icon = '🗑️';
+      if (issue.category === 'Roads' || issue.category === 'Infrastructure') icon = Icons.roads;
+      if (issue.category === 'Sanitation' || issue.category === 'Waste') icon = Icons.trash;
       if (issue.category === 'Electricity') icon = '💡';
       if (issue.category === 'Water' || issue.category === 'Water Supply') icon = '💧';
 
@@ -325,7 +326,7 @@ export async function initCitizenMap() {
         // Populate Preview
         document.getElementById('preview-id').textContent = issue.id;
         document.getElementById('preview-title').textContent = issue.title;
-        document.getElementById('preview-loc').textContent = \`📍 \${issue.location}\`;
+        document.getElementById('preview-loc').textContent = \`${Icons.location} \${issue.location}\`;
         
         let statusClass = 'active';
         if (issue.status === 'Resolved') statusClass = 'inactive';

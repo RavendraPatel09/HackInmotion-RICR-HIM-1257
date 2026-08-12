@@ -125,8 +125,8 @@ export function renderAdminAnalytics() {
       }
     </style>
 
-    <div class="mb-lg pb-xl" style="animation: fadeIn 0.4s ease;">
-      <div class="mb-lg">
+    <div class="mb-lg pb-xl page-enter" >
+      <div class="mb-lg page-enter" >
         <h2 class="headline-md m-0">Civic Analytics</h2>
         <p class="body-sm text-muted">Real-time data derivation from global queue.</p>
       </div>
@@ -144,7 +144,7 @@ export function renderAdminAnalytics() {
           <div class="chart-container" id="chart-timeline"></div>
         </div>
 
-        <div class="analytics-grid mb-lg">
+        <div class="analytics-grid mb-lg page-enter" >
           
           <!-- Category Dist -->
           <div class="card" style="padding: var(--spacing-md);">

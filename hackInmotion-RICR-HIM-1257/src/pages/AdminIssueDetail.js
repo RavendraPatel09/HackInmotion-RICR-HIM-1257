@@ -1,4 +1,5 @@
 import { issueService } from '../services/issueService.js';
+import { Icons } from '../utils/icons.js';
 
 export function renderAdminIssueDetail(id) {
   return `
@@ -19,7 +20,7 @@ export function renderAdminIssueDetail(id) {
       }
     </style>
 
-    <div class="mb-lg pb-xl" id="admin-issue-container" style="animation: fadeIn 0.3s ease;">
+    <div class="mb-lg pb-xl" id="admin-issue-container" >
       <!-- Loading State -->
       <div id="admin-issue-loading" class="flex justify-center items-center" style="height: 300px;">
         <span class="status-dot active" style="transform: scale(2);"></span>
@@ -143,7 +144,7 @@ export async function initAdminIssueDetail(id) {
         <div class="card mb-lg" style="border: 2px solid var(--success);">
           <div class="title-md mb-sm" style="color: var(--brand-green);">Resolution Details</div>
           <div style="height: 120px; background: linear-gradient(135deg, #0f766e, #042f2e); position: relative; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; margin-bottom: var(--spacing-sm);">
-             <div style="color: rgba(255,255,255,0.2); font-size: 48px;">🛠️</div>
+             <div style="color: rgba(255,255,255,0.2); font-size: 48px;">${Icons.tools}</div>
              <span class="badge badge-success" style="position: absolute; bottom: 8px; left: 8px;">After Photo (Simulated)</span>
           </div>
           <p class="body-sm text-muted m-0">Issue fixed successfully by field team.</p>
@@ -200,7 +201,7 @@ export async function initAdminIssueDetail(id) {
           <!-- AI Analysis Panel -->
           <div class="card ai-panel mb-lg" style="padding: var(--spacing-md);">
             <div class="flex items-center gap-sm mb-md pb-sm" style="border-bottom: 1px solid rgba(139, 92, 246, 0.2);">
-              <span style="font-size: 20px;">✨</span>
+              <span style="font-size: 20px;">${Icons.sparkles}</span>
               <h3 class="title-md m-0" style="color: #8b5cf6;">AI Context Analysis</h3>
             </div>
             
@@ -238,7 +239,7 @@ export async function initAdminIssueDetail(id) {
           \${resolutionHtml}
           
           <!-- Timeline -->
-          <div class="mb-lg">
+          <div class="mb-lg page-enter" >
             <h3 class="title-md mb-md">Issue Lifecycle</h3>
             <div class="timeline">
               \${timelineHTML}
@@ -268,7 +269,7 @@ export async function initAdminIssueDetail(id) {
             
             <div class="caption text-muted mb-xs uppercase">Reported By</div>
             <div class="body-md font-weight-bold flex items-center gap-sm">
-              <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--surface-container-highest); display: flex; align-items: center; justify-content: center; font-size: 12px;">👤</div>
+              <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--surface-container-highest); display: flex; align-items: center; justify-content: center; font-size: 12px;">${Icons.user}</div>
               Citizen #\${issue.userId.substring(0, 5)}
             </div>
             <div class="caption text-muted mt-xs">\${new Date(issue.reportedAt).toLocaleString()}</div>
@@ -314,8 +315,8 @@ export async function initAdminIssueDetail(id) {
     loading.style.display = 'none';
     container.style.display = 'block';
     container.innerHTML = \`
-      <div class="empty-state">
-        <div class="empty-state-icon text-error" style="font-size: 32px;">❌</div>
+      <div class="empty-state page-enter" >
+        <div class="empty-state-icon text-error" style="font-size: 32px;">${Icons.x}</div>
         <h2 class="title-lg">Issue Not Found</h2>
         <a href="#/admin/issues" class="btn btn-primary mt-md">Back to Queue</a>
       </div>
