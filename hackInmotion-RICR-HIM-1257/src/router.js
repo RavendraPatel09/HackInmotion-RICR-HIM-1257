@@ -2,6 +2,9 @@ import { renderPublicLayout } from './layouts/PublicLayout.js';
 import { renderCitizenLayout, initCitizenLayout } from './layouts/CitizenLayout.js';
 import { renderAdminLayout, initAdminLayout } from './layouts/AdminLayout.js';
 import { renderAdminDashboard, initAdminDashboard } from './pages/AdminDashboard.js';
+import { renderAdminIssues, initAdminIssues } from './pages/AdminIssues.js';
+import { renderAdminIssueDetail, initAdminIssueDetail } from './pages/AdminIssueDetail.js';
+import { renderAdminMap, initAdminMap } from './pages/AdminMap.js';
 import { renderBlankPage } from './pages/BlankPage.js';
 import { renderLandingPage } from './pages/LandingPage.js';
 import { renderLogin, renderRegister, renderForgotPassword, initLoginLogic, initRegisterLogic, initForgotLogic } from './pages/AuthPages.js';
@@ -77,12 +80,22 @@ function navigate() {
     // Admin Routes
     let pageContent = '';
     let isAdminDashboard = false;
+    let isAdminIssues = false;
+    let isAdminMap = false;
+    let adminIssueDetailId = null;
     
     if (hash === '#/admin') {
       pageContent = renderAdminDashboard();
       isAdminDashboard = true;
     } else if (hash === '#/admin/issues') {
-      pageContent = renderBlankPage('Manage Issues', 'Global queue of civic complaints.');
+      pageContent = renderAdminIssues();
+      isAdminIssues = true;
+    } else if (hash === '#/admin/map') {
+      pageContent = renderAdminMap();
+      isAdminMap = true;
+    } else if (hash.startsWith('#/admin/issue/')) {
+      adminIssueDetailId = hash.replace('#/admin/issue/', '');
+      pageContent = renderAdminIssueDetail(adminIssueDetailId);
     } else if (hash === '#/admin/analytics') {
       pageContent = renderBlankPage('Analytics', 'Data insights and reporting.');
     } else {
@@ -96,6 +109,9 @@ function navigate() {
     setTimeout(() => {
       initAdminLayout();
       if (isAdminDashboard) initAdminDashboard();
+      if (isAdminIssues) initAdminIssues();
+      if (isAdminMap) initAdminMap();
+      if (adminIssueDetailId) initAdminIssueDetail(adminIssueDetailId);
     }, 0);
     
   } else {
