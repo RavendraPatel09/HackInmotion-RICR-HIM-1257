@@ -1,6 +1,7 @@
 import { renderPublicLayout } from './layouts/PublicLayout.js';
-import { renderCitizenLayout } from './layouts/CitizenLayout.js';
+import { renderCitizenLayout, initCitizenLayout } from './layouts/CitizenLayout.js';
 import { renderAdminLayout, initAdminLayout } from './layouts/AdminLayout.js';
+import { renderAdminDashboard, initAdminDashboard } from './pages/AdminDashboard.js';
 import { renderBlankPage } from './pages/BlankPage.js';
 import { renderLandingPage } from './pages/LandingPage.js';
 import { renderLogin, renderRegister, renderForgotPassword, initLoginLogic, initRegisterLogic, initForgotLogic } from './pages/AuthPages.js';
@@ -8,6 +9,9 @@ import { renderCitizenDashboard, initCitizenDashboard } from './pages/CitizenDas
 import { renderCitizenReport, initCitizenReport } from './pages/CitizenReport.js';
 import { renderCitizenIssues, initCitizenIssues } from './pages/CitizenIssues.js';
 import { renderCitizenIssueDetail, initCitizenIssueDetail } from './pages/CitizenIssueDetail.js';
+import { renderCitizenMap, initCitizenMap } from './pages/CitizenMap.js';
+import { renderCitizenNotifications, initCitizenNotifications } from './pages/CitizenNotifications.js';
+import { renderCitizenImpact, initCitizenImpact } from './pages/CitizenImpact.js';
 import { initComponents } from './utils/components.js';
 
 const app = document.getElementById('app');
@@ -23,6 +27,9 @@ function navigate() {
     let isCitizenDashboard = false;
     let isCitizenReport = false;
     let isCitizenIssues = false;
+    let isCitizenMap = false;
+    let isCitizenNotifications = false;
+    let isCitizenImpact = false;
     let issueDetailId = null;
     
     if (hash === '#/citizen') {
@@ -34,6 +41,15 @@ function navigate() {
     } else if (hash === '#/citizen/track' || hash === '#/citizen/issues') {
       pageContent = renderCitizenIssues();
       isCitizenIssues = true;
+    } else if (hash === '#/citizen/map') {
+      pageContent = renderCitizenMap();
+      isCitizenMap = true;
+    } else if (hash === '#/citizen/notifications') {
+      pageContent = renderCitizenNotifications();
+      isCitizenNotifications = true;
+    } else if (hash === '#/citizen/impact') {
+      pageContent = renderCitizenImpact();
+      isCitizenImpact = true;
     } else if (hash.startsWith('#/citizen/issue/')) {
       issueDetailId = hash.replace('#/citizen/issue/', '');
       pageContent = renderCitizenIssueDetail(issueDetailId);
@@ -45,17 +61,26 @@ function navigate() {
     const activeRoute = hash.replace('#', '');
     app.innerHTML = renderCitizenLayout(pageContent, activeRoute);
     
-    if (isCitizenDashboard) initCitizenDashboard();
-    if (isCitizenReport) initCitizenReport();
-    if (isCitizenIssues) initCitizenIssues();
-    if (issueDetailId) initCitizenIssueDetail(issueDetailId);
+    setTimeout(() => {
+      initCitizenLayout();
+      if (isCitizenDashboard) initCitizenDashboard();
+      if (isCitizenReport) initCitizenReport();
+      if (isCitizenIssues) initCitizenIssues();
+      if (isCitizenMap) initCitizenMap();
+      if (isCitizenNotifications) initCitizenNotifications();
+      if (isCitizenImpact) initCitizenImpact();
+      if (issueDetailId) initCitizenIssueDetail(issueDetailId);
+    }, 0);
     
   } else if (hash.startsWith('#/admin')) {
     
     // Admin Routes
     let pageContent = '';
+    let isAdminDashboard = false;
+    
     if (hash === '#/admin') {
-      pageContent = renderBlankPage('Admin Dashboard', 'Command center overview.');
+      pageContent = renderAdminDashboard();
+      isAdminDashboard = true;
     } else if (hash === '#/admin/issues') {
       pageContent = renderBlankPage('Manage Issues', 'Global queue of civic complaints.');
     } else if (hash === '#/admin/analytics') {
@@ -67,7 +92,11 @@ function navigate() {
     // Mount layout
     const activeRoute = hash.replace('#', '');
     app.innerHTML = renderAdminLayout(pageContent, activeRoute);
-    initAdminLayout(); // initialize sidebar toggles
+    
+    setTimeout(() => {
+      initAdminLayout();
+      if (isAdminDashboard) initAdminDashboard();
+    }, 0);
     
   } else {
     

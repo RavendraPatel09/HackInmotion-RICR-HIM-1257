@@ -1,3 +1,5 @@
+import { notificationService } from '../services/notificationService.js';
+
 export function renderCitizenLayout(contentHtml, activeRoute = '/citizen') {
   return `
     <div class="app-shell" style="flex-direction: column;">
@@ -17,16 +19,10 @@ export function renderCitizenLayout(contentHtml, activeRoute = '/citizen') {
 
         <div class="flex items-center gap-md">
           <!-- Notification Entry -->
-          <div class="dropdown">
-            <button class="btn-icon" style="position: relative; background: transparent; border: none;">
-              🔔
-              <span class="status-dot active" style="position: absolute; top: 4px; right: 4px;"></span>
-            </button>
-            <div class="dropdown-menu" style="width: 250px; right: 0;">
-              <div class="dropdown-item"><strong>Issue BH-10241</strong> updated</div>
-              <div class="dropdown-item">New civic poll available</div>
-            </div>
-          </div>
+          <a href="#/citizen/notifications" class="btn-icon" style="position: relative; background: transparent; border: none; text-decoration: none;">
+            🔔
+            <span class="status-dot active" id="citizen-nav-notif-dot" style="position: absolute; top: 4px; right: 4px; display: none;"></span>
+          </a>
 
           <!-- Profile Menu -->
           <div class="dropdown">
@@ -35,6 +31,7 @@ export function renderCitizenLayout(contentHtml, activeRoute = '/citizen') {
             </button>
             <div class="dropdown-menu">
               <a href="#/citizen/profile" class="dropdown-item">My Profile</a>
+              <a href="#/citizen/impact" class="dropdown-item">My Civic Impact</a>
               <a href="#/citizen/settings" class="dropdown-item">Settings</a>
               <div style="height: 1px; background: var(--outline-variant); margin: 4px 0;"></div>
               <a href="#/" class="dropdown-item" style="color: var(--error);">Logout</a>
@@ -67,4 +64,20 @@ export function renderCitizenLayout(contentHtml, activeRoute = '/citizen') {
       </nav>
     </div>
   `;
+}
+
+export async function initCitizenLayout() {
+  const dot = document.getElementById('citizen-nav-notif-dot');
+  if (dot) {
+    try {
+      const unreadCount = await notificationService.getUnreadCount();
+      if (unreadCount > 0) {
+        dot.style.display = 'block';
+      } else {
+        dot.style.display = 'none';
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
 }
