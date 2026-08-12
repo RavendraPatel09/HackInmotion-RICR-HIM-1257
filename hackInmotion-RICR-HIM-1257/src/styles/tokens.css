@@ -1,0 +1,88 @@
+:root {
+  /* Brand Colors */
+  --brand-green: #1E7A3D;
+  --brand-navy: #0F2740;
+  --brand-gold: #F4B740;
+  
+  /* Surface Colors */
+  --surface-base: #F8FAFC;
+  --surface-container-lowest: #FFFFFF;
+  --on-surface: #0B1C30;
+  --on-surface-variant: #3F493F;
+  --outline: #6F7A6E;
+  --outline-variant: #BFCABC;
+  
+  /* Status Colors */
+  --error: #BA1A1A;
+  --success: var(--brand-green);
+  --warning: var(--brand-gold);
+
+  /* Typography */
+  --font-family: 'Inter', sans-serif;
+  --font-size-display-lg: 48px;
+  --font-size-headline-lg: 32px;
+  --font-size-headline-md: 24px;
+  --font-size-title-lg: 20px;
+  --font-size-body-lg: 16px;
+  --font-size-body-md: 14px;
+  --font-size-label-md: 12px;
+  --font-size-caption: 12px;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-base: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+
+  /* Elevation (Shadows) */
+  --elevation-1: 0px 4px 12px rgba(15, 39, 64, 0.05); /* Cards/Surface */
+  --elevation-2: 0px 8px 24px rgba(15, 39, 64, 0.1);  /* Active/Floating */
+  --elevation-3: 0px 16px 48px rgba(15, 39, 64, 0.15); /* Modals/Overlays */
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 9999px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--surface-base);
+  color: var(--on-surface);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Typography Utility Classes */
+h1, h2, h3, h4, h5, h6 { color: var(--brand-navy); }
+.display-lg { font-size: var(--font-size-display-lg); font-weight: 700; line-height: 56px; letter-spacing: -0.02em; }
+.headline-lg { font-size: var(--font-size-headline-lg); font-weight: 700; line-height: 40px; }
+.headline-md { font-size: var(--font-size-headline-md); font-weight: 600; line-height: 32px; }
+.title-lg { font-size: var(--font-size-title-lg); font-weight: 600; line-height: 28px; }
+.body-lg { font-size: var(--font-size-body-lg); font-weight: 400; line-height: 24px; }
+.body-md { font-size: var(--font-size-body-md); font-weight: 400; line-height: 20px; }
+.label-md { font-size: var(--font-size-label-md); font-weight: 600; line-height: 16px; }
+.caption { font-size: var(--font-size-caption); font-weight: 400; line-height: 16px; }
+
+/* Layout Utilities */
+.container {
+  width: 100%;
+  margin: 0 auto;
+}
+@media (min-width: 375px) {
+  .container { padding: 0 16px; }
+}
+@media (min-width: 1024px) {
+  .container { max-width: 1440px; padding: 0 32px; }
+}
