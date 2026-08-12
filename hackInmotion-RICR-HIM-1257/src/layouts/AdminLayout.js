@@ -4,7 +4,7 @@ export function renderAdminLayout(contentHtml, activeRoute = '/admin') {
       
       <!-- Desktop Sidebar -->
       <aside class="sidebar" id="admin-sidebar">
-        <div class="flex justify-between items-center mb-lg">
+        <div class="flex justify-between items-center mb-lg page-enter" >
           <div class="sidebar-logo" style="margin-bottom: 0;">Civic Admin</div>
           <button class="btn-icon md:hidden" id="close-sidebar-btn" style="color: white;">✕</button>
         </div>
@@ -12,7 +12,10 @@ export function renderAdminLayout(contentHtml, activeRoute = '/admin') {
         <nav class="sidebar-nav">
           <a href="#/admin" class="sidebar-link ${activeRoute === '/admin' ? 'active' : ''}">Dashboard</a>
           <a href="#/admin/issues" class="sidebar-link ${activeRoute === '/admin/issues' ? 'active' : ''}">Manage Issues</a>
+          <a href="#/admin/map" class="sidebar-link ${activeRoute === '/admin/map' ? 'active' : ''}">Command Map</a>
           <a href="#/admin/analytics" class="sidebar-link ${activeRoute === '/admin/analytics' ? 'active' : ''}">Analytics</a>
+          <a href="#/admin/hotspots" class="sidebar-link ${activeRoute === '/admin/hotspots' ? 'active' : ''}">Hotspots</a>
+          <a href="#/admin/sla" class="sidebar-link ${activeRoute === '/admin/sla' ? 'active' : ''}">SLA Tracking</a>
           <a href="#/admin/settings" class="sidebar-link ${activeRoute === '/admin/settings' ? 'active' : ''}">Settings</a>
         </nav>
       </aside>

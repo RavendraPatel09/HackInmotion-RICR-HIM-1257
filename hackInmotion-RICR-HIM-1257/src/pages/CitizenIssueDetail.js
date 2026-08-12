@@ -1,11 +1,12 @@
 import { issueService } from '../services/issueService.js';
+import { Icons } from '../utils/icons.js';
 
 export function renderCitizenIssueDetail(id) {
   return `
-    <div class="mb-lg pb-xl" id="issue-detail-container" style="animation: fadeIn 0.3s ease;">
+    <div class="mb-lg pb-xl" id="issue-detail-container" >
       <!-- Skeleton Loading State -->
       <div id="issue-loading">
-        <div class="flex items-center gap-md mb-lg">
+        <div class="flex items-center gap-md mb-lg page-enter" >
           <a href="#/citizen/issues" class="btn-icon" style="text-decoration: none; font-size: 20px;">←</a>
           <div class="skeleton skeleton-text" style="width: 120px; height: 24px;"></div>
         </div>
@@ -109,10 +110,10 @@ export async function initCitizenIssueDetail(id) {
     let resolutionBlock = '';
     if (issue.status === 'Resolved') {
       resolutionBlock = `
-        <div class="card" style="margin-top: var(--spacing-xl); border: 2px solid var(--success); padding: 0; overflow: hidden; animation: fadeIn 0.5s ease;">
+        <div class="card" style="margin-top: var(--spacing-xl); border: 2px solid var(--success); padding: 0; overflow: hidden; ">
           <div style="background: color-mix(in srgb, var(--success) 10%, transparent); padding: var(--spacing-md); border-bottom: 1px solid var(--outline-variant);">
             <div class="flex items-center gap-sm">
-              <span style="font-size: 24px;">✅</span>
+              <span style="font-size: 24px;">${Icons.check}</span>
               <h3 class="title-lg m-0" style="color: var(--brand-green);">Resolution Pending Verification</h3>
             </div>
           </div>
@@ -120,13 +121,13 @@ export async function initCitizenIssueDetail(id) {
           <div style="padding: var(--spacing-md);">
             <!-- Resolution Evidence -->
             <div style="height: 160px; background: linear-gradient(135deg, #0f766e, #042f2e); position: relative; border-radius: var(--radius-sm); overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: var(--spacing-md);">
-               <div style="color: rgba(255,255,255,0.2); font-size: 48px;">🛠️</div>
+               <div style="color: rgba(255,255,255,0.2); font-size: 48px;">${Icons.tools}</div>
                <div style="position: absolute; bottom: 8px; left: 8px;">
                  <span class="badge badge-success" style="background: rgba(0,0,0,0.6); border: none; backdrop-filter: blur(4px);">After Photo</span>
                </div>
             </div>
             
-            <p class="body-md mb-lg font-weight-bold text-center">Was this issue actually fixed?</p>
+            <p class="body-md mb-lg font-weight-bold text-center page-enter" >Was this issue actually fixed?</p>
             
             <div class="flex gap-sm">
               <button class="btn btn-secondary" id="btn-reopen" style="flex: 1; justify-content: center; color: var(--error); border-color: var(--error);">
@@ -143,7 +144,7 @@ export async function initCitizenIssueDetail(id) {
 
     container.innerHTML = `
       <!-- Header -->
-      <div class="flex items-center gap-md mb-lg">
+      <div class="flex items-center gap-md mb-lg page-enter" >
         <a href="#/citizen/issues" class="btn-icon" style="text-decoration: none; font-size: 20px;">←</a>
         <h2 class="title-lg m-0 font-monospace">${issue.id}</h2>
       </div>
@@ -168,7 +169,7 @@ export async function initCitizenIssueDetail(id) {
       <!-- Location Map -->
       <div class="mb-xl">
         <h3 class="title-md mb-xs">Location</h3>
-        <p class="body-md text-muted mb-sm">📍 ${issue.location}</p>
+        <p class="body-md text-muted mb-sm">${Icons.location} ${issue.location}</p>
         ${mapPlaceholder}
       </div>
 
@@ -243,9 +244,9 @@ export async function initCitizenIssueDetail(id) {
     container.style.display = 'block';
     container.innerHTML = `
       <div class="empty-state" style="padding: var(--spacing-2xl) var(--spacing-md);">
-        <div class="empty-state-icon" style="font-size: 32px; color: var(--error);">❌</div>
+        <div class="empty-state-icon" style="font-size: 32px; color: var(--error);">${Icons.x}</div>
         <h2 class="title-lg mb-xs">Issue Not Found</h2>
-        <p class="body-md text-muted mb-lg">The issue you are looking for does not exist or has been removed.</p>
+        <p class="body-md text-muted mb-lg page-enter" >The issue you are looking for does not exist or has been removed.</p>
         <a href="#/citizen/issues" class="btn btn-primary">Back to Issues</a>
       </div>
     `;

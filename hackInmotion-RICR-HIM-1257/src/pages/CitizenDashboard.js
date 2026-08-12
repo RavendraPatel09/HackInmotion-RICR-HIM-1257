@@ -1,10 +1,11 @@
 import { issueService } from '../services/issueService.js';
 import { authService } from '../services/authService.js';
+import { Icons } from '../utils/icons.js';
 
 export function renderCitizenDashboard() {
   // Return the skeleton structure immediately, data will be injected via initCitizenDashboard
   return `
-    <div class="mb-lg">
+    <div class="mb-lg page-enter" >
       <div class="flex justify-between items-center mb-md">
         <div>
           <p class="body-md text-muted mb-xs">Good morning 👋</p>
@@ -12,7 +13,7 @@ export function renderCitizenDashboard() {
         </div>
         <!-- Profile Avatar Placeholder -->
         <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--surface-base); display: flex; align-items: center; justify-content: center; font-size: 20px;" id="dashboard-avatar">
-          👤
+          ${Icons.user}
         </div>
       </div>
       
@@ -143,8 +144,8 @@ export async function initCitizenDashboard() {
           if (issue.status === 'Resolved') statusClass = 'inactive'; // Though filtered out
 
           let icon = '📝';
-          if (issue.category === 'Infrastructure') icon = '🛣️';
-          if (issue.category === 'Sanitation') icon = '🗑️';
+          if (issue.category === 'Infrastructure') icon = Icons.roads;
+          if (issue.category === 'Sanitation') icon = Icons.trash;
           if (issue.category === 'Electricity') icon = '💡';
           if (issue.category === 'Water Supply') icon = '💧';
 
