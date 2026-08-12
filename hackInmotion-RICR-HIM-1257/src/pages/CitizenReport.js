@@ -1,4 +1,6 @@
 import { issueService } from '../services/issueService.js';
+import { duplicateDetectionService } from '../services/duplicateDetectionService.js';
+import { renderDuplicateDetectionPanel } from '../components/DuplicateDetectionPanel.js';
 
 export function renderCitizenReport() {
   return `
@@ -136,6 +138,11 @@ export function renderCitizenReport() {
             <span id="desc-counter" class="caption text-muted" style="margin-left: auto;">0 / 500 characters</span>
           </div>
         </div>
+      </div>
+
+      <!-- STEP 4.5: DUPLICATE DETECTION -->
+      <div class="wizard-step" id="step-duplicate" style="padding-top: var(--spacing-xl);">
+        <!-- Injected via JS -->
       </div>
 
       <!-- STEP 5: REVIEW -->
@@ -332,6 +339,60 @@ export function initCitizenReport() {
 
   if (btnNext) {
     btnNext.addEventListener('click', async () => {
+      
+      // Duplicate Detection check at Step 4
+      if (currentStep === 4) {
+        btnNext.disabled = true;
+        btnNext.innerHTML = 'Analyzing <span class="status-dot active" style="margin-left: 8px; animation: pulse 1s infinite;"></span>';
+        
+        try {
+          const payload = {
+            category: state.category,
+            location: state.location,
+            description: state.description
+          };
+          const match = await duplicateDetectionService.checkDuplicate(payload);
+          
+          if (match) {
+            document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+            const dupStep = document.getElementById('step-duplicate');
+            dupStep.innerHTML = renderDuplicateDetectionPanel(match);
+            dupStep.classList.add('active');
+            wizardActions.style.display = 'none';
+            
+            document.getElementById('btn-support-duplicate').addEventListener('click', () => {
+               document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+               document.getElementById('step-success').classList.add('active');
+               wizardActions.style.display = 'none';
+               wizardProgress.style.display = 'none';
+               document.getElementById('success-id').textContent = match.issue.id;
+               const successTitle = document.querySelector('#step-success h2');
+               if (successTitle) successTitle.textContent = 'Issue Supported!';
+               const successDesc = document.querySelector('#step-success p');
+               if (successDesc) successDesc.textContent = 'Thank you for adding your voice to this existing issue.';
+            });
+            
+            document.getElementById('btn-report-separately').addEventListener('click', () => {
+               currentStep = 5;
+               wizardActions.style.display = 'flex';
+               if (window.innerWidth >= 768) wizardActions.style.display = 'block'; // preserve desktop layout if needed, though flex is fine
+               updateUI();
+            });
+            
+            document.getElementById('btn-view-duplicate').addEventListener('click', () => {
+               window.location.hash = '#/citizen/track';
+            });
+            
+            return; // Wait for user choice, halt progression
+          }
+        } catch (e) {
+          console.error("Duplicate check failed", e);
+        } finally {
+          btnNext.disabled = false;
+          btnNext.innerHTML = 'Next';
+        }
+      }
+
       if (currentStep < totalSteps) {
         currentStep++;
         updateUI();
