@@ -1,0 +1,417 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useIssues } from '../context/IssuesContext';
+import { CityMap } from '../components/map/CityMap';
+import { showToast } from '../components/ui/Toast';
+import logoImg from '../assets/logo.png';
+import { 
+  User, 
+  ShieldCheck, 
+  CheckCircle2, 
+  ArrowRight, 
+  Loader2, 
+  Sparkles, 
+  Eye, 
+  EyeOff, 
+  Mail, 
+  Lock 
+} from 'lucide-react';
+import { motion } from 'framer-motion';
+
+export const Login: React.FC = () => {
+  const { user, isAuthenticated, loginCustom, logout } = useAuth();
+  const { issues } = useIssues();
+  const navigate = useNavigate();
+
+  const [selectedRole, setSelectedRole] = useState<'citizen' | 'admin'>('citizen');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  // Validation States
+  const [emailError, setEmailError] = useState<string>('');
+  const [passwordError, setPasswordError] = useState<string>('');
+
+  const validateEmail = (val: string): boolean => {
+    if (!val) {
+      setEmailError('Email is required');
+      return false;
+    }
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regex.test(val)) {
+      setEmailError('Please enter a valid email address');
+      return false;
+    }
+    setEmailError('');
+    return true;
+  };
+
+  const validatePassword = (val: string): boolean => {
+    if (!val) {
+      setPasswordError('Password is required');
+      return false;
+    }
+    if (val.length < 6) {
+      setPasswordError('Password must be at least 6 characters');
+      return false;
+    }
+    setPasswordError('');
+    return true;
+  };
+
+  const handleLoginSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = validatePassword(password);
+
+    if (!isEmailValid || !isPasswordValid) {
+      showToast('Please correct validation errors', 'warning');
+      return;
+    }
+
+    setIsLoading(true);
+
+    setTimeout(() => {
+      // Parse email to construct a beautiful name
+      const namePart = email.split('@')[0];
+      const formattedName = namePart
+        .split(/[\._-]/)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ');
+
+      const loggedInUser = {
+        id: selectedRole === 'citizen' ? 'usr-citizen-custom' : 'usr-admin-custom',
+        name: formattedName || (selectedRole === 'citizen' ? 'Citizen User' : 'Administrator'),
+        email: email,
+        role: selectedRole,
+        avatar: selectedRole === 'citizen'
+          ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'
+          : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
+        wardId: 'ward-01',
+        phone: '+91 98765 43210',
+        points: selectedRole === 'citizen' ? 42 : 0,
+        badges: selectedRole === 'citizen' ? ['badge-first-report', 'badge-five-reports'] : [],
+      };
+
+      loginCustom(loggedInUser);
+
+      if (selectedRole === 'citizen') {
+        showToast(`Welcome back, ${loggedInUser.name}! Authenticated as Citizen.`, 'success');
+        navigate('/citizen');
+      } else {
+        showToast(`Welcome back, ${loggedInUser.name}! Authenticated as Municipal Administrator.`, 'success');
+        navigate('/admin');
+      }
+      setIsLoading(false);
+    }, 600);
+  };
+
+  const handleDemoLogin = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      const demoUser = {
+        id: selectedRole === 'citizen' ? 'usr-citizen-demo' : 'usr-admin-demo',
+        name: selectedRole === 'citizen' ? 'Citizen Demo' : 'Admin Demo',
+        email: selectedRole === 'citizen' ? 'citizen@nagarsathi.demo' : 'admin@nagarsathi.demo',
+        role: selectedRole,
+        avatar: selectedRole === 'citizen'
+          ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'
+          : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
+        wardId: 'ward-01',
+        phone: '+91 98765 43210',
+        points: selectedRole === 'citizen' ? 42 : 0,
+        badges: selectedRole === 'citizen' ? ['badge-first-report'] : [],
+      };
+      loginCustom(demoUser);
+      showToast(`Welcome! Authenticated as ${selectedRole === 'citizen' ? 'Citizen' : 'Administrator'}.`, 'success');
+      navigate(selectedRole === 'citizen' ? '/citizen' : '/admin');
+      setIsLoading(false);
+    }, 600);
+  };
+
+  if (isAuthenticated && user) {
+    return (
+      <div className="max-w-md mx-auto my-16 px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass-card p-8 rounded-3xl space-y-6 text-center shadow-xl border border-indigo-200/50"
+        >
+          <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-600 mx-auto flex items-center justify-center">
+            <CheckCircle2 className="w-8 h-8" />
+          </div>
+
+          <div className="space-y-1">
+            <h2 className="text-2xl font-black text-slate-900">You are signed in</h2>
+            <p className="text-xs text-slate-500">
+              Authenticated as <strong className="text-slate-900">{user.name}</strong> ({user.role})
+            </p>
+          </div>
+
+          <div className="space-y-3 pt-2">
+            <button
+              onClick={() => navigate(user.role === 'admin' ? '/admin' : '/citizen')}
+              className="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition-transform hover:scale-[1.02]"
+            >
+              Continue to {user.role === 'admin' ? 'Admin Center' : 'Citizen Workspace'} &rarr;
+            </button>
+
+            <button
+              onClick={() => logout()}
+              className="w-full py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs transition-colors"
+            >
+              Switch Account / Logout
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[580px]">
+        {/* Left Panel — Civic Brand Identity & Map Visual */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="hidden lg:block lg:col-span-6 space-y-6"
+        >
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-extrabold uppercase tracking-wider">
+            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+            <span>NagarSathi Municipal Gateway</span>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <img
+                src={logoImg}
+                alt="NagarSathi Logo"
+                className="w-12 h-12 object-contain rounded-full shadow-md"
+              />
+              <h1 className="text-4xl font-black tracking-tight text-slate-900">
+                Nagar<span className="text-indigo-600">Sathi</span>
+              </h1>
+            </div>
+            <p className="text-2xl font-black text-slate-800 leading-snug">
+              Report it. Track it. Fix it.
+            </p>
+          </div>
+
+          <p className="text-sm text-slate-600 leading-relaxed font-medium">
+            Together, we can make everyday city problems visible, actionable, and verifiable across Bhopal municipal zones.
+          </p>
+
+          <div className="relative rounded-3xl overflow-hidden glass-card p-2 border border-slate-200/85 shadow-lg">
+            <CityMap issues={issues.slice(0, 6)} className="h-56 w-full rounded-2xl overflow-hidden" />
+          </div>
+        </motion.div>
+
+        {/* Right Panel — Interactive Demo Account Login Form */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="lg:col-span-6 w-full max-w-md mx-auto"
+        >
+          <form
+            onSubmit={handleLoginSubmit}
+            className="glass-card p-5 sm:p-8 rounded-3xl border border-indigo-200/40 shadow-xl space-y-4 sm:space-y-6 bg-white"
+          >
+            {/* Mobile Brand Header */}
+            <div className="block lg:hidden text-center space-y-1 mb-2">
+              <div className="flex items-center justify-center gap-2">
+                <img
+                  src={logoImg}
+                  alt="NagarSathi Logo"
+                  className="w-8 h-8 object-contain rounded-full shadow-sm"
+                />
+                <h1 className="text-xl font-black text-slate-900">
+                  Nagar<span className="text-indigo-600">Sathi</span>
+                </h1>
+              </div>
+              <p className="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest">
+                Report it. Track it. Fix it.
+              </p>
+            </div>
+
+            <div className="space-y-0.5">
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900">Welcome back</h2>
+              <p className="text-[11px] sm:text-xs text-slate-500 font-semibold">
+                Sign in to your NagarSathi dashboard to track and manage civic issues.
+              </p>
+            </div>
+
+            {/* Role Preset Selector Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div
+                onClick={() => setSelectedRole('citizen')}
+                className={`p-4 rounded-2xl border cursor-pointer transition-all space-y-2 ${
+                  selectedRole === 'citizen'
+                    ? 'bg-indigo-50/60 border-indigo-500 ring-2 ring-indigo-500/20'
+                    : 'bg-slate-50/50 border-slate-200 hover:border-slate-300'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="w-9 h-9 rounded-xl bg-indigo-600/10 text-indigo-600 flex items-center justify-center font-bold">
+                    <User className="w-5 h-5" />
+                  </div>
+                  {selectedRole === 'citizen' && <CheckCircle2 className="w-5 h-5 text-indigo-600" />}
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm text-slate-900">Citizen</h4>
+                  <p className="text-[11px] text-slate-500">Report &amp; Track Issues</p>
+                </div>
+                <p className="text-[10px] text-slate-500 pt-1 leading-tight">
+                  Report and track civic issues in your neighborhood.
+                </p>
+              </div>
+
+              <div
+                onClick={() => setSelectedRole('admin')}
+                className={`p-4 rounded-2xl border cursor-pointer transition-all space-y-2 ${
+                  selectedRole === 'admin'
+                    ? 'bg-amber-50/60 border-amber-500 ring-2 ring-amber-500/20'
+                    : 'bg-slate-50/50 border-slate-200 hover:border-slate-300'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="w-9 h-9 rounded-xl bg-amber-600/10 text-amber-600 flex items-center justify-center font-bold">
+                    <ShieldCheck className="w-5 h-5" />
+                  </div>
+                  {selectedRole === 'admin' && <CheckCircle2 className="w-5 h-5 text-amber-600" />}
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm text-slate-900">Administrator</h4>
+                  <p className="text-[11px] text-slate-500">Municipal Operations</p>
+                </div>
+                <p className="text-[10px] text-slate-500 pt-1 leading-tight">
+                  Manage city issues and departments, track SLA &amp; status queue.
+                </p>
+              </div>
+            </div>
+
+            {/* Email Input */}
+            <div className="space-y-1.5">
+              <label htmlFor="login-email" className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider">
+                Email Address
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <Mail className="w-4 h-4" />
+                </div>
+                <input
+                  id="login-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (emailError) validateEmail(e.target.value);
+                  }}
+                  onBlur={(e) => validateEmail(e.target.value)}
+                  placeholder="e.g. citizen@nagarsathi.demo"
+                  className={`w-full pl-9 pr-4 py-3 rounded-xl border bg-slate-50 text-slate-900 text-xs font-semibold focus:outline-none transition-all ${
+                    emailError 
+                      ? 'border-rose-500 ring-2 ring-rose-500/15 focus:border-rose-500' 
+                      : 'border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
+                  }`}
+                />
+              </div>
+              {emailError && (
+                <p className="text-[11px] font-bold text-rose-600 pt-0.5">{emailError}</p>
+              )}
+            </div>
+
+            {/* Password Input */}
+            <div className="space-y-1.5">
+              <label htmlFor="login-password" className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider">
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <Lock className="w-4 h-4" />
+                </div>
+                <input
+                  id="login-password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (passwordError) validatePassword(e.target.value);
+                  }}
+                  onBlur={(e) => validatePassword(e.target.value)}
+                  placeholder="••••••••"
+                  className={`w-full pl-9 pr-10 py-3 rounded-xl border bg-slate-50 text-slate-900 text-xs font-semibold focus:outline-none transition-all ${
+                    passwordError 
+                      ? 'border-rose-500 ring-2 ring-rose-500/15 focus:border-rose-500' 
+                      : 'border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20'
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              {passwordError && (
+                <p className="text-[11px] font-bold text-rose-600 pt-0.5">{passwordError}</p>
+              )}
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full py-3 rounded-2xl font-extrabold text-sm shadow-md flex items-center justify-center gap-2 transition-all hover:scale-[1.01] ${
+                selectedRole === 'citizen'
+                  ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/10'
+                  : 'bg-amber-600 hover:bg-amber-500 text-white shadow-amber-600/10'
+              }`}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" /> Logging In...
+                </>
+              ) : (
+                <>
+                  Log In <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+
+            {/* Continue as Demo User Button */}
+            <button
+              type="button"
+              onClick={handleDemoLogin}
+              disabled={isLoading}
+              className="w-full py-3 rounded-2xl font-extrabold text-sm bg-slate-100 hover:bg-slate-200 text-slate-805 border border-slate-200 flex items-center justify-center gap-2 transition-colors"
+            >
+              Continue as Demo User
+            </button>
+
+            <div className="flex items-center justify-between text-[11px] font-bold text-indigo-650 px-1 pt-1">
+              <button
+                type="button"
+                onClick={() => showToast('Password reset email links are deactivated for local demo mode.', 'info')}
+                className="hover:underline"
+              >
+                Forgot Password?
+              </button>
+              <button
+                type="button"
+                onClick={() => showToast('Simply input your desired email credentials. User accounts are auto-registered.', 'info')}
+                className="hover:underline"
+              >
+                Create Account
+              </button>
+            </div>
+          </form>
+        </motion.div>
+      </div>
+    </div>
+  );
+};
