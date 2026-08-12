@@ -5,6 +5,7 @@ import { renderBlankPage } from './pages/BlankPage.js';
 import { renderLandingPage } from './pages/LandingPage.js';
 import { renderLogin, renderRegister, renderForgotPassword, initLoginLogic, initRegisterLogic, initForgotLogic } from './pages/AuthPages.js';
 import { renderCitizenDashboard, initCitizenDashboard } from './pages/CitizenDashboard.js';
+import { renderCitizenReport, initCitizenReport } from './pages/CitizenReport.js';
 import { initComponents } from './utils/components.js';
 
 const app = document.getElementById('app');
@@ -18,12 +19,14 @@ function navigate() {
     // Citizen Routes
     let pageContent = '';
     let isCitizenDashboard = false;
+    let isCitizenReport = false;
     
     if (hash === '#/citizen') {
       pageContent = renderCitizenDashboard();
       isCitizenDashboard = true;
     } else if (hash === '#/citizen/report') {
-      pageContent = renderBlankPage('Report an Issue', 'Form to submit a new civic complaint.');
+      pageContent = renderCitizenReport();
+      isCitizenReport = true;
     } else if (hash === '#/citizen/track') {
       pageContent = renderBlankPage('Track Status', 'Track the progress of your submitted issues.');
     } else {
@@ -35,6 +38,7 @@ function navigate() {
     app.innerHTML = renderCitizenLayout(pageContent, activeRoute);
     
     if (isCitizenDashboard) initCitizenDashboard();
+    if (isCitizenReport) initCitizenReport();
     
   } else if (hash.startsWith('#/admin')) {
     
