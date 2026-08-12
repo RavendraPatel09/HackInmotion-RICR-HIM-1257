@@ -101,22 +101,36 @@ export function renderAdminMap() {
       }
 
       /* Side Preview Panel */
+      /* Side Preview Panel / Mobile Bottom Sheet */
       .admin-map-preview {
         position: absolute;
-        top: var(--spacing-md);
-        right: -400px;
-        width: 320px;
-        height: calc(100% - 2 * var(--spacing-md));
         background: var(--surface-container-lowest);
-        border-radius: var(--radius-md);
         box-shadow: var(--elevation-3);
         z-index: 30;
-        transition: right 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         display: flex;
         flex-direction: column;
         overflow-y: auto;
       }
-      .admin-map-preview.active { right: var(--spacing-md); }
+      
+      @media (max-width: 767px) {
+        .admin-map-preview {
+          bottom: 0; left: 0; right: 0;
+          height: auto; max-height: 80vh;
+          border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+          transform: translateY(100%);
+        }
+        .admin-map-preview.active { transform: translateY(0); }
+      }
+      @media (min-width: 768px) {
+        .admin-map-preview {
+          top: var(--spacing-md); right: var(--spacing-md);
+          width: 350px; height: calc(100% - 2 * var(--spacing-md));
+          border-radius: var(--radius-md);
+          transform: translateX(120%);
+        }
+        .admin-map-preview.active { transform: translateX(0); }
+      }
 
     </style>
 

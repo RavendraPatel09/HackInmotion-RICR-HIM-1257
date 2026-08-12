@@ -18,7 +18,7 @@ export function renderCitizenReport() {
       
       .bottom-nav-spacer { height: 80px; } /* To prevent overlap with fixed bottom actions */
       
-      .wizard-actions { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface-container-lowest); padding: var(--spacing-md) var(--spacing-lg); box-shadow: 0 -4px 12px rgba(0,0,0,0.05); z-index: 100; display: flex; justify-content: space-between; gap: var(--spacing-md); }
+      .wizard-actions { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface-container-lowest); padding: var(--spacing-md) var(--spacing-lg) calc(var(--spacing-md) + env(safe-area-inset-bottom)); box-shadow: 0 -4px 12px rgba(0,0,0,0.05); z-index: 100; display: flex; justify-content: space-between; gap: var(--spacing-md); }
       @media(min-width: 768px) { .wizard-actions { position: static; box-shadow: none; padding: var(--spacing-xl) 0 0; background: transparent; } .bottom-nav-spacer { display: none; } }
       
       #evidence-preview-container { display: none; position: relative; border-radius: var(--radius-md); overflow: hidden; height: 250px; background: #000; }
@@ -226,7 +226,7 @@ export function renderCitizenReport() {
       <div class="bottom-nav-spacer"></div>
 
       <!-- WIZARD ACTIONS -->
-      <div class="wizard-actions" id="wizard-actions">
+      <div class="wizard-actions fixed-bottom-actions" id="wizard-actions" style="margin-top: var(--spacing-xl);">
         <button class="btn btn-secondary" id="btn-back" style="flex: 1; display: none;">Back</button>
         <button class="btn btn-primary" id="btn-next" style="flex: 1;" disabled>Next</button>
       </div>

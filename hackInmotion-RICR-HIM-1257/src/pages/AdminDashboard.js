@@ -11,7 +11,7 @@ export function renderAdminDashboard() {
         box-shadow: var(--elevation-1);
       }
       .admin-kpi-value {
-        font-size: 32px;
+        font-size: clamp(24px, 3vw, 32px);
         font-weight: 700;
         margin: var(--spacing-xs) 0;
         font-family: monospace;
@@ -28,6 +28,35 @@ export function renderAdminDashboard() {
         height: 100%;
         border-radius: 4px;
       }
+
+      /* Responsive Grids */
+      .dashboard-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Mobile: 2 cols */
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-xl);
+      }
+      @media (min-width: 768px) {
+        .dashboard-kpi-grid { grid-template-columns: repeat(3, 1fr); }
+      }
+      @media (min-width: 1024px) {
+        .dashboard-kpi-grid { grid-template-columns: repeat(6, 1fr); }
+      }
+
+      .dashboard-layout-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+        margin-bottom: var(--spacing-xl);
+      }
+      .dashboard-split-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+      }
+      @media (min-width: 768px) {
+        .dashboard-split-grid { grid-template-columns: 1fr 1fr; }
+      }
     </style>
 
     <div class="mb-lg pb-xl" style="animation: fadeIn 0.4s ease;">
@@ -37,7 +66,7 @@ export function renderAdminDashboard() {
       </div>
 
       <!-- KPI Grid -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--spacing-md); margin-bottom: var(--spacing-xl);">
+      <div class="dashboard-kpi-grid">
         <div class="admin-kpi-card" style="border-left: 4px solid var(--brand-navy);">
           <div class="caption text-muted font-weight-bold uppercase">Total Issues</div>
           <div class="admin-kpi-value" id="kpi-total">-</div>
@@ -65,10 +94,10 @@ export function renderAdminDashboard() {
       </div>
 
       <!-- Main Layout Grid -->
-      <div style="display: grid; grid-template-columns: 1fr; gap: var(--spacing-lg); margin-bottom: var(--spacing-xl);">
+      <div class="dashboard-layout-grid">
         
         <!-- Desktop Grid Split -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-lg);">
+        <div class="dashboard-split-grid">
           
           <!-- Category Distribution -->
           <div class="card" style="padding: var(--spacing-md);">
@@ -86,9 +115,7 @@ export function renderAdminDashboard() {
             </div>
           </div>
 
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-lg);">
+        <div class="dashboard-split-grid">
           
           <!-- Critical Issues -->
           <div class="card" style="padding: var(--spacing-md); border-color: var(--error);">

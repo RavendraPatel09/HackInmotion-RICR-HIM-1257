@@ -18,7 +18,7 @@ export function renderAdminHotspots() {
 
       <!-- Hotspots Content -->
       <div id="hotspots-content" style="display: none;">
-        <div class="card" style="padding: 0; overflow: hidden;">
+        <div class="card table-responsive" style="padding: 0;">
           <table class="w-full text-left" style="border-collapse: collapse;">
             <thead style="background: var(--surface-container-low);">
               <tr>

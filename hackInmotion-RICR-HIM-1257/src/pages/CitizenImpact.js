@@ -17,7 +17,7 @@ export function renderCitizenImpact() {
 
       <!-- Stats Grid -->
       <h3 class="title-lg mb-md">Impact Metrics</h3>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-sm); margin-bottom: var(--spacing-xl);">
+      <div class="grid-layout grid-2-col grid-4-col" style="margin-bottom: var(--spacing-xl);">
         <div class="card" style="padding: var(--spacing-md);">
           <div class="display-sm" style="color: var(--brand-navy);">12</div>
           <div class="caption text-muted">Reports Submitted</div>
