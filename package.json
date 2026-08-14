@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@oxlint/binding-win32-x64-msvc": "^1.78.0",
+    "@rolldown/binding-win32-x64-msvc": "^1.2.4",
     "@types/gsap": "^1.20.2",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
