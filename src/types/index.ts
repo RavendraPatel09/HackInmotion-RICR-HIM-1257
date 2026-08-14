@@ -37,6 +37,7 @@ export interface User {
   phone?: string;
   points?: number;
   badges?: string[];
+  settings?: any;
 }
 
 export interface Comment {
@@ -77,6 +78,8 @@ export interface Issue {
   lat: number;
   lng: number;
   address: string;
+  city?: string;
+  state?: string;
   wardId?: string;
   photoUrl?: string;
   resolutionPhotoUrl?: string;

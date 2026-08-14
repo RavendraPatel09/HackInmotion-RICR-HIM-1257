@@ -55,7 +55,7 @@ export const ExploreIndia: React.FC = () => {
   };
 
   const getCityIssuesCount = (cityName: string) => {
-    return issues.filter((i) => i.city.toLowerCase() === cityName.toLowerCase()).length;
+    return issues.filter((i) => i.city?.toLowerCase() === cityName.toLowerCase()).length;
   };
 
   return (

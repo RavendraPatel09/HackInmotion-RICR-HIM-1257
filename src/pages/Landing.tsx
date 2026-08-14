@@ -1,38 +1,50 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useRef, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useIssues } from '../context/IssuesContext';
+import { useAuth } from '../context/AuthContext';
 import { CityMap } from '../components/map/CityMap';
-import { PremiumCard } from '../components/ui/PremiumCard';
+import { showToast } from '../components/ui/Toast';
 import {
   Zap,
   Map,
   Sparkles,
   ShieldCheck,
   ArrowRight,
-  CheckCircle2,
   Users,
-  Check,
-  Building,
-  Flag,
   FileCheck,
+  ArrowUpRight,
+  Activity,
+  MapPin,
+  ArrowRightLeft,
+  Mail
 } from 'lucide-react';
 import gsap from 'gsap';
+import { motion } from 'framer-motion';
 
 export const Landing: React.FC = () => {
-  const { issues } = useIssues();
+  const { issues, upvoteIssue } = useIssues();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const heroRef = useRef<HTMLDivElement>(null);
+  const [citySelection, setCitySelection] = useState<string>('Bhopal');
+
+  useEffect(() => {
+    // Dynamic city detection if logged in
+    if (user?.settings?.city_preference) {
+      setCitySelection(user.settings.city_preference);
+    }
+  }, [user]);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion || !heroRef.current) return;
 
     const ctx = gsap.context(() => {
-      gsap.from('.gsap-hero-item', {
-        y: 20,
+      gsap.from('.gsap-reveal', {
+        y: 30,
         opacity: 0,
-        duration: 0.7,
-        stagger: 0.1,
+        duration: 0.8,
+        stagger: 0.12,
         ease: 'power3.out',
       });
     }, heroRef);
@@ -44,387 +56,538 @@ export const Landing: React.FC = () => {
   const totalReportsCount = issues.length;
   const activeReportsCount = issues.filter((i) => i.status !== 'Resolved' && i.status !== 'Verified').length;
   const resolvedReportsCount = issues.filter((i) => i.status === 'Resolved' || i.status === 'Verified').length;
-  
-  // Dynamic average resolution SLA (mock calculation or standard 96%)
-  const responseRate = '94.8%';
+  const highPriorityCount = issues.filter((i) => i.priority === 'High' || i.priority === 'Critical').length;
+  const verifiedCount = issues.filter((i) => i.status === 'Verified').length;
 
-  // 3 Recent issues from local storage context to populate activity feed
+  // Recent issues from local storage context to populate activity feed
   const recentIssues = useMemo(() => {
-    return [...issues].sort((a, b) => new Date(b.reportedAt).getTime() - new Date(a.reportedAt).getTime()).slice(0, 3);
+    return [...issues]
+      .sort((a, b) => new Date(b.reportedAt).getTime() - new Date(a.reportedAt).getTime())
+      .slice(0, 3);
+  }, [issues]);
+
+  // Top upvoted community issues
+  const communityIssues = useMemo(() => {
+    return [...issues]
+      .sort((a, b) => b.upvotes - a.upvotes)
+      .slice(0, 3);
   }, [issues]);
 
   const handleCategoryClick = (catId: string) => {
     navigate(`/citizen/issues?category=${catId}`);
   };
 
+  const handleCommunityUpvote = async (issueId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) {
+      showToast('Please log in to upvote community issues.', 'warning');
+      return;
+    }
+    await upvoteIssue(issueId, user.id);
+  };
+
+  const categories = [
+    { id: 'roads', title: 'Roads & Potholes', icon: '🛣️', desc: 'Report waterlogged potholes, cracks, or damage', accent: 'border-blue-500/30 text-blue-400' },
+    { id: 'lights', title: 'Street Lights', icon: '💡', desc: 'Unlit street lamps or broken posts on roads', accent: 'border-yellow-500/30 text-yellow-400' },
+    { id: 'waste', title: 'Waste & Garbage', icon: '🗑️', desc: 'Overflowing dustbins, garbage dumps, or trash pileup', accent: 'border-emerald-500/30 text-emerald-400' },
+    { id: 'water', title: 'Water Leakage', icon: '🚰', desc: 'Leaking water pipelines or public tap overflow', accent: 'border-cyan-500/30 text-cyan-400' },
+    { id: 'traffic', title: 'Traffic & Parking', icon: '🚦', desc: 'Encroached spaces, illegal parking, or signal damage', accent: 'border-purple-500/30 text-purple-400' },
+    { id: 'parks', title: 'Parks & Playgrounds', icon: '🌳', desc: 'Damaged benches, wild grass, or broken equipment', accent: 'border-green-500/30 text-green-400' },
+    { id: 'infra', title: 'Public Infrastructure', icon: '🏢', desc: 'Damaged footpaths, municipal offices, or public toilets', accent: 'border-indigo-500/30 text-indigo-400' },
+    { id: 'electricity', title: 'Electricity', icon: '⚡', desc: 'Hanging electric wires, transformer spark, or power poles', accent: 'border-amber-500/30 text-amber-400' },
+    { id: 'transport', title: 'Public Transport', icon: '🚌', desc: 'Damaged bus shelters, metro facilities, or bus schedules', accent: 'border-blue-500/30 text-blue-400' },
+    { id: 'health', title: 'Public Health', icon: '🏥', desc: 'Stagnant water breeding, mosquito sprays, open drains', accent: 'border-rose-500/30 text-rose-400' },
+    { id: 'safety', title: 'Public Safety', icon: '👮', desc: 'Unsafe dark stretches, security camera failures, patrolling', accent: 'border-red-500/30 text-red-400' },
+    { id: 'drainage', title: 'Drainage & Sewage', icon: '💧', desc: 'Choked gutters, overflowing manholes, or sewer damage', accent: 'border-teal-500/30 text-teal-400' },
+    { id: 'air', title: 'Air Pollution', icon: '💨', desc: 'Industrial smoke venting, crop burning, or dust emissions', accent: 'border-slate-500/30 text-slate-400' },
+    { id: 'noise', title: 'Noise Pollution', icon: '🔊', desc: 'Illegal loudspeaker usage, industrial noise after limits', accent: 'border-indigo-500/30 text-indigo-400' },
+    { id: 'encroachment', title: 'Encroachment', icon: '🚧', desc: 'Street vendors blockage, footpaths occupied illegally', accent: 'border-orange-500/30 text-orange-400' },
+    { id: 'other', title: 'Other Civic Issues', icon: '📝', desc: 'Any other local municipal complaints that need routing', accent: 'border-slate-500/30 text-slate-400' },
+  ];
+
   return (
-    <div ref={heroRef} className="space-y-16 py-6 max-w-6xl mx-auto px-4 relative">
+    <div ref={heroRef} className="w-full bg-[#050816] text-white min-h-screen py-8 overflow-hidden relative selection:bg-indigo-600 selection:text-white">
       
-      {/* 1. HERO SECTION */}
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-4 relative overflow-hidden bg-white border border-slate-200/80 p-8 sm:p-10 rounded-3xl shadow-xs">
+      {/* BACKGROUND DECORATIVE GRADIENTS */}
+      <div className="absolute top-10 left-10 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl animate-pulse pointer-events-none" />
+      <div className="absolute top-60 right-10 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl animate-pulse pointer-events-none" />
+      <div className="absolute bottom-40 left-20 w-[450px] h-[450px] bg-emerald-500/5 rounded-full blur-3xl animate-pulse pointer-events-none" />
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24 relative z-10">
         
-        {/* Tasteful Desi Arch SVG Backdrop */}
-        <svg className="absolute right-0 bottom-0 w-full h-[150px] opacity-[0.02] pointer-events-none text-slate-800" viewBox="0 0 1440 150" fill="currentColor">
-          <path d="M0,150 L1440,150 L1440,130 L1400,130 L1390,90 L1380,90 L1370,130 L1300,130 L1280,80 L1260,80 L1240,130 L1150,130 L1130,50 L1080,50 L1060,130 L1000,130 L980,100 L950,100 L930,130 L850,130 L830,70 L790,70 L770,130 L700,130 L680,90 L650,90 L630,130 L550,130 L530,40 L480,40 L460,130 L400,130 L380,80 L350,80 L330,130 L250,130 L230,60 L190,60 L170,130 L100,130 L80,100 L55,100 L35,130 Z" />
-          <path d="M480,40 C480,15 530,15 530,40 Z" />
-          <path d="M1080,50 C1080,25 1130,25 1130,50 Z" />
-        </svg>
-
-        {/* Hero Left Content */}
-        <div className="lg:col-span-7 space-y-6 relative z-10">
-          <div className="gsap-hero-item inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-black uppercase tracking-wider shadow-xs">
-            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-            <span>YOUR CITY. YOUR VOICE.</span>
-          </div>
-
-          <h1 className="gsap-hero-item text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.08]">
-            Make Your City <span className="text-indigo-650">Better.</span>
-          </h1>
-
-          <p className="gsap-hero-item text-slate-600 text-xs sm:text-sm leading-relaxed font-semibold max-w-lg">
-            Help make everyday civic problems visible, actionable and accountable. Report street issues, track municipal dispatches, and verify resolutions in your zone.
-          </p>
-
-          <div className="gsap-hero-item flex flex-col sm:flex-row items-center gap-3 pt-1">
-            <Link
-              to="/citizen/report"
-              className="px-6 py-3.5 w-full sm:w-auto rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs shadow-md flex items-center justify-center gap-2 transition-all"
-            >
-              <Zap className="w-4 h-4 text-amber-300 animate-pulse" />
-              Report an Issue
-            </Link>
-
-            <Link
-              to="/map"
-              className="px-6 py-3.5 w-full sm:w-auto rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-805 font-extrabold text-xs border border-slate-200 flex items-center justify-center gap-2 transition-all"
-            >
-              <Map className="w-4 h-4 text-indigo-600" />
-              Explore City Map
-            </Link>
-          </div>
-
-          <p className="gsap-hero-item text-[11px] text-slate-500 font-extrabold flex items-center gap-1.5 pt-1 uppercase tracking-wider">
-            <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
-            <span>Your report. Your city. Your impact. ({activeReportsCount} active reports)</span>
-          </p>
-        </div>
-
-        {/* Hero Right Compact Map Visual */}
-        <div className="lg:col-span-5 relative h-[280px] rounded-2xl overflow-hidden border border-slate-200 shadow-md bg-slate-50 z-10">
-          <CityMap issues={issues} className="h-full w-full" zoom={11} />
-        </div>
-      </section>
-
-      {/* 2. TRUST STRIP */}
-      <section className="bg-slate-100/50 border border-slate-200/60 p-4 rounded-2xl">
-        <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-12 text-[10px] font-black uppercase tracking-widest text-slate-500">
-          <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-indigo-600" /> GPS Geo-tagging</span>
-          <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-indigo-600" /> Photo Evidence Required</span>
-          <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-indigo-600" /> 72h SLA clock</span>
-          <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-indigo-600" /> Citizen Verification</span>
-        </div>
-      </section>
-
-      {/* 3. QUICK REPORT CTA */}
-      <section className="p-6 bg-[#111827] text-white rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-lg relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="space-y-1 relative z-10">
-          <h3 className="text-lg font-black">See something that needs fixing?</h3>
-          <p className="text-xs text-slate-400 font-semibold">Report potholes, broken lights, trash piles, or leakages in less than 2 minutes.</p>
-        </div>
-        <Link
-          to="/citizen/report"
-          className="px-5 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs rounded-xl shadow-md transition-all relative z-10 flex items-center justify-center gap-1 shrink-0 self-start md:self-center"
-        >
-          Start Quick Report <ArrowRight className="w-4 h-4" />
-        </Link>
-      </section>
-
-      {/* 4. WHY NAGARSATHI SECTION */}
-      <section className="space-y-6">
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl font-black text-slate-900">Why NagarSathi?</h2>
-          <p className="text-xs text-slate-500 max-w-xl mx-auto font-semibold">
-            NagarSathi was created to make communication between citizens and municipal zones transparent, accountable, and actionable.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <PremiumCard variant="blue" className="p-6 space-y-3">
-            <span className="text-xl font-black text-blue-500 font-mono">01</span>
-            <h4 className="font-bold text-sm text-slate-950">Report Easily</h4>
-            <p className="text-[11px] text-slate-600 leading-relaxed font-semibold">
-              Citizens can quickly log problems with exact GPS locations and photo evidence directly from mobile devices.
-            </p>
-          </PremiumCard>
-
-          <PremiumCard variant="amber" className="p-6 space-y-3">
-            <span className="text-xl font-black text-amber-500 font-mono">02</span>
-            <h4 className="font-bold text-sm text-slate-950">Track Progress</h4>
-            <p className="text-[11px] text-slate-600 leading-relaxed font-semibold">
-              Every reported issue receives a unique tracking ID and follows a visible status lifecycle from acknowledgment to dispatch.
-            </p>
-          </PremiumCard>
-
-          <PremiumCard variant="green" className="p-6 space-y-3">
-            <span className="text-xl font-black text-emerald-500 font-mono">03</span>
-            <h4 className="font-bold text-sm text-slate-950">Resolution Verification</h4>
-            <p className="text-[11px] text-slate-600 leading-relaxed font-semibold">
-              Resolutions must be approved. Citizens retain absolute control to audit completions before closing reports.
-            </p>
-          </PremiumCard>
-
-          <PremiumCard variant="purple" className="p-6 space-y-3">
-            <span className="text-xl font-black text-purple-500 font-mono">04</span>
-            <h4 className="font-bold text-sm text-slate-950">Build Communities</h4>
-            <p className="text-[11px] text-slate-600 leading-relaxed font-semibold">
-              Strengthen community trust by upvoting neighborhood issues and tracking aggregate zone performance.
-            </p>
-          </PremiumCard>
-        </div>
-      </section>
-
-      {/* 5. HOW IT WORKS TIMELINE */}
-      <section className="space-y-8 bg-slate-50 border border-slate-200 p-8 rounded-3xl">
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl font-black text-slate-900">How NagarSathi Works</h2>
-          <p className="text-xs text-slate-500 max-w-xl mx-auto font-semibold">
-            Follow the simple citizen timeline journey from flagging a problem to municipal resolution.
-          </p>
-        </div>
-
-        {/* Timeline Stack */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
+        {/* ======================================================
+            1. HERO SECTION
+            ====================================================== */}
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-8">
           
-          {/* Connecting Line (desktop only) */}
-          <div className="hidden md:block absolute top-[28px] left-[12%] right-[12%] h-[2px] bg-slate-250 z-0" />
-          
-          {[
-            { step: '1', title: 'Spot a Problem', desc: 'Identify any civic issue in your ward that requires attention.' },
-            { step: '2', title: 'File a Report', desc: 'Add location details, upload photos, and click submit.' },
-            { step: '3', title: 'Track Live Progress', desc: 'Monitor the status updates, assigned departments, and SLA timers.' },
-            { step: '4', title: 'Verify Resolution', desc: 'Check completion evidence and mark the issue as verified.' },
-          ].map((t, idx) => (
-            <div key={idx} className="flex flex-col items-center text-center space-y-3 relative z-10">
-              <div className="w-14 h-14 rounded-full bg-indigo-600 text-white flex items-center justify-center font-black text-lg border-4 border-white shadow-md">
-                {t.step}
-              </div>
-              <h4 className="font-extrabold text-sm text-slate-900">{t.title}</h4>
-              <p className="text-[11px] text-slate-550 leading-relaxed font-semibold px-4">{t.desc}</p>
+          {/* Left Text details */}
+          <div className="lg:col-span-7 space-y-6">
+            <div className="gsap-reveal inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-900 border border-[#1F2E47] shadow-lg">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-300">
+                Together, building better cities for a better India.
+              </span>
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* 6. WHAT CAN YOU REPORT (12 CATEGORIES) */}
-      <section className="space-y-6">
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl font-black text-slate-900">What Can You Report?</h2>
-          <p className="text-xs text-slate-500 max-w-xl mx-auto font-semibold">
-            Choose a category to explore existing reports or file new complaints.
-          </p>
-        </div>
+            <div className="space-y-4">
+              <h1 className="gsap-reveal text-5xl sm:text-6xl font-black tracking-tight leading-[1.05]">
+                YOUR CITY. <br />
+                <span className="bg-gradient-to-r from-amber-500 via-white to-emerald-500 bg-clip-text text-transparent">
+                  YOUR VOICE.
+                </span>
+              </h1>
+              <p className="gsap-reveal text-lg font-bold text-slate-200">
+                Report problems. Track progress. Make your community better.
+              </p>
+              <p className="gsap-reveal text-slate-400 text-xs sm:text-sm leading-relaxed max-w-xl font-semibold">
+                NagarSathi connects citizens with civic departments to report local problems, track resolution progress and make public services more transparent.
+              </p>
+            </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {[
-            { id: 'roads', title: 'Roads & Potholes', icon: '🛣️', color: 'blue' },
-            { id: 'lights', title: 'Street Lights', icon: '💡', color: 'amber' },
-            { id: 'waste', title: 'Waste & Garbage', icon: '🗑️', color: 'green' },
-            { id: 'water', title: 'Water Leakage', icon: '🚰', color: 'cyan' },
-            { id: 'traffic', title: 'Traffic & Parking', icon: '🚦', color: 'purple' },
-            { id: 'parks', title: 'Parks & Playgrounds', icon: '🌳', color: 'teal' },
-            { id: 'infra', title: 'Public Infra', icon: '🏢', color: 'indigo' },
-            { id: 'electricity', title: 'Electricity Grid', icon: '⚡', color: 'amber' },
-            { id: 'transport', title: 'Public Transport', icon: '🚌', color: 'blue' },
-            { id: 'health', title: 'Public Health', icon: '🏥', color: 'red' },
-            { id: 'safety', title: 'Public Safety', icon: '👮', color: 'red' },
-            { id: 'other', title: 'Other Inquiries', icon: '📝', color: 'default' },
-          ].map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => handleCategoryClick(cat.id)}
-              className="w-full text-left"
-            >
-              <PremiumCard
-                variant={cat.color as any}
-                className="p-4 flex items-center gap-3 cursor-pointer select-none hover:scale-[1.02] transition-transform"
+            {/* CTAs */}
+            <div className="gsap-reveal flex flex-wrap items-center gap-4 pt-2">
+              <Link
+                to="/citizen/report"
+                className="relative group overflow-hidden px-7 py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs shadow-[0_4px_20px_rgba(79,70,229,0.35)] flex items-center justify-center gap-2 transition-all duration-300"
               >
-                <div className="text-2xl shrink-0">{cat.icon}</div>
-                <div className="min-w-0">
-                  <h4 className="font-extrabold text-xs text-slate-900 truncate">{cat.title}</h4>
-                  <p className="text-[10px] text-indigo-650 font-bold mt-0.5">Explore Feed &rarr;</p>
-                </div>
-              </PremiumCard>
-            </button>
-          ))}
-        </div>
-      </section>
+                <div className="absolute inset-0 bg-gradient-to-r from-amber-500 to-indigo-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
+                <Zap className="w-4 h-4 text-amber-300" />
+                <span>Report an Issue</span>
+              </Link>
 
-      {/* 7. CITY IMPACT STATISTICS */}
-      <section className="bg-[#111827] text-white p-8 sm:p-10 rounded-3xl relative overflow-hidden shadow-lg">
-        {/* Subtle decorative ring */}
-        <div className="absolute -top-12 -left-12 w-48 h-48 rounded-full border-4 border-white/5 pointer-events-none" />
-        <div className="absolute -bottom-12 -right-12 w-64 h-64 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
+              <Link
+                to="/map"
+                className="px-7 py-4 rounded-2xl bg-slate-900/60 hover:bg-slate-800/80 text-white font-extrabold text-xs border border-slate-800 flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg"
+              >
+                <Map className="w-4 h-4 text-indigo-400" />
+                <span>Explore City Map</span>
+              </Link>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center relative z-10">
-          <div className="space-y-1">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Reports</p>
-            <p className="text-4xl font-black text-white font-mono">{totalReportsCount}</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Complaints</p>
-            <p className="text-4xl font-black text-amber-400 font-mono">{activeReportsCount}</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Issues Resolved</p>
-            <p className="text-4xl font-black text-emerald-400 font-mono">{resolvedReportsCount}</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">SLA Compliance</p>
-            <p className="text-4xl font-black text-indigo-400 font-mono">{responseRate}</p>
-          </div>
-        </div>
-      </section>
+              <Link
+                to="/citizen/issues"
+                className="text-xs font-bold text-slate-400 hover:text-indigo-400 transition-colors flex items-center gap-1 group ml-2"
+              >
+                <span>Track My Report</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
 
-      {/* 8. COMMUNITY ACTIVITY FEED */}
-      <section className="space-y-6">
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl font-black text-slate-900">What's Happening Around Your City?</h2>
-          <p className="text-xs text-slate-500 max-w-xl mx-auto font-semibold">
-            See recent civic grievances flagged by citizens in Bhopal municipal zones.
-          </p>
-        </div>
+            <p className="gsap-reveal text-[10px] text-slate-500 font-extrabold flex items-center gap-1.5 pt-2 uppercase tracking-wider">
+              <ShieldCheck className="w-4 h-4 text-emerald-450 shrink-0" />
+              <span>Active Reports in {citySelection}: <strong className="text-slate-300 font-black">{activeReportsCount} complaints</strong></span>
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {recentIssues.length > 0 ? (
-            recentIssues.map((issue) => (
+          {/* Right Map Preview */}
+          <div className="lg:col-span-5 gsap-reveal">
+            <div className="h-[360px] rounded-3xl overflow-hidden border border-slate-800/80 shadow-2xl relative bg-slate-900/40 backdrop-blur-md">
+              <CityMap issues={issues} className="h-full w-full" zoom={11} />
+              
+              {/* Map Floating Indicator */}
+              <div className="absolute bottom-4 left-4 z-[999] bg-[#101827]/90 border border-slate-800 p-2.5 rounded-xl text-[9px] font-black uppercase tracking-wider space-y-1 shadow-lg">
+                <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-blue-500" /> Reported</div>
+                <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500" /> In Progress</div>
+                <div className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> Resolved</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ======================================================
+            2. FEATURE ACTION CARDS
+            ====================================================== */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <motion.div
+            whileHover={{ y: -4, borderColor: '#4F46E5', boxShadow: '0 8px 30px rgba(79, 70, 229, 0.15)' }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => navigate('/citizen/report')}
+            className="p-6 rounded-3xl bg-[#121B2B] border border-slate-800/80 cursor-pointer space-y-4 transition-all duration-300"
+          >
+            <div className="w-10 h-10 rounded-xl bg-indigo-950/60 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-md">
+              <Zap className="w-5 h-5 text-amber-400" />
+            </div>
+            <div className="space-y-1.5">
+              <h3 className="font-extrabold text-sm text-white">Report an Issue</h3>
+              <p className="text-[11px] text-slate-400 leading-relaxed font-semibold">
+                Tell the city what needs fixing. Add photos, location and details so the right department can act faster.
+              </p>
+            </div>
+            <p className="text-[10px] text-indigo-400 font-extrabold flex items-center gap-1 group">
+              Report Now <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </p>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ y: -4, borderColor: '#F59E0B', boxShadow: '0 8px 30px rgba(245, 158, 11, 0.15)' }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => navigate('/citizen/issues')}
+            className="p-6 rounded-3xl bg-[#121B2B] border border-slate-800/80 cursor-pointer space-y-4 transition-all duration-300"
+          >
+            <div className="w-10 h-10 rounded-xl bg-amber-950/60 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-md">
+              <Activity className="w-5 h-5" />
+            </div>
+            <div className="space-y-1.5">
+              <h3 className="font-extrabold text-sm text-white">Track Your Report</h3>
+              <p className="text-[11px] text-slate-400 leading-relaxed font-semibold">
+                Follow your complaint from Reported &rarr; Acknowledged &rarr; In Progress &rarr; Resolved &rarr; Verified.
+              </p>
+            </div>
+            <p className="text-[10px] text-amber-400 font-extrabold flex items-center gap-1 group">
+              Track Issue <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </p>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ y: -4, borderColor: '#10B981', boxShadow: '0 8px 30px rgba(16, 185, 129, 0.15)' }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => navigate('/map')}
+            className="p-6 rounded-3xl bg-[#121B2B] border border-slate-800/80 cursor-pointer space-y-4 transition-all duration-300"
+          >
+            <div className="w-10 h-10 rounded-xl bg-emerald-950/60 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-md">
+              <Map className="w-5 h-5" />
+            </div>
+            <div className="space-y-1.5">
+              <h3 className="font-extrabold text-sm text-white">Explore City Map</h3>
+              <p className="text-[11px] text-slate-400 leading-relaxed font-semibold">
+                See civic issues around your area and explore active complaints, locations and resolution status.
+              </p>
+            </div>
+            <p className="text-[10px] text-emerald-400 font-extrabold flex items-center gap-1 group">
+              Open Map <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </p>
+          </motion.div>
+        </section>
+
+        {/* ======================================================
+            3. CITY AT A GLANCE
+            ====================================================== */}
+        <section className="space-y-6">
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl font-black tracking-tight">City at a Glance</h2>
+            <p className="text-xs text-slate-400 max-w-xl mx-auto font-semibold">
+              A quick look at what's happening across your community in {citySelection}.
+            </p>
+            <div className="h-[2px] w-16 bg-gradient-to-r from-amber-500 via-white to-emerald-500 mx-auto mt-2" />
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+            {[
+              { label: 'Total Issues', val: totalReportsCount, color: 'text-white border-slate-800 bg-[#121B2B]' },
+              { label: 'Resolved', val: resolvedReportsCount, color: 'text-emerald-450 border-emerald-950 bg-[#121B2B]' },
+              { label: 'In Progress', val: activeReportsCount, color: 'text-amber-500 border-amber-950 bg-[#121B2B]' },
+              { label: 'High Priority', val: highPriorityCount, color: 'text-rose-500 border-rose-950 bg-[#121B2B]' },
+              { label: 'Verified Fixed', val: verifiedCount, color: 'text-cyan-400 border-cyan-950 bg-[#121B2B]' },
+            ].map((stat, idx) => (
               <div
-                key={issue.id}
-                onClick={() => navigate('/citizen/issues')}
-                className="p-4 bg-white border border-slate-200 hover:border-indigo-400 rounded-2xl cursor-pointer hover:shadow-md transition-all duration-150 flex flex-col justify-between h-44 group"
+                key={idx}
+                className={`p-5 rounded-2xl border text-center space-y-1.5 shadow-md ${stat.color}`}
               >
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[9px] font-mono font-bold text-indigo-600 bg-indigo-50 border border-indigo-150 px-2 py-0.5 rounded">
-                      {issue.trackingId}
-                    </span>
-                    <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${
-                      issue.status === 'Resolved' || issue.status === 'Verified'
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                        : 'bg-indigo-50 text-indigo-700 border border-indigo-200'
-                    }`}>
-                      {issue.status}
+                <p className="text-[10px] text-slate-400 uppercase font-black tracking-wider">{stat.label}</p>
+                <p className="text-3xl font-black font-mono">{stat.val}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ======================================================
+            4. HOW NAGARSATHI WORKS
+            ====================================================== */}
+        <section className="p-8 sm:p-10 rounded-3xl bg-[#0B1220] border border-slate-800 space-y-8 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="text-center space-y-2 relative z-10">
+            <h2 className="text-2xl font-black">How NagarSathi Works</h2>
+            <p className="text-xs text-slate-450 max-w-xl mx-auto font-semibold">
+              From reporting a problem to verified resolution — everything stays visible.
+            </p>
+          </div>
+
+          {/* Timeline */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
+            {[
+              { step: '01', title: 'REPORT', desc: 'Submit a civic issue with location, description and photo evidence.' },
+              { step: '02', title: 'ROUTE', desc: 'NagarSathi routes the issue to the appropriate civic department.' },
+              { step: '03', title: 'RESOLVE', desc: 'The responsible department works on the issue and updates its progress.' },
+              { step: '04', title: 'VERIFY', desc: 'Citizens can verify the resolution before the complaint is considered closed.' },
+            ].map((t, idx) => (
+              <div key={idx} className="flex flex-col items-center text-center space-y-3">
+                <div className="w-12 h-12 rounded-2xl bg-indigo-950/80 text-indigo-400 border border-indigo-500/40 flex items-center justify-center font-black text-base shadow-lg">
+                  {t.step}
+                </div>
+                <h4 className="font-extrabold text-xs tracking-wider uppercase text-white">{t.title}</h4>
+                <p className="text-[11px] text-slate-400 leading-relaxed font-semibold px-2">{t.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ======================================================
+            5. WHAT CAN YOU REPORT
+            ====================================================== */}
+        <section className="space-y-6">
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl font-black">What Can You Report?</h2>
+            <p className="text-xs text-slate-450 max-w-xl mx-auto font-semibold">
+              From roads and waste to water, safety and public infrastructure — raise issues that affect your community.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {categories.map((cat) => (
+              <motion.div
+                key={cat.id}
+                whileHover={{ y: -3, borderColor: '#6366F1' }}
+                onClick={() => handleCategoryClick(cat.id)}
+                className="p-4 rounded-2xl bg-[#121B2B] border border-slate-800/60 cursor-pointer space-y-2.5 transition-all duration-200"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl shrink-0">{cat.icon}</span>
+                  <h4 className="font-extrabold text-xs text-white truncate">{cat.title}</h4>
+                </div>
+                <p className="text-[10px] text-slate-400 font-semibold line-clamp-2 leading-relaxed">
+                  {cat.desc}
+                </p>
+                <p className="text-[9px] text-indigo-400 font-extrabold flex items-center gap-0.5 mt-2">
+                  Explore Reports <ArrowUpRight className="w-3 h-3" />
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* ======================================================
+            6. WHAT'S HAPPENING (RECENT GRIEVE FEED)
+            ====================================================== */}
+        <section className="space-y-6">
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl font-black">What's Happening in Your City?</h2>
+            <p className="text-xs text-slate-450 max-w-xl mx-auto font-semibold">
+              See the latest civic reports logged and monitored dynamically across neighborhoods.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {recentIssues.length > 0 ? (
+              recentIssues.map((issue) => (
+                <div
+                  key={issue.id}
+                  onClick={() => navigate('/citizen/issues')}
+                  className="p-5 bg-[#121B2B] border border-slate-800/80 hover:border-indigo-500 rounded-2xl cursor-pointer transition-all duration-250 flex flex-col justify-between h-48 group shadow-lg"
+                >
+                  <div className="space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[9px] font-mono font-bold text-indigo-400 bg-indigo-950/40 border border-indigo-900 px-2 py-0.5 rounded">
+                        {issue.trackingId}
+                      </span>
+                      <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${
+                        issue.status === 'Resolved' || issue.status === 'Verified'
+                          ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-800/30'
+                          : 'bg-indigo-950/60 text-indigo-400 border border-indigo-800/30'
+                      }`}>
+                        {issue.status}
+                      </span>
+                    </div>
+                    <h4 className="font-extrabold text-xs text-white line-clamp-1 group-hover:text-indigo-455 transition-colors">
+                      {issue.title}
+                    </h4>
+                    <p className="text-[10px] text-slate-400 line-clamp-2 leading-relaxed font-semibold">
+                      {issue.description}
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-800 text-[10px] text-slate-500 font-bold">
+                    <span>{issue.address.split(',')[0]}</span>
+                    <span className="text-indigo-400 group-hover:translate-x-1 transition-transform flex items-center gap-0.5">
+                      Track <ArrowRight className="w-3.5 h-3.5" />
                     </span>
                   </div>
-                  <h4 className="font-extrabold text-xs text-slate-905 line-clamp-1 group-hover:text-indigo-650 transition-colors">
-                    {issue.title}
-                  </h4>
-                  <p className="text-[10px] text-slate-500 line-clamp-2 leading-relaxed font-semibold">
-                    {issue.description}
-                  </p>
                 </div>
-                <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-[10px] text-slate-400 font-bold">
-                  <span>{issue.address.split(',')[0]}</span>
-                  <span className="text-indigo-605 group-hover:translate-x-1 transition-transform flex items-center gap-0.5">
-                    Track &rarr;
-                  </span>
-                </div>
+              ))
+            ) : (
+              <div className="col-span-3 text-center py-12 text-slate-550 text-xs font-semibold bg-[#121B2B] rounded-3xl border border-slate-805">
+                No active complaints filed.
               </div>
-            ))
-          ) : (
-            <div className="col-span-3 text-center py-8 text-slate-400 text-xs font-semibold">
-              No recent reports logged.
-            </div>
-          )}
-        </div>
-      </section>
+            )}
+          </div>
+        </section>
 
-      {/* 9. TRANSPARENCY PIPELINE FLOW */}
-      <section className="space-y-8 bg-slate-50 border border-slate-200 p-8 rounded-3xl">
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl font-black text-slate-900">Know Where Your Report Stands</h2>
-          <p className="text-xs text-slate-500 max-w-xl mx-auto font-semibold">
-            Track transparency ratings and audit statuses along the verified resolution cycle.
-          </p>
-        </div>
-
-        {/* Pipeline Step Circles */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-4 px-4">
-          {[
-            { step: 'Reported', desc: 'Logged on portal', icon: <Flag className="w-5 h-5 text-indigo-600" /> },
-            { step: 'Acknowledged', desc: 'Department confirmed', icon: <Check className="w-5 h-5 text-amber-500" /> },
-            { step: 'Assigned', desc: 'Engineer dispatched', icon: <Building className="w-5 h-5 text-blue-500" /> },
-            { step: 'In Progress', desc: 'Site work ongoing', icon: <Zap className="w-5 h-5 text-purple-500" /> },
-            { step: 'Resolved', desc: 'Supervisor submitted', icon: <CheckCircle2 className="w-5 h-5 text-emerald-500" /> },
-            { step: 'Verified', desc: 'Citizen approved', icon: <FileCheck className="w-5 h-5 text-cyan-600" /> },
-          ].map((item, idx) => (
-            <div key={idx} className="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto relative">
-              <div className="flex flex-col items-center">
-                <div className="w-12 h-12 rounded-full bg-white border-2 border-slate-200 shadow-sm flex items-center justify-center">
-                  {item.icon}
-                </div>
-                <div className="text-center mt-2 space-y-0.5">
-                  <p className="text-xs font-extrabold text-slate-900">{item.step}</p>
-                  <p className="text-[9px] text-slate-400 font-bold uppercase">{item.desc}</p>
-                </div>
-              </div>
-              {idx < 5 && (
-                <div className="hidden md:block w-8 h-[2px] bg-slate-300 self-center mb-6" />
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 10. STORYTELLING: WHY WE CREATED NAGARSATHI */}
-      <section className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-8 sm:p-10 rounded-3xl relative overflow-hidden shadow-lg space-y-6">
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
-        
-        <div className="max-w-2xl space-y-4 relative z-10">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-black uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Civic Purpose &amp; Action</span>
+        {/* ======================================================
+            7. COMMUNITY VOTING SECTION
+            ====================================================== */}
+        <section className="space-y-6">
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl font-black">Problems Your Community Cares About</h2>
+            <p className="text-xs text-slate-450 max-w-xl mx-auto font-semibold">
+              These issues have been identified as affecting multiple citizens. Upvote to boost their municipal routing priority.
+            </p>
           </div>
 
-          <h3 className="text-2xl sm:text-3xl font-black">Why We Created NagarSathi</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {communityIssues.length > 0 ? (
+              communityIssues.map((issue) => {
+                const hasVoted = user && issue.upvotedBy.includes(user.id);
+                return (
+                  <div
+                    key={issue.id}
+                    className="p-5 bg-[#121B2B] border border-slate-800/80 rounded-2xl flex flex-col justify-between h-52 shadow-lg space-y-3"
+                  >
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[9px] font-bold text-slate-400 font-mono">{issue.address.split(',')[0]}</span>
+                        <span className="inline-flex items-center gap-1 text-[10px] text-indigo-400 font-black">
+                          <Users className="w-3.5 h-3.5" /> {issue.upvotes} Votes
+                        </span>
+                      </div>
+                      <h4 className="font-extrabold text-xs text-white line-clamp-1">{issue.title}</h4>
+                      <p className="text-[10px] text-slate-400 font-semibold line-clamp-2 leading-relaxed">
+                        {issue.description}
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={(e) => handleCommunityUpvote(issue.id, e)}
+                      className={`w-full py-2.5 rounded-xl font-black text-[10px] uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 border ${
+                        hasVoted
+                          ? 'bg-indigo-950/30 text-indigo-400 border-indigo-900 hover:bg-indigo-950/50'
+                          : 'bg-indigo-600 text-white border-transparent hover:bg-indigo-500'
+                      }`}
+                    >
+                      <PlusCircleIcon className="w-4 h-4" />
+                      <span>{hasVoted ? 'Affected Too (Registered)' : 'I Have This Problem Too'}</span>
+                    </button>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="col-span-3 text-center py-8 text-slate-500 text-xs font-semibold">
+                No active issues to upvote.
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* ======================================================
+            8. WHY NAGARSATHI?
+            ====================================================== */}
+        <section className="space-y-6">
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl font-black">Why NagarSathi?</h2>
+            <p className="text-xs text-slate-450 max-w-xl mx-auto font-semibold">
+              NagarSathi was created to make communication between citizens and civic departments clearer, faster and more transparent.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { title: 'REPORT EASILY', desc: 'Track problems without visiting multiple offices. Fast GPS geo-tagging.', icon: <Zap className="w-5 h-5 text-indigo-400" /> },
+              { title: 'TRACK PROGRESS', desc: 'Know what happens after submitting a complaint in real-time status chains.', icon: <Activity className="w-5 h-5 text-amber-500" /> },
+              { title: 'SMART ROUTING', desc: 'Autoselect category mapping which matches complaints to department backends.', icon: <ArrowRightLeft className="w-5 h-5 text-emerald-400" /> },
+              { title: 'PHOTO + LOCATION EVIDENCE', desc: 'Attach coordinates and images directly to reports to avoid municipal lookup confusion.', icon: <MapPin className="w-5 h-5 text-cyan-400" /> },
+              { title: 'COMMUNITY VOICE', desc: 'Let collective priority voting push critical zone alerts directly to ward engineers.', icon: <Users className="w-5 h-5 text-rose-400" /> },
+              { title: 'TRANSPARENT RESOLUTION', desc: 'Read supervisor logs, view resolution photos, and verify status changes directly.', icon: <FileCheck className="w-5 h-5 text-purple-400" /> },
+            ].map((feat, idx) => (
+              <div
+                key={idx}
+                className="p-5 rounded-2xl bg-[#121B2B] border border-slate-800/80 space-y-3 shadow-md hover:border-slate-700/60 transition-colors"
+              >
+                <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center shadow-md">
+                  {feat.icon}
+                </div>
+                <h4 className="font-extrabold text-xs text-white uppercase tracking-wider">{feat.title}</h4>
+                <p className="text-[11px] text-slate-400 leading-relaxed font-semibold">{feat.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ======================================================
+            9. STORYTELLING: WHY WE CREATED NAGARSATHI
+            ====================================================== */}
+        <section className="bg-gradient-to-br from-slate-950 via-[#0B1220] to-indigo-950 text-white p-8 sm:p-10 rounded-3xl relative overflow-hidden border border-slate-800 shadow-xl space-y-8">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
           
-          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-semibold">
-            In everyday municipal environments, citizen issues often get lost in bureaucracy or remain invisible due to communication gaps. NagarSathi was created to restore transparency and bridge the trust between citizens and civic departments. 
-          </p>
+          <div className="max-w-2xl space-y-4 relative z-10">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-amber-500 text-[10px] font-black uppercase tracking-wider shadow-lg">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span>NagarSathi Slogan &amp; Integrity</span>
+            </div>
 
-          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-semibold">
-            By geo-tagging logs, locking 72-hour SLAs, and giving citizens final verification rights, we ensure that municipal workers remain accountable, and every voice contributes to building better, cleaner neighborhoods.
-          </p>
-        </div>
+            <h3 className="text-3xl font-black">Why We Created NagarSathi</h3>
+            
+            <p className="text-xs sm:text-sm text-slate-350 leading-relaxed font-semibold">
+              Everyday civic problems — broken roads, overflowing garbage, leaking pipelines, damaged streetlights and unsafe public spaces — affect thousands of people. But reporting a problem is only the first step.
+            </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4 border-t border-white/10 relative z-10">
-          <div className="space-y-1">
-            <p className="font-extrabold text-xs text-amber-400">100% Transparency</p>
-            <p className="text-[11px] text-slate-400 font-semibold">Every update log is publicly logged and searchable.</p>
-          </div>
-          <div className="space-y-1">
-            <p className="font-extrabold text-xs text-amber-400">SLA Enforcement</p>
-            <p className="text-[11px] text-slate-400 font-semibold">Strict 72-hour limits on initial acknowledgments.</p>
-          </div>
-          <div className="space-y-1">
-            <p className="font-extrabold text-xs text-amber-400">Citizen Verification</p>
-            <p className="text-[11px] text-slate-400 font-semibold">Issues remain open until confirmed by citizens.</p>
-          </div>
-        </div>
-      </section>
+            <p className="text-xs sm:text-sm text-slate-350 leading-relaxed font-semibold">
+              NagarSathi was created to bridge the gap between citizens and civic departments by making reporting easier, tracking clearer and resolution more transparent.
+            </p>
 
-      {/* 11. CONTACT / CONNECT BANNER */}
-      <section className="bg-slate-50 border border-slate-200 p-8 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1">
-          <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
-            <Users className="w-5 h-5 text-indigo-650" /> Join NagarSathi Forums
-          </h3>
-          <p className="text-xs text-slate-500 font-semibold">Have ideas for municipal reforms or civic policy improvements? Connect with us.</p>
-        </div>
-        <div className="text-xs font-semibold text-slate-700 bg-white border border-slate-200 px-5 py-3 rounded-2xl shrink-0">
-          Email support: <strong className="text-indigo-605">support@nagarsathi.gov</strong>
-        </div>
-      </section>
+            <p className="text-sm font-black text-amber-400 italic">
+              "Because a better city starts with a citizen who speaks up."
+            </p>
+          </div>
+
+          <div className="flex items-center justify-between border-t border-slate-800 pt-6 relative z-10">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+              YOUR CITY. YOUR VOICE.
+            </span>
+            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest hidden sm:inline">
+              Report it. Track it. Fix it.
+            </span>
+          </div>
+        </section>
+
+        {/* ======================================================
+            10. SUGGESTIONS / FEEDBACK BANNER
+            ====================================================== */}
+        <section className="p-8 rounded-3xl bg-[#0B1220] border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="space-y-1 relative z-10">
+            <h3 className="text-base font-black text-white">Have a suggestion?</h3>
+            <p className="text-xs text-slate-400 font-semibold">Help us make NagarSathi better for your city. Report application bugs or share feedback.</p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 relative z-10 shrink-0">
+            <Link
+              to="/profile"
+              className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-[10px] uppercase tracking-wider shadow-md transition-colors"
+            >
+              Give Feedback
+            </Link>
+            <Link
+              to="/profile"
+              className="px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 font-extrabold text-[10px] uppercase tracking-wider transition-colors"
+            >
+              Report a Bug
+            </Link>
+            <a
+              href="mailto:contact@nagarsathi.gov"
+              className="px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-350 font-extrabold text-[10px] uppercase tracking-wider transition-colors flex items-center gap-1"
+            >
+              <Mail className="w-3.5 h-3.5" /> Contact Us
+            </a>
+          </div>
+        </section>
+
+      </div>
     </div>
   );
 };
+
+// Simple Icon fallback
+const PlusCircleIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 8v8" />
+    <path d="M8 12h8" />
+  </svg>
+);
