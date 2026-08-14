@@ -50,17 +50,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded, isHidden, onToggle
       <Link
         key={path}
         to={path}
-        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors font-medium text-sm
+        className={`group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-250 font-semibold text-sm
           ${active 
-            ? 'bg-[#E6F1EE] text-[#053229] border border-[#BFD5CE]' 
+            ? 'bg-[#E6F1EE] text-[#053229] border border-[#BFD5CE] shadow-2xs font-extrabold translate-x-1' 
             : 'text-[#536761] hover:bg-[#F1F7F5] hover:text-[#053229] border border-transparent'
           }
-          ${!isExpanded ? 'justify-center' : ''}
+          ${!isExpanded ? 'justify-center !translate-x-0' : ''}
         `}
         title={!isExpanded ? label : undefined}
       >
-        <Icon className={`w-5 h-5 shrink-0 ${active ? 'text-[#053229]' : 'text-[#73827D]'}`} />
-        {isExpanded && <span>{label}</span>}
+        <Icon className={`w-5 h-5 shrink-0 transition-transform duration-250 ${active ? 'text-[#053229] scale-[1.05]' : 'text-[#73827D] group-hover:scale-[1.08] group-hover:text-[#053229]'}`} />
+        {isExpanded && <span className="transition-transform duration-250 group-hover:translate-x-0.5">{label}</span>}
       </Link>
     );
   };
@@ -103,8 +103,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded, isHidden, onToggle
       >
         {/* Top Brand Logo */}
         <div className={`flex items-center h-[68px] px-4 border-b border-[#D6E2DE] shrink-0 ${!isExpanded ? 'justify-center' : 'justify-between'}`}>
-          <Link to={isAdmin ? '/admin' : '/citizen'} className="flex items-center gap-2 group">
-            <img src={logoImg} alt="NagarSathi Logo" className="w-8 h-8 object-contain rounded-full shadow-sm" />
+          <Link to="/" className="flex items-center gap-2 group">
+            <img src={logoImg} alt="NagarSathi Logo" className="w-8 h-8 object-contain rounded-full shadow-sm animate-fade-in-up" />
             {isExpanded && (
               <span className="text-lg font-black tracking-tight text-[#10201C]">
                 Nagar<span className="text-[#053229]">Sathi</span>

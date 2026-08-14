@@ -18,6 +18,7 @@ import {
   ChevronRight,
   Sparkles,
   Camera,
+  Plus,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -56,10 +57,24 @@ export const CitizenHome: React.FC = () => {
             <span>Civic Issue Resolution Hub</span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#10201C] tracking-tight leading-[1.1] flex flex-col gap-1.5">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#10201C] dark:text-[#f2f7f5] tracking-tight leading-[1.1] flex flex-col gap-1.5">
             <span>Make your city better.</span>
-            <span className="text-lg sm:text-xl lg:text-2xl font-extrabold text-[#053229] font-serif italic">
+            <span className="text-lg sm:text-xl lg:text-2xl font-extrabold tricolor-text-animate font-serif italic flex items-center gap-2 mt-1">
               Hamara Shehar, Hamari Awaaz
+              <svg className="w-5 h-5 text-[#000080]/80 dark:text-cyan-400/80 spin-slow shrink-0" viewBox="0 0 100 100" fill="none" stroke="currentColor">
+                <circle cx="50" cy="50" r="45" strokeWidth="2" />
+                <circle cx="50" cy="50" r="8" fill="currentColor" />
+                {Array.from({ length: 24 }).map((_, i) => (
+                  <line
+                    key={i}
+                    x1="50"
+                    y1="50"
+                    x2={50 + 45 * Math.cos((i * 2 * Math.PI) / 24)}
+                    y2={50 + 45 * Math.sin((i * 2 * Math.PI) / 24)}
+                    strokeWidth="1.5"
+                  />
+                ))}
+              </svg>
             </span>
           </h1>
 
@@ -70,16 +85,17 @@ export const CitizenHome: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
             <Link
               to="/report"
-              className="px-7 py-3.5 rounded-2xl bg-[#053229] hover:bg-[#07483A] text-white font-extrabold text-sm shadow-xl shadow-[#053229]/30 flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="group px-7 py-3.5 rounded-2xl bg-[#053229] hover:bg-[#07483A] text-white font-extrabold text-sm shadow-xl shadow-[#053229]/30 flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] premium-btn-shimmer"
             >
-              ＋ Report an Issue
+              <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" /> Report an Issue
             </Link>
 
             <Link
               to="/reports"
-              className="px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-850 font-extrabold text-sm border border-slate-200 flex items-center justify-center gap-2 transition-all shadow-sm"
+              className="group px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-850 font-extrabold text-sm border border-slate-200 flex items-center justify-center gap-2 transition-all shadow-sm premium-btn-shimmer"
             >
-              View My Issues &rarr;
+              <span>View My Issues</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
             </Link>
           </div>
 

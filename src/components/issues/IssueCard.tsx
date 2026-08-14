@@ -147,18 +147,18 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue, onAdminAction, init
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.98 }}
-      className={`group rounded-2xl border transition-all duration-150 shadow-sm overflow-hidden border-l-4 ${
-        issue.category === 'roads' ? 'border-l-blue-500 bg-[#F4F9FF] border-blue-100 hover:shadow-[0_8px_30px_rgba(59,130,246,0.08)]' :
-        issue.category === 'sanitation' ? 'border-l-emerald-500 bg-[#F5FDF7] border-emerald-100 hover:shadow-[0_8px_30px_rgba(16,185,129,0.08)]' :
-        issue.category === 'electricity' ? 'border-l-amber-500 bg-[#FFFDF4] border-amber-100 hover:shadow-[0_8px_30px_rgba(245,158,11,0.08)]' :
-        issue.category === 'water' ? 'border-l-cyan-500 bg-[#F2FEFF] border-cyan-100 hover:shadow-[0_8px_30px_rgba(6,182,212,0.08)]' :
-        issue.category === 'public-property' ? 'border-l-purple-500 bg-[#FAF8FF] border-purple-100 hover:shadow-[0_8px_30px_rgba(139,92,246,0.08)]' :
-        issue.category === 'drainage' ? 'border-l-indigo-500 bg-[#F2FDFB] border-teal-100 hover:shadow-[0_8px_30px_rgba(20,184,166,0.08)]' :
+      className={`group rounded-2xl border transition-all duration-150 shadow-sm overflow-hidden border-l-4 premium-card-hover ${
+        issue.category === 'roads' ? 'border-l-blue-500 bg-[#F4F9FF] border-blue-100' :
+        issue.category === 'sanitation' ? 'border-l-emerald-500 bg-[#F5FDF7] border-emerald-100' :
+        issue.category === 'electricity' ? 'border-l-amber-500 bg-[#FFFDF4] border-amber-100' :
+        issue.category === 'water' ? 'border-l-cyan-500 bg-[#F2FEFF] border-cyan-100' :
+        issue.category === 'public-property' ? 'border-l-purple-500 bg-[#FAF8FF] border-purple-100' :
+        issue.category === 'drainage' ? 'border-l-indigo-500 bg-[#F2FDFB] border-teal-100' :
         'border-l-slate-400 bg-white border-slate-200'
       } ${
         issue.escalated
           ? '!border-l-rose-650 bg-[#FFF5F5] border-rose-150 shadow-rose-950/10'
-          : 'hover:-translate-y-[2px] hover:shadow-md'
+          : ''
       }`}
     >
       {/* SLA Escalation or Countdown Header */}
@@ -241,11 +241,11 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue, onAdminAction, init
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-500 border-t border-b border-slate-100 py-3">
           <div className="flex items-start gap-1.5">
-            <MapPin className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+            <MapPin className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5 group-hover:translate-y-[-1px] transition-transform duration-200" />
             <span className="line-clamp-1 text-slate-700">{issue.address}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Building2 className="w-4 h-4 text-cyan-600 shrink-0" />
+            <Building2 className="w-4 h-4 text-cyan-600 shrink-0 group-hover:scale-[1.06] transition-transform duration-200" />
             <span className="text-slate-700 truncate">Dept: {dept.name}</span>
           </div>
         </div>
