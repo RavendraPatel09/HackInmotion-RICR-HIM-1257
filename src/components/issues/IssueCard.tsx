@@ -68,18 +68,13 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue, onAdminAction }) =>
     }
   }, [expanded, issue.id]);
 
-  const handleUpvote = (e: React.MouseEvent) => {
+  const handleUpvote = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!user) {
       showToast('Please log in to confirm this issue affects you too.', 'warning');
       return;
     }
-    const success = upvoteIssue(issue.id, user.id);
-    if (success) {
-      showToast('You confirmed this issue affects you too! Priority score updated.', 'success');
-    } else {
-      showToast('You have already confirmed this issue affects you.', 'info');
-    }
+    await upvoteIssue(issue.id, user.id);
   };
 
   const handleToggleBookmark = (e: React.MouseEvent) => {

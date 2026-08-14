@@ -1,16 +1,17 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { User } from '../types';
 import { getCurrentUser, saveCurrentUser, clearSession } from '../services/storage';
-import { MOCK_CITIZEN_USER, MOCK_ADMIN_USER } from '../data/mockUsers';
+import { authApi } from '../services/api';
+import { showToast } from '../components/ui/Toast';
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
   isCitizen: boolean;
-  loginAsCitizen: () => void;
-  loginAsAdmin: () => void;
-  loginCustom: (user: User) => void;
+  loginAsCitizen: () => Promise<void>;
+  loginAsAdmin: () => Promise<void>;
+  loginCustom: (user: any) => Promise<void>;
   logout: () => void;
   switchRole: () => void;
 }
@@ -24,28 +25,71 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     saveCurrentUser(user);
   }, [user]);
 
-  const loginAsCitizen = () => {
-    setUser(MOCK_CITIZEN_USER);
+  // Sync token expiration logout from API requests
+  useEffect(() => {
+    const handleLogoutEvent = () => {
+      setUser(null);
+      clearSession();
+      showToast('Session expired. Please log in again.', 'warning');
+    };
+    window.addEventListener('auth-logout', handleLogoutEvent);
+    return () => window.removeEventListener('auth-logout', handleLogoutEvent);
+  }, []);
+
+  const loginAsCitizen = async () => {
+    try {
+      const data = await authApi.login('citizen@nagarsathi.demo', 'password123');
+      setUser(data.user);
+    } catch (err: any) {
+      showToast(err.message || 'Demo login failed', 'error');
+    }
   };
 
-  const loginAsAdmin = () => {
-    setUser(MOCK_ADMIN_USER);
+  const loginAsAdmin = async () => {
+    try {
+      const data = await authApi.login('admin@nagarsathi.demo', 'password123');
+      setUser(data.user);
+    } catch (err: any) {
+      showToast(err.message || 'Demo login failed', 'error');
+    }
   };
 
-  const loginCustom = (newUser: User) => {
-    setUser(newUser);
+  const loginCustom = async (newUser: any) => {
+    try {
+      // Try logging in first
+      const data = await authApi.login(newUser.email, 'password123');
+      setUser(data.user);
+    } catch {
+      // If user doesn't exist in PostgreSQL, register them on the fly
+      try {
+        const regData = await authApi.register({
+          name: newUser.name,
+          email: newUser.email,
+          password: 'password123',
+          role: newUser.role,
+          phone: newUser.phone || '',
+          avatar: newUser.avatar || '',
+          ward_id: newUser.wardId || 'bpl-ward-01',
+        });
+        setUser(regData.user);
+      } catch (err: any) {
+        showToast(err.message || 'Custom authentication failed', 'error');
+      }
+    }
   };
 
   const logout = () => {
     clearSession();
+    localStorage.removeItem('cityfix_token');
+    localStorage.removeItem('cityfix_refresh_token');
     setUser(null);
   };
 
-  const switchRole = () => {
+  const switchRole = async () => {
     if (user?.role === 'admin') {
-      setUser(MOCK_CITIZEN_USER);
+      await loginAsCitizen();
     } else {
-      setUser(MOCK_ADMIN_USER);
+      await loginAsAdmin();
     }
   };
 

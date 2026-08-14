@@ -1,12 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import type { AppNotification, NotificationType } from '../services/notificationService';
-import {
-  getNotifications,
-  addNotificationToStorage,
-  markNotificationAsRead,
-  markAllNotificationsAsRead,
-  clearNotificationsFromStorage,
-} from '../services/notificationService';
+import type { AppNotification } from '../services/notificationService';
+import { notificationApi } from '../services/api';
+import { useAuth } from './AuthContext';
 
 interface NotificationsContextType {
   notifications: AppNotification[];
@@ -14,7 +9,7 @@ interface NotificationsContextType {
   notify: (
     title: string,
     message: string,
-    type: NotificationType,
+    type: any,
     issueId?: string,
     trackingId?: string
   ) => void;
@@ -27,41 +22,68 @@ const NotificationsContext = createContext<NotificationsContextType | undefined>
 
 export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const { isAuthenticated } = useAuth();
+
+  const loadNotifications = useCallback(async () => {
+    if (!isAuthenticated) {
+      setNotifications([]);
+      return;
+    }
+    try {
+      const loaded = await notificationApi.list();
+      setNotifications(loaded);
+    } catch (err) {
+      console.error('Failed to load notifications:', err);
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
-    setNotifications(getNotifications());
-  }, []);
+    loadNotifications();
+  }, [loadNotifications]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const notify = useCallback(
-    (
-      title: string,
-      message: string,
-      type: NotificationType,
-      issueId?: string,
-      trackingId?: string
+    async (
+      _title: string,
+      _message: string,
+      _type: any,
+      _issueId?: string,
+      _trackingId?: string
     ) => {
-      const updated = addNotificationToStorage(title, message, type, issueId, trackingId);
-      setNotifications(updated);
+      // Backend automatically generates notifications on main actions,
+      // but if frontend requests explicit client-side notify, we load from backend.
+      await loadNotifications();
     },
-    []
+    [loadNotifications]
   );
 
-  const markAsRead = useCallback((id: string) => {
-    const updated = markNotificationAsRead(id);
-    setNotifications(updated);
-  }, []);
+  const markAsRead = useCallback(async (id: string) => {
+    try {
+      await notificationApi.read(id);
+      await loadNotifications();
+    } catch (err) {
+      console.error(err);
+    }
+  }, [loadNotifications]);
 
-  const markAllAsRead = useCallback(() => {
-    const updated = markAllNotificationsAsRead();
-    setNotifications(updated);
-  }, []);
+  const markAllAsRead = useCallback(async () => {
+    try {
+      await notificationApi.readAll();
+      await loadNotifications();
+    } catch (err) {
+      console.error(err);
+    }
+  }, [loadNotifications]);
 
-  const clearNotifications = useCallback(() => {
-    const updated = clearNotificationsFromStorage();
-    setNotifications(updated);
-  }, []);
+  const clearNotifications = useCallback(async () => {
+    try {
+      await notificationApi.clearAll();
+      await loadNotifications();
+    } catch (err) {
+      console.error(err);
+    }
+  }, [loadNotifications]);
 
   return (
     <NotificationsContext.Provider

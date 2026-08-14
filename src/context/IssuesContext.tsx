@@ -1,28 +1,23 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { Issue, IssueStatus, IssueFilter } from '../types';
-import {
-  getIssues,
-  saveIssues,
-  addIssueToStorage,
-  updateIssueInStorage,
-} from '../services/storage';
-import { addNotificationToStorage } from '../services/notificationService';
+import { reportsApi } from '../services/api';
+import { showToast } from '../components/ui/Toast';
 
 interface IssuesContextType {
   issues: Issue[];
   isLoading: boolean;
-  addIssue: (newIssue: Issue) => void;
-  updateIssue: (updatedIssue: Issue) => void;
-  upvoteIssue: (issueId: string, userId: string) => boolean;
+  addIssue: (newIssue: any) => Promise<void>;
+  updateIssue: (updatedIssue: Issue) => Promise<void>;
+  upvoteIssue: (issueId: string, userId: string) => Promise<boolean>;
   advanceStatus: (
     issueId: string,
     nextStatus: IssueStatus,
     updatedBy: string,
     note?: string,
     resolutionPhotoUrl?: string
-  ) => void;
-  reopenIssue: (issueId: string, updatedBy: string, note?: string) => void;
-  confirmResolution: (issueId: string, updatedBy: string) => void;
+  ) => Promise<void>;
+  reopenIssue: (issueId: string, updatedBy: string, note?: string) => Promise<void>;
+  confirmResolution: (issueId: string, updatedBy: string) => Promise<void>;
   refreshIssues: () => void;
   getFilteredIssues: (filter: IssueFilter) => Issue[];
 }
@@ -33,13 +28,13 @@ export const IssuesProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [issues, setIssues] = useState<Issue[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const loadIssues = useCallback(() => {
+  const loadIssues = useCallback(async () => {
     setIsLoading(true);
     try {
-      const loaded = getIssues();
+      const loaded = await reportsApi.list();
       setIssues(loaded);
     } catch (err) {
-      console.error('Failed to load issues:', err);
+      console.error('Failed to load issues from backend:', err);
     } finally {
       setIsLoading(false);
     }
@@ -49,113 +44,93 @@ export const IssuesProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     loadIssues();
   }, [loadIssues]);
 
-  const addIssue = (newIssue: Issue) => {
-    const updated = addIssueToStorage(newIssue);
-    setIssues(updated);
-    addNotificationToStorage(
-      'Issue Report Created',
-      `Your report ${newIssue.trackingId} (${newIssue.title}) has been submitted and auto-routed.`,
-      'report_created',
-      newIssue.id,
-      newIssue.trackingId
-    );
-  };
-
-  const updateIssue = (updatedIssue: Issue) => {
-    const updated = updateIssueInStorage(updatedIssue);
-    setIssues(updated);
-  };
-
-  const upvoteIssue = (issueId: string, userId: string): boolean => {
-    let success = false;
-    let targetTrackingId = '';
-    setIssues((prevIssues) => {
-      const target = prevIssues.find((i) => i.id === issueId);
-      if (!target) return prevIssues;
-
-      if (target.upvotedBy.includes(userId)) {
-        return prevIssues;
-      }
-
-      success = true;
-      targetTrackingId = target.trackingId;
-      const updatedIssue: Issue = {
-        ...target,
-        upvotes: target.upvotes + 1,
-        upvotedBy: [...target.upvotedBy, userId],
-        updatedAt: new Date().toISOString(),
+  const addIssue = async (newIssue: any) => {
+    setIsLoading(true);
+    try {
+      const payload = {
+        title: newIssue.title,
+        description: newIssue.description,
+        category: newIssue.category,
+        priority: newIssue.priority,
+        lat: newIssue.lat,
+        lng: newIssue.lng,
+        address: newIssue.address,
+        state: newIssue.state || 'Madhya Pradesh',
+        district: newIssue.district || 'Bhopal District',
+        city: newIssue.city || 'Bhopal',
+        wardId: newIssue.wardId,
+        wardName: newIssue.wardName,
+        photoUrl: newIssue.photoUrl,
+        isAnonymous: newIssue.isAnonymous || false
       };
-
-      const nextList = prevIssues.map((i) => (i.id === issueId ? updatedIssue : i));
-      saveIssues(nextList);
-      return nextList;
-    });
-
-    if (success) {
-      addNotificationToStorage(
-        'Community Priority Boost',
-        `Issue ${targetTrackingId} received an upvote from a citizen. Priority score updated.`,
-        'upvote_received',
-        issueId,
-        targetTrackingId
-      );
+      
+      const created = await reportsApi.create(payload);
+      showToast(`Report ${created.trackingId} created successfully!`, 'success');
+      await loadIssues();
+    } catch (err: any) {
+      showToast(err.message || 'Failed to file report', 'error');
+    } finally {
+      setIsLoading(false);
     }
-    return success;
   };
 
-  const advanceStatus = (
+  const updateIssue = async (updatedIssue: Issue) => {
+    try {
+      await reportsApi.updateStatus(
+        updatedIssue.id,
+        updatedIssue.status,
+        updatedIssue.resolutionNotes,
+        updatedIssue.resolutionPhotoUrl
+      );
+      await loadIssues();
+    } catch (err: any) {
+      showToast(err.message || 'Failed to update issue', 'error');
+    }
+  };
+
+  const upvoteIssue = async (issueId: string, userId: string): Promise<boolean> => {
+    try {
+      const report = issues.find((i) => i.id === issueId);
+      if (!report) return false;
+
+      if (report.upvotedBy.includes(userId)) {
+        // Unvote if already voted
+        await reportsApi.unvote(issueId);
+        showToast('Upvote removed', 'info');
+      } else {
+        await reportsApi.vote(issueId);
+        showToast('Upvoted successfully!', 'success');
+      }
+      await loadIssues();
+      return true;
+    } catch (err: any) {
+      showToast(err.message || 'Failed to cast upvote', 'error');
+      return false;
+    }
+  };
+
+  const advanceStatus = async (
     issueId: string,
     nextStatus: IssueStatus,
-    updatedBy: string,
+    _updatedBy: string,
     note?: string,
     resolutionPhotoUrl?: string
   ) => {
-    let targetTrackingId = '';
-    setIssues((prevIssues) => {
-      const target = prevIssues.find((i) => i.id === issueId);
-      if (!target) return prevIssues;
-
-      targetTrackingId = target.trackingId;
-      const nowISO = new Date().toISOString();
-
-      const newHistoryItem = {
-        status: nextStatus,
-        timestamp: nowISO,
-        updatedBy,
-        note,
-        photoUrl: resolutionPhotoUrl,
-      };
-
-      const updatedIssue: Issue = {
-        ...target,
-        status: nextStatus,
-        updatedAt: nowISO,
-        statusHistory: [...target.statusHistory, newHistoryItem],
-        resolutionNotes: note || target.resolutionNotes,
-        resolutionPhotoUrl: resolutionPhotoUrl || target.resolutionPhotoUrl,
-        escalated: nextStatus === 'Resolved' || nextStatus === 'Verified' ? false : target.escalated,
-      };
-
-      const nextList = prevIssues.map((i) => (i.id === issueId ? updatedIssue : i));
-      saveIssues(nextList);
-      return nextList;
-    });
-
-    addNotificationToStorage(
-      `Status Updated to ${nextStatus}`,
-      `Report ${targetTrackingId} updated by ${updatedBy}. Current status: ${nextStatus}.`,
-      nextStatus === 'Resolved' || nextStatus === 'Verified' ? 'issue_resolved' : 'status_changed',
-      issueId,
-      targetTrackingId
-    );
+    try {
+      await reportsApi.updateStatus(issueId, nextStatus, note, resolutionPhotoUrl);
+      showToast(`Status updated to ${nextStatus}`, 'success');
+      await loadIssues();
+    } catch (err: any) {
+      showToast(err.message || 'Failed to change status', 'error');
+    }
   };
 
-  const reopenIssue = (issueId: string, updatedBy: string, note?: string) => {
-    advanceStatus(issueId, 'Reopened', updatedBy, note || 'Citizen indicated issue is not resolved.');
+  const reopenIssue = async (issueId: string, _updatedBy: string, note?: string) => {
+    await advanceStatus(issueId, 'Reopened', _updatedBy, note || 'Citizen indicated issue is not resolved.');
   };
 
-  const confirmResolution = (issueId: string, updatedBy: string) => {
-    advanceStatus(issueId, 'Verified', updatedBy, 'Citizen verified problem resolution.');
+  const confirmResolution = async (issueId: string, _updatedBy: string) => {
+    await advanceStatus(issueId, 'Verified', _updatedBy, 'Citizen verified problem resolution.');
   };
 
   const refreshIssues = () => {
