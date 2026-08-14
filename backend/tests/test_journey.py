@@ -18,8 +18,23 @@ def test_full_civic_journey():
     })
     print("REGISTRATION RESPONSE DETAIL:", reg_response.json())
     assert reg_response.status_code == 200
-    reg_data = reg_response.json()
-    token = reg_data["access_token"]
+
+    # 1b. Verify the email via OTP
+    verify_response = client.post("/api/auth/verify-otp", json={
+        "email": email,
+        "otp": "000000",
+        "purpose": "verification"
+    })
+    assert verify_response.status_code == 200
+
+    # 1c. Login to get access token
+    login_response = client.post("/api/auth/login", json={
+        "email": email,
+        "password": "testpassword"
+    })
+    assert login_response.status_code == 200
+    login_data = login_response.json()
+    token = login_data["access_token"]
     citizen_headers = {"Authorization": f"Bearer {token}"}
 
     # 2. File a civic report

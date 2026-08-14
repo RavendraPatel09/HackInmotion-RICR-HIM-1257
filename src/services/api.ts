@@ -65,6 +65,27 @@ export const authApi = {
     return data;
   },
 
+  sendOtp: async (email: string, purpose: string = 'verification'): Promise<any> => {
+    return request<any>('/auth/send-otp', {
+      method: 'POST',
+      body: JSON.stringify({ email, purpose }),
+    });
+  },
+
+  verifyOtp: async (email: string, otp: string, purpose: string = 'verification'): Promise<any> => {
+    return request<any>('/auth/verify-otp', {
+      method: 'POST',
+      body: JSON.stringify({ email, otp, purpose }),
+    });
+  },
+
+  resendOtp: async (email: string): Promise<any> => {
+    return request<any>('/auth/resend-otp', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  },
+
   me: async (): Promise<User> => {
     return request<User>('/auth/me');
   },

@@ -1,10 +1,709 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useIssues } from '../context/IssuesContext';
 import { CityMap } from '../components/map/CityMap';
 import { showToast } from '../components/ui/Toast';
+import { authApi } from '../services/api';
+import { INDIAN_LOCATIONS } from '../data/locations';
 import logoImg from '../assets/logo.png';
-import { User, ShieldCheck, CheckCircle2, ArrowRight, Loader2, Sparkles, Eye, EyeOff, Mail, Lock } from 'lucide-react';
-import { motion } from 'framer-motion'; export const Login: React.FC = () => { const { user, isAuthenticated, loginCustom, logout } = useAuth(); const { issues } = useIssues(); const navigate = useNavigate(); const [selectedRole, setSelectedRole] = useState<'citizen' | 'admin'>('citizen'); const [email, setEmail] = useState<string>(''); const [password, setPassword] = useState<string>(''); const [showPassword, setShowPassword] = useState<boolean>(false); const [isLoading, setIsLoading] = useState<boolean>(false); // Validation States const [emailError, setEmailError] = useState<string>(''); const [passwordError, setPasswordError] = useState<string>(''); const validateEmail = (val: string): boolean => { if (!val) { setEmailError('Email is required'); return false; } const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; if (!regex.test(val)) { setEmailError('Please enter a valid email address'); return false; } setEmailError(''); return true; }; const validatePassword = (val: string): boolean => { if (!val) { setPasswordError('Password is required'); return false; } if (val.length < 6) { setPasswordError('Password must be at least 6 characters'); return false; } setPasswordError(''); return true; }; const handleLoginSubmit = (e: React.FormEvent) => { e.preventDefault(); const isEmailValid = validateEmail(email); const isPasswordValid = validatePassword(password); if (!isEmailValid || !isPasswordValid) { showToast('Please correct validation errors', 'warning'); return; } setIsLoading(true); setTimeout(() => { // Parse email to construct a beautiful name const namePart = email.split('@')[0]; const formattedName = namePart .split(/[\._-]/) .map((part) => part.charAt(0).toUpperCase() + part.slice(1)) .join(' '); const loggedInUser = { id: selectedRole === 'citizen' ? 'usr-citizen-custom' : 'usr-admin-custom', name: formattedName || (selectedRole === 'citizen' ? 'Citizen User' : 'Administrator'), email: email, role: selectedRole, avatar: selectedRole === 'citizen' ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80' : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80', wardId: 'ward-01', phone: '+91 98765 43210', points: selectedRole === 'citizen' ? 42 : 0, badges: selectedRole === 'citizen' ? ['badge-first-report', 'badge-five-reports'] : [], }; loginCustom(loggedInUser); if (selectedRole === 'citizen') { showToast(`Welcome back, ${loggedInUser.name}! Authenticated as Citizen.`, 'success'); navigate('/citizen'); } else { showToast(`Welcome back, ${loggedInUser.name}! Authenticated as Municipal Administrator.`, 'success'); navigate('/admin'); } setIsLoading(false); }, 600); }; const handleDemoLogin = () => { setIsLoading(true); setTimeout(() => { const demoUser = { id: selectedRole === 'citizen' ? 'usr-citizen-demo' : 'usr-admin-demo', name: selectedRole === 'citizen' ? 'Citizen Demo' : 'Admin Demo', email: selectedRole === 'citizen' ? 'citizen@nagarsathi.demo' : 'admin@nagarsathi.demo', role: selectedRole, avatar: selectedRole === 'citizen' ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80' : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80', wardId: 'ward-01', phone: '+91 98765 43210', points: selectedRole === 'citizen' ? 42 : 0, badges: selectedRole === 'citizen' ? ['badge-first-report'] : [], }; loginCustom(demoUser); showToast(`Welcome! Authenticated as ${selectedRole === 'citizen' ? 'Citizen' : 'Administrator'}.`, 'success'); navigate(selectedRole === 'citizen' ? '/citizen' : '/admin'); setIsLoading(false); }, 600); }; if (isAuthenticated && user) { return ( <div className="max-w-md mx-auto my-16 px-4"> <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-2xl border border-[#D6E2DE] shadow-sm p-8 rounded-3xl space-y-6 text-center shadow-xl border border-indigo-200/50" > <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-600 mx-auto flex items-center justify-center"> <CheckCircle2 className="w-8 h-8" /> </div> <div className="space-y-1"> <h2 className="text-2xl font-black text-[#10201C]">You are signed in</h2> <p className="text-xs text-[#73827D]"> Authenticated as <strong className="text-[#10201C]">{user.name}</strong> ({user.role}) </p> </div> <div className="space-y-3 pt-2"> <button onClick={() => navigate(user.role === 'admin' ? '/admin' : '/citizen')} className="w-full py-3 rounded-2xl bg-[#053229] hover:bg-[#07483A] text-white font-extrabold text-xs shadow-lg shadow-[#053229]/30 flex items-center justify-center gap-2 transition-transform hover:scale-[1.02]" > Continue to {user.role === 'admin' ? 'Admin Center' : 'Citizen Workspace'} &rarr; </button> <button onClick={() => logout()} className="w-full py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-[#10201C] font-extrabold text-xs transition-colors" > Switch Account / Logout </button> </div> </motion.div> </div> ); } return ( <div className="max-w-6xl mx-auto px-4 py-8"> <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[580px]"> {/* Left Panel — Civic Brand Identity & Map Visual */} <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="hidden lg:block lg:col-span-6 space-y-6" > <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E6F1EE] border border-indigo-200 text-[#053229] text-xs font-extrabold uppercase tracking-wider"> <Sparkles className="w-3.5 h-3.5 text-amber-500" /> <span>NagarSathi Municipal Gateway</span> </div> <div className="space-y-2"> <div className="flex items-center gap-3"> <img src={logoImg} alt="NagarSathi Logo" className="w-12 h-12 object-contain rounded-full shadow-md" /> <h1 className="text-4xl font-black tracking-tight text-[#10201C]"> Nagar<span className="text-[#053229]">Sathi</span> </h1> </div> <p className="text-2xl font-black text-[#10201C] leading-snug"> Report it. Track it. Fix it. </p> </div> <p className="text-sm text-[#536761] leading-relaxed font-medium"> Together, we can make everyday city problems visible, actionable, and verifiable across Bhopal municipal zones. </p> <div className="relative rounded-3xl overflow-hidden bg-white rounded-2xl border border-[#D6E2DE] shadow-sm p-2 border border-slate-200/85 shadow-lg"> <CityMap issues={issues.slice(0, 6)} className="h-56 w-full rounded-2xl overflow-hidden" /> </div> </motion.div> {/* Right Panel — Interactive Demo Account Login Form */} <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="lg:col-span-6 w-full max-w-md mx-auto" > <form onSubmit={handleLoginSubmit} className="bg-white rounded-2xl border border-[#D6E2DE] shadow-sm p-5 sm:p-8 rounded-3xl border border-indigo-200/40 shadow-xl space-y-4 sm:space-y-6 bg-white" > {/* Mobile Brand Header */} <div className="block lg:hidden text-center space-y-1 mb-2"> <div className="flex items-center justify-center gap-2"> <img src={logoImg} alt="NagarSathi Logo" className="w-8 h-8 object-contain rounded-full shadow-sm" /> <h1 className="text-xl font-black text-[#10201C]"> Nagar<span className="text-[#053229]">Sathi</span> </h1> </div> <p className="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest"> Report it. Track it. Fix it. </p> </div> <div className="space-y-0.5"> <h2 className="text-xl sm:text-2xl font-black text-[#10201C]">Welcome back</h2> <p className="text-[11px] sm:text-xs text-[#73827D] font-semibold"> Sign in to your NagarSathi dashboard to track and manage civic issues. </p> </div> {/* Role Preset Selector Cards */} <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"> <div onClick={() => setSelectedRole('citizen')} className={`p-4 rounded-2xl border cursor-pointer transition-all space-y-2 ${ selectedRole === 'citizen' ? 'bg-[#E6F1EE]/60 border-[#07483A] ring-2 ring-[#07483A]/20' : 'bg-slate-50/50 border-slate-200 hover:border-slate-300' }`} > <div className="flex items-center justify-between"> <div className="w-9 h-9 rounded-xl bg-[#053229]/10 text-[#053229] flex items-center justify-center font-bold"> <User className="w-5 h-5" /> </div> {selectedRole === 'citizen' && <CheckCircle2 className="w-5 h-5 text-[#053229]" />} </div> <div> <h4 className="font-bold text-sm text-[#10201C]">Citizen</h4> <p className="text-[11px] text-[#73827D]">Report &amp; Track Issues</p> </div> <p className="text-[10px] text-[#73827D] pt-1 leading-tight"> Report and track civic issues in your neighborhood. </p> </div> <div onClick={() => setSelectedRole('admin')} className={`p-4 rounded-2xl border cursor-pointer transition-all space-y-2 ${ selectedRole === 'admin' ? 'bg-amber-50/60 border-amber-500 ring-2 ring-amber-500/20' : 'bg-slate-50/50 border-slate-200 hover:border-slate-300' }`} > <div className="flex items-center justify-between"> <div className="w-9 h-9 rounded-xl bg-amber-600/10 text-amber-600 flex items-center justify-center font-bold"> <ShieldCheck className="w-5 h-5" /> </div> {selectedRole === 'admin' && <CheckCircle2 className="w-5 h-5 text-amber-600" />} </div> <div> <h4 className="font-bold text-sm text-[#10201C]">Administrator</h4> <p className="text-[11px] text-[#73827D]">Municipal Operations</p> </div> <p className="text-[10px] text-[#73827D] pt-1 leading-tight"> Manage city issues and departments, track SLA &amp; status queue. </p> </div> </div> {/* Email Input */} <div className="space-y-1.5"> <label htmlFor="login-email" className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider"> Email Address </label> <div className="relative"> <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400"> <Mail className="w-4 h-4" /> </div> <input id="login-email" type="email" value={email} onChange={(e) => { setEmail(e.target.value); if (emailError) validateEmail(e.target.value); }} onBlur={(e) => validateEmail(e.target.value)} placeholder="e.g. citizen@nagarsathi.demo" className={`w-full pl-9 pr-4 py-3 rounded-xl border bg-slate-50 text-[#10201C] text-xs font-semibold focus:outline-none transition-all ${ emailError ? 'border-rose-500 ring-2 ring-rose-500/15 focus:border-rose-500' : 'border-slate-200 focus:border-[#07483A] focus:ring-2 focus:ring-[#07483A]/20' }`} /> </div> {emailError && ( <p className="text-[11px] font-bold text-rose-600 pt-0.5">{emailError}</p> )} </div> {/* Password Input */} <div className="space-y-1.5"> <label htmlFor="login-password" className="block text-[11px] font-extrabold text-slate-700 uppercase tracking-wider"> Password </label> <div className="relative"> <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400"> <Lock className="w-4 h-4" /> </div> <input id="login-password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => { setPassword(e.target.value); if (passwordError) validatePassword(e.target.value); }} onBlur={(e) => validatePassword(e.target.value)} placeholder="••••••••" className={`w-full pl-9 pr-10 py-3 rounded-xl border bg-slate-50 text-[#10201C] text-xs font-semibold focus:outline-none transition-all ${ passwordError ? 'border-rose-500 ring-2 ring-rose-500/15 focus:border-rose-500' : 'border-slate-200 focus:border-[#07483A] focus:ring-2 focus:ring-[#07483A]/20' }`} /> <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-[#536761] focus:outline-none" > {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />} </button> </div> {passwordError && ( <p className="text-[11px] font-bold text-rose-600 pt-0.5">{passwordError}</p> )} </div> {/* Submit Button */} <button type="submit" disabled={isLoading} className={`w-full py-3 rounded-2xl font-extrabold text-sm shadow-md flex items-center justify-center gap-2 transition-all hover:scale-[1.01] ${ selectedRole === 'citizen' ? 'bg-[#053229] hover:bg-[#07483A] text-white shadow-[#053229]/10' : 'bg-amber-600 hover:bg-amber-500 text-white shadow-amber-600/10' }`} > {isLoading ? ( <> <Loader2 className="w-4 h-4 animate-spin" /> Logging In... </> ) : ( <> Log In <ArrowRight className="w-4 h-4" /> </> )} </button> {/* Continue as Demo User Button */} <button type="button" onClick={handleDemoLogin} disabled={isLoading} className="w-full py-3 rounded-2xl font-extrabold text-sm bg-slate-100 hover:bg-slate-200 text-slate-805 border border-slate-200 flex items-center justify-center gap-2 transition-colors" > Continue as Demo User </button> <div className="flex items-center justify-between text-[11px] font-bold text-[#053229] px-1 pt-1"> <button type="button" onClick={() => showToast('Password reset email links are deactivated for local demo mode.', 'info')} className="hover:underline" > Forgot Password? </button> <button type="button" onClick={() => showToast('Simply input your desired email credentials. User accounts are auto-registered.', 'info')} className="hover:underline" > Create Account </button> </div> </form> </motion.div> </div> </div> );
+import { 
+  User, 
+  ShieldCheck, 
+  CheckCircle2, 
+  ArrowRight, 
+  Loader2, 
+  Sparkles, 
+  Eye, 
+  EyeOff, 
+  Mail, 
+  Lock,
+  X,
+  Phone,
+  Key,
+  Timer,
+  RefreshCw,
+  Info
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+export const Login: React.FC = () => {
+  const { user, isAuthenticated, loginWithCredentials, registerWithCredentials, logout } = useAuth();
+  const { issues } = useIssues();
+  const navigate = useNavigate();
+
+  // Tab State: 'signin' | 'register'
+  const [authTab, setAuthTab] = useState<'signin' | 'register'>('signin');
+  const [selectedRole, setSelectedRole] = useState<'citizen' | 'admin'>('citizen');
+
+  // Login Form State
+  const [loginEmail, setLoginEmail] = useState<string>('');
+  const [loginPassword, setLoginPassword] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  // Register Form State
+  const [regName, setRegName] = useState<string>('');
+  const [regEmail, setRegEmail] = useState<string>('');
+  const [regPassword, setRegPassword] = useState<string>('');
+  const [regConfirmPassword, setRegConfirmPassword] = useState<string>('');
+  const [regPhone, setRegPhone] = useState<string>('');
+  
+  // Cascading Location Selectors for Register
+  const [regState, setRegState] = useState<string>('Maharashtra');
+  const [regCity, setRegCity] = useState<string>('Pune');
+  const [regWardId, setRegWardId] = useState<string>('pne-ward-01');
+
+  // Loading & Error States
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  // OTP Verification Modal States
+  const [showOtpModal, setShowOtpModal] = useState<boolean>(false);
+  const [otpEmail, setOtpEmail] = useState<string>('');
+  const [otpCode, setOtpCode] = useState<string>('');
+  const [otpTimer, setOtpTimer] = useState<number>(0);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState<boolean>(false);
+
+  // Derived location lists
+  const availableStates = useMemo(() => {
+    return Array.from(new Set(INDIAN_LOCATIONS.map((c) => c.state)));
+  }, []);
+
+  const availableCities = useMemo(() => {
+    return INDIAN_LOCATIONS.filter((c) => c.state === regState);
+  }, [regState]);
+
+  const availableWards = useMemo(() => {
+    const matchedCity = INDIAN_LOCATIONS.find(
+      (c) => c.state === regState && c.name.toLowerCase() === regCity.toLowerCase()
+    );
+    return matchedCity ? matchedCity.wards : [];
+  }, [regState, regCity]);
+
+  // Sync cities and wards on state change
+  useEffect(() => {
+    if (availableCities.length > 0) {
+      setRegCity(availableCities[0].name);
+    }
+  }, [regState, availableCities]);
+
+  useEffect(() => {
+    if (availableWards.length > 0) {
+      setRegWardId(availableWards[0].id);
+    }
+  }, [regCity, availableWards]);
+
+  // Resend OTP Cooldown Timer Hook
+  useEffect(() => {
+    if (otpTimer <= 0) return;
+    const interval = setInterval(() => {
+      setOtpTimer((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [otpTimer]);
+
+  const validateEmail = (val: string): boolean => {
+    if (!val) return false;
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(val);
+  };
+
+  const validatePassword = (val: string): boolean => {
+    if (!val) return false;
+    return val.length >= 6;
+  };
+
+  // Submit Sign In Form
+  const handleSignInSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const isEmailValid = validateEmail(loginEmail);
+    const isPasswordValid = validatePassword(loginPassword);
+
+    if (!isEmailValid || !isPasswordValid) {
+      showToast('Please enter a valid email and minimum 6-character password', 'warning');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const data = await loginWithCredentials(loginEmail, loginPassword);
+      showToast(`Welcome back, ${data.user.name}!`, 'success');
+      navigate(data.user.role === 'admin' ? '/admin' : '/citizen');
+    } catch (err: any) {
+      if (err.message && err.message.includes('not verified')) {
+        showToast('Please complete email verification first.', 'warning');
+        setOtpEmail(loginEmail);
+        setShowOtpModal(true);
+        try {
+          await authApi.sendOtp(loginEmail, 'verification');
+          setOtpTimer(60);
+        } catch (sendErr: any) {
+          console.error(sendErr);
+        }
+      } else {
+        showToast(err.message || 'Incorrect credentials', 'error');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Submit Register Form
+  const handleRegisterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!regName.trim()) {
+      showToast('Please enter your full name', 'warning');
+      return;
+    }
+    const isEmailValid = validateEmail(regEmail);
+    const isPasswordValid = validatePassword(regPassword);
+    if (!isEmailValid || !isPasswordValid) {
+      showToast('Please enter a valid email and 6+ character password', 'warning');
+      return;
+    }
+    if (regPassword !== regConfirmPassword) {
+      showToast('Passwords do not match', 'warning');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const payload = {
+        name: regName,
+        email: regEmail,
+        password: regPassword,
+        role: selectedRole,
+        phone: regPhone || undefined,
+        ward_id: regWardId,
+        avatar: selectedRole === 'citizen'
+          ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'
+          : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80'
+      };
+
+      await registerWithCredentials(payload);
+      showToast('Registration successful! Verification code sent to your email.', 'success');
+      setOtpEmail(regEmail);
+      setShowOtpModal(true);
+      setOtpTimer(60);
+    } catch (err: any) {
+      showToast(err.message || 'Registration failed. Try again.', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Verify OTP Action
+  const handleVerifyOtpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const cleanOtp = otpCode.trim();
+    if (!/^\d{6}$/.test(cleanOtp)) {
+      showToast('Please enter a valid 6-digit verification code.', 'warning');
+      return;
+    }
+
+    setIsVerifyingOtp(true);
+    try {
+      await authApi.verifyOtp(otpEmail, cleanOtp, 'verification');
+      showToast('Email verified successfully! You can now log in.', 'success');
+      setShowOtpModal(false);
+      setAuthTab('signin');
+      setLoginEmail(otpEmail);
+      setLoginPassword('');
+    } catch (err: any) {
+      showToast(err.message || 'Invalid OTP code. Please verify and try again.', 'error');
+    } finally {
+      setIsVerifyingOtp(false);
+    }
+  };
+
+  // Resend OTP Action
+  const handleResendOtp = async () => {
+    if (otpTimer > 0) return;
+    try {
+      await authApi.resendOtp(otpEmail);
+      showToast('Verification code resent to your email address.', 'success');
+      setOtpTimer(60);
+    } catch (err: any) {
+      showToast(err.message || 'Failed to resend code.', 'error');
+    }
+  };
+
+  // Quick Switch demo login bypass for fast hackathon judging evaluation
+  const handleDemoLogin = async () => {
+    setIsLoading(true);
+    try {
+      const demoEmail = selectedRole === 'citizen' ? 'citizen@nagarsathi.demo' : 'admin@nagarsathi.demo';
+      const data = await loginWithCredentials(demoEmail, 'password123');
+      showToast(`Logged in as demo ${selectedRole}!`, 'success');
+      navigate(data.user.role === 'admin' ? '/admin' : '/citizen');
+    } catch (err: any) {
+      try {
+        const payload = {
+          name: selectedRole === 'citizen' ? 'Citizen Demo' : 'Admin Demo',
+          email: selectedRole === 'citizen' ? 'citizen@nagarsathi.demo' : 'admin@nagarsathi.demo',
+          password: 'password123',
+          role: selectedRole,
+          ward_id: 'pne-ward-01',
+          is_verified: true
+        };
+        await authApi.register(payload);
+        await authApi.verifyOtp(payload.email, '000000', 'verification').catch(() => {});
+        const data = await loginWithCredentials(payload.email, 'password123');
+        showToast(`Demo account auto-provisioned!`, 'success');
+        navigate(data.user.role === 'admin' ? '/admin' : '/citizen');
+      } catch (innerErr: any) {
+        showToast(innerErr.message || 'Demo credentials failed.', 'error');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isAuthenticated && user) {
+    return (
+      <div className="max-w-md mx-auto my-16 px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white dark:bg-[#0e1714] p-8 rounded-3xl space-y-6 text-center shadow-xl border border-[#D6E2DE] dark:border-[#1e332f]"
+        >
+          <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-600 mx-auto flex items-center justify-center">
+            <CheckCircle2 className="w-8 h-8" />
+          </div>
+
+          <div className="space-y-1">
+            <h2 className="text-2xl font-black text-[#10201C] dark:text-[#f2f7f5]">You are signed in</h2>
+            <p className="text-xs text-[#73827D] dark:text-[#a3c4b9]">
+              Authenticated as <strong className="text-[#10201C] dark:text-[#f2f7f5]">{user.name}</strong> ({user.role})
+            </p>
+          </div>
+
+          <div className="space-y-3 pt-2">
+            <button
+              onClick={() => navigate(user.role === 'admin' ? '/admin' : '/citizen')}
+              className="w-full py-3.5 rounded-2xl bg-[#053229] hover:bg-[#07483A] text-white font-extrabold text-xs shadow-lg shadow-[#053229]/20 flex items-center justify-center gap-2 transition-transform hover:scale-[1.02]"
+            >
+              Continue to {user.role === 'admin' ? 'Admin Center' : 'Citizen Workspace'} &rarr;
+            </button>
+
+            <button
+              onClick={() => logout()}
+              className="w-full py-3.5 rounded-2xl bg-slate-100 dark:bg-[#152420] border border-[#D6E2DE] dark:border-[#1e332f] hover:bg-slate-200 text-[#10201C] dark:text-[#f2f7f5] font-extrabold text-xs transition-colors"
+            >
+              Switch Account / Logout
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[580px]">
+        
+        {/* Left Panel — Civic Brand Identity & Map Visual */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="hidden lg:block lg:col-span-6 space-y-6"
+        >
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E6F1EE] dark:bg-[#152420] border border-[#BFD5CE] dark:border-[#1e332f] text-[#053229] dark:text-[#0ca688] text-xs font-black uppercase tracking-wider">
+            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+            <span>NagarSathi Municipal Gateway</span>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <img
+                src={logoImg}
+                alt="NagarSathi Logo"
+                className="w-12 h-12 object-contain rounded-full shadow-md"
+              />
+              <h1 className="text-4xl font-black tracking-tight text-[#10201C] dark:text-[#f2f7f5]">
+                Nagar<span className="text-[#053229] dark:text-[#0ca688]">Sathi</span>
+              </h1>
+            </div>
+            <p className="text-2xl font-black text-[#10201C] dark:text-[#f2f7f5] leading-snug">
+              Report it. Track it. Fix it.
+            </p>
+          </div>
+
+          <p className="text-xs sm:text-sm text-[#536761] dark:text-[#a3c4b9] leading-relaxed font-semibold">
+            Together, we can make everyday city problems visible, actionable, and verifiable across Indian municipal zones.
+          </p>
+
+          <div className="relative rounded-3xl overflow-hidden border border-[#D6E2DE] dark:border-[#1e332f] p-2 bg-white dark:bg-[#0e1714] shadow-md">
+            <CityMap issues={issues.slice(0, 6)} className="h-56 w-full rounded-2xl overflow-hidden" />
+          </div>
+        </motion.div>
+
+        {/* Right Panel — Credentials Forms */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="lg:col-span-6 w-full max-w-lg mx-auto"
+        >
+          <div className="bg-white dark:bg-[#0e1714] p-5 sm:p-8 rounded-3xl border border-[#D6E2DE] dark:border-[#1e332f] shadow-xl space-y-6">
+            
+            {/* Header with Switch Tabs */}
+            <div className="flex items-center justify-between border-b border-[#D6E2DE] dark:border-[#1e332f] pb-4">
+              <div>
+                <h2 className="text-xl font-black text-[#10201C] dark:text-[#f2f7f5]">
+                  {authTab === 'signin' ? 'Welcome back' : 'Create Account'}
+                </h2>
+                <p className="text-[11px] text-[#73827D] dark:text-[#a3c4b9] font-bold">
+                  {authTab === 'signin' ? 'Sign in to access your city feed' : 'Register details to report issues'}
+                </p>
+              </div>
+
+              <div className="flex bg-[#F1F7F5] dark:bg-[#152420] border border-[#D6E2DE] dark:border-[#1e332f] rounded-xl p-1 text-[11px] font-black uppercase">
+                <button
+                  onClick={() => setAuthTab('signin')}
+                  className={`px-3 py-1.5 rounded-lg transition-colors ${
+                    authTab === 'signin' ? 'bg-[#053229] text-white shadow-xs' : 'text-[#536761] dark:text-[#a3c4b9] hover:text-[#10201C]'
+                  }`}
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => setAuthTab('register')}
+                  className={`px-3 py-1.5 rounded-lg transition-colors ${
+                    authTab === 'register' ? 'bg-[#053229] text-white shadow-xs' : 'text-[#536761] dark:text-[#a3c4b9] hover:text-[#10201C]'
+                  }`}
+                >
+                  Register
+                </button>
+              </div>
+            </div>
+
+            {/* Role Preset Selector Cards */}
+            <div className="grid grid-cols-2 gap-4">
+              <div
+                onClick={() => setSelectedRole('citizen')}
+                className={`p-3.5 rounded-2xl border cursor-pointer transition-all space-y-1.5 ${
+                  selectedRole === 'citizen'
+                    ? 'bg-[#E6F1EE] dark:bg-[#142e2a] border-[#07483A] dark:border-[#0ca688]'
+                    : 'bg-slate-50 dark:bg-[#152420] border-[#D6E2DE] dark:border-[#1e332f] hover:border-slate-300'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="w-8 h-8 rounded-xl bg-[#053229]/10 text-[#053229] dark:text-[#0ca688] flex items-center justify-center font-bold">
+                    <User className="w-4.5 h-4.5" />
+                  </span>
+                  {selectedRole === 'citizen' && <CheckCircle2 className="w-4 h-4 text-[#053229] dark:text-[#0ca688]" />}
+                </div>
+                <div>
+                  <h4 className="font-bold text-xs text-[#10201C] dark:text-[#f2f7f5]">Citizen</h4>
+                  <p className="text-[9px] text-[#73827D] dark:text-[#a3c4b9]">Report &amp; Track</p>
+                </div>
+              </div>
+
+              <div
+                onClick={() => setSelectedRole('admin')}
+                className={`p-3.5 rounded-2xl border cursor-pointer transition-all space-y-1.5 ${
+                  selectedRole === 'admin'
+                    ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-500'
+                    : 'bg-slate-50 dark:bg-[#152420] border-[#D6E2DE] dark:border-[#1e332f] hover:border-slate-300'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="w-8 h-8 rounded-xl bg-amber-600/10 text-amber-600 flex items-center justify-center font-bold">
+                    <ShieldCheck className="w-4.5 h-4.5" />
+                  </span>
+                  {selectedRole === 'admin' && <CheckCircle2 className="w-4 h-4 text-amber-600" />}
+                </div>
+                <div>
+                  <h4 className="font-bold text-xs text-[#10201C] dark:text-[#f2f7f5]">Municipal Admin</h4>
+                  <p className="text-[9px] text-[#73827D] dark:text-[#a3c4b9]">Manage &amp; Resolve</p>
+                </div>
+              </div>
+            </div>
+
+            {/* ==================== SIGN IN FORM ==================== */}
+            {authTab === 'signin' && (
+              <form onSubmit={handleSignInSubmit} className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                      <Mail className="w-4 h-4" />
+                    </div>
+                    <input
+                      type="email"
+                      required
+                      value={loginEmail}
+                      onChange={(e) => setLoginEmail(e.target.value)}
+                      placeholder="citizen@nagarsathi.gov.in"
+                      className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[#D6E2DE] dark:border-[#1e332f] bg-slate-50 dark:bg-[#152420] text-[#10201C] dark:text-[#f2f7f5] text-xs font-semibold focus:outline-none focus:border-[#053229]"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                      <Lock className="w-4 h-4" />
+                    </div>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={loginPassword}
+                      onChange={(e) => setLoginPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full pl-9 pr-10 py-2.5 rounded-xl border border-[#D6E2DE] dark:border-[#1e332f] bg-slate-50 dark:bg-[#152420] text-[#10201C] dark:text-[#f2f7f5] text-xs font-semibold focus:outline-none focus:border-[#053229]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full py-3 rounded-2xl bg-[#053229] hover:bg-[#07483A] text-white font-extrabold text-xs shadow-md transition-colors uppercase tracking-wider flex items-center justify-center gap-1.5"
+                >
+                  {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Log In'}
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </form>
+            )}
+
+            {/* ==================== REGISTER FORM ==================== */}
+            {authTab === 'register' && (
+              <form onSubmit={handleRegisterSubmit} className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[9px] uppercase text-slate-600 dark:text-slate-400 font-black">Full Name</label>
+                    <input
+                      type="text"
+                      required
+                      value={regName}
+                      onChange={(e) => setRegName(e.target.value)}
+                      placeholder="Aniket Patil"
+                      className="w-full px-3 py-2.5 rounded-xl border border-[#D6E2DE] dark:border-[#1e332f] bg-slate-50 dark:bg-[#152420] text-[#10201C] dark:text-[#f2f7f5] text-xs font-semibold focus:outline-none focus:border-[#053229]"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[9px] uppercase text-slate-600 dark:text-slate-400 font-black">Email Address</label>
+                    <input
+                      type="email"
+                      required
+                      value={regEmail}
+                      onChange={(e) => setRegEmail(e.target.value)}
+                      placeholder="aniket@gmail.com"
+                      className="w-full px-3 py-2.5 rounded-xl border border-[#D6E2DE] dark:border-[#1e332f] bg-slate-50 dark:bg-[#152420] text-[#10201C] dark:text-[#f2f7f5] text-xs font-semibold focus:outline-none focus:border-[#053229]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[9px] uppercase text-slate-600 dark:text-slate-400 font-black">Password</label>
+                    <input
+                      type="password"
+                      required
+                      value={regPassword}
+                      onChange={(e) => setRegPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full px-3 py-2.5 rounded-xl border border-[#D6E2DE] dark:border-[#1e332f] bg-slate-50 dark:bg-[#152420] text-[#10201C] dark:text-[#f2f7f5] text-xs font-semibold focus:outline-none focus:border-[#053229]"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[9px] uppercase text-slate-600 dark:text-slate-400 font-black">Confirm Password</label>
+                    <input
+                      type="password"
+                      required
+                      value={regConfirmPassword}
+                      onChange={(e) => setRegConfirmPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full px-3 py-2.5 rounded-xl border border-[#D6E2DE] dark:border-[#1e332f] bg-slate-50 dark:bg-[#152420] text-[#10201C] dark:text-[#f2f7f5] text-xs font-semibold focus:outline-none focus:border-[#053229]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[9px] uppercase text-slate-600 dark:text-slate-400 font-black">Phone Number (Optional)</label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 pointer-events-none">
+                        <Phone className="w-3.5 h-3.5" />
+                      </div>
+                      <input
+                        type="text"
+                        value={regPhone}
+                        onChange={(e) => setRegPhone(e.target.value)}
+                        placeholder="+91 9999999999"
+                        className="w-full pl-8 pr-3 py-2.5 rounded-xl border border-[#D6E2DE] dark:border-[#1e332f] bg-slate-50 dark:bg-[#152420] text-[#10201C] dark:text-[#f2f7f5] text-xs font-semibold focus:outline-none focus:border-[#053229]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[9px] uppercase text-slate-600 dark:text-slate-400 font-black">State Region</label>
+                    <select
+                      value={regState}
+                      onChange={(e) => setRegState(e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-xl border border-[#D6E2DE] dark:border-[#1e332f] bg-slate-50 dark:bg-[#152420] text-[#10201C] dark:text-[#f2f7f5] text-xs font-bold focus:outline-none"
+                    >
+                      {availableStates.map((st) => (
+                        <option key={st} value={st}>{st}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[9px] uppercase text-slate-600 dark:text-slate-400 font-black">City / Town</label>
+                    <select
+                      value={regCity}
+                      onChange={(e) => setRegCity(e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-xl border border-[#D6E2DE] dark:border-[#1e332f] bg-slate-50 dark:bg-[#152420] text-[#10201C] dark:text-[#f2f7f5] text-xs font-bold focus:outline-none"
+                    >
+                      {availableCities.map((ct) => (
+                        <option key={ct.name} value={ct.name}>{ct.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[9px] uppercase text-slate-600 dark:text-slate-400 font-black">Ward Locality</label>
+                    <select
+                      value={regWardId}
+                      onChange={(e) => setRegWardId(e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-xl border border-[#D6E2DE] dark:border-[#1e332f] bg-slate-50 dark:bg-[#152420] text-[#10201C] dark:text-[#f2f7f5] text-xs font-bold focus:outline-none"
+                    >
+                      {availableWards.map((wd) => (
+                        <option key={wd.id} value={wd.id}>{wd.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full py-3 rounded-2xl bg-[#053229] hover:bg-[#07483A] text-white font-extrabold text-xs shadow-md transition-colors uppercase tracking-wider flex items-center justify-center gap-1.5"
+                >
+                  {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Register Account'}
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </form>
+            )}
+
+            {/* Quick Demo Bypass Area */}
+            <div className="border-t border-[#D6E2DE] dark:border-[#1e332f] pt-5 space-y-3">
+              <button
+                type="button"
+                onClick={handleDemoLogin}
+                disabled={isLoading}
+                className="w-full py-3 rounded-2xl font-extrabold text-xs bg-[#F1F7F5] dark:bg-[#152420] border border-[#D6E2DE] dark:border-[#1e332f] hover:bg-slate-200 text-[#10201C] dark:text-[#f2f7f5] flex items-center justify-center gap-2 transition-colors uppercase tracking-wide"
+              >
+                🎯 Direct Hackathon Evaluation Access
+              </button>
+
+              <div className="text-center text-[10px] text-[#73827D] dark:text-[#a3c4b9] font-bold">
+                * Note: Evaluators can click the above button to bypass live OTP inbox check during testing.
+              </div>
+            </div>
+
+          </div>
+        </motion.div>
+      </div>
+
+      {/* ==================== OTP VERIFICATION MODAL OVERLAY ==================== */}
+      <AnimatePresence>
+        {showOtpModal && (
+          <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white dark:bg-[#0e1714] border border-[#D6E2DE] dark:border-[#1e332f] rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-6 text-[#10201C] dark:text-[#f2f7f5]"
+            >
+              <div className="flex items-center justify-between border-b border-[#D6E2DE] dark:border-[#1e332f] pb-3">
+                <h3 className="text-base font-black flex items-center gap-2 text-[#053229] dark:text-[#0ca688]">
+                  <Key className="w-5 h-5 text-[#053229] dark:text-[#0ca688] animate-pulse" /> Verify Your Email
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setShowOtpModal(false)}
+                  className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-[#152420] text-slate-400 hover:text-slate-700"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-4 bg-[#E6F1EE] dark:bg-[#142e2a] border border-[#BFD5CE] dark:border-[#1e332f] rounded-2xl flex gap-3 text-xs leading-relaxed text-[#053229] dark:text-[#0ca688] font-semibold">
+                <Info className="w-5 h-5 text-[#053229] dark:text-[#0ca688] shrink-0 mt-0.5" />
+                <div>
+                  We sent a 6-digit verification code to: <strong className="text-[#10201C] dark:text-white">{otpEmail}</strong>.
+                  Enter the code below to complete account activation.
+                </div>
+              </div>
+
+              <form onSubmit={handleVerifyOtpSubmit} className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest text-center">
+                    6-Digit Verification Code
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    maxLength={6}
+                    value={otpCode}
+                    onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                    placeholder="123456"
+                    className="w-full text-center tracking-[0.5em] font-mono text-2xl py-3 rounded-xl border border-[#D6E2DE] dark:border-[#1e332f] bg-slate-50 dark:bg-[#152420] text-[#10201C] dark:text-[#f2f7f5] focus:outline-none focus:border-[#053229]"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-600 dark:text-slate-400">
+                  <div className="flex items-center gap-1">
+                    <Timer className="w-3.5 h-3.5 text-[#053229] dark:text-[#0ca688]" />
+                    <span>Resend: {otpTimer > 0 ? `${otpTimer}s` : 'Available'}</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    disabled={otpTimer > 0}
+                    onClick={handleResendOtp}
+                    className={`flex items-center gap-1 uppercase hover:underline ${
+                      otpTimer > 0 ? 'text-slate-400 cursor-not-allowed' : 'text-[#053229] dark:text-[#0ca688]'
+                    }`}
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${otpTimer > 0 ? '' : 'animate-spin-slow'}`} />
+                    Resend Code
+                  </button>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isVerifyingOtp}
+                  className="w-full py-3 rounded-xl bg-[#053229] hover:bg-[#07483A] text-white font-extrabold text-xs uppercase tracking-wider shadow-md transition-colors flex items-center justify-center gap-2"
+                >
+                  {isVerifyingOtp ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm Verification Code'}
+                </button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 };

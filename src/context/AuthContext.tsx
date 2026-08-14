@@ -12,6 +12,8 @@ interface AuthContextType {
   loginAsCitizen: () => Promise<void>;
   loginAsAdmin: () => Promise<void>;
   loginCustom: (user: any) => Promise<void>;
+  loginWithCredentials: (email: string, password: string) => Promise<any>;
+  registerWithCredentials: (payload: any) => Promise<any>;
   logout: () => void;
   switchRole: () => void;
 }
@@ -78,6 +80,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const loginWithCredentials = async (email: string, password: string) => {
+    const data = await authApi.login(email, password);
+    setUser(data.user);
+    return data;
+  };
+
+  const registerWithCredentials = async (payload: any) => {
+    const data = await authApi.register(payload);
+    return data;
+  };
+
   const logout = () => {
     clearSession();
     localStorage.removeItem('cityfix_token');
@@ -103,6 +116,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loginAsCitizen,
         loginAsAdmin,
         loginCustom,
+        loginWithCredentials,
+        registerWithCredentials,
         logout,
         switchRole,
       }}
