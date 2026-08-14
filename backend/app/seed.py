@@ -171,7 +171,8 @@ def seed_db():
             phone="+91 98765 43210",
             avatar="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
             points=0,
-            badges=[]
+            badges=[],
+            is_verified=True
         )
         db.add(admin_user)
         
@@ -194,7 +195,8 @@ def seed_db():
             phone="+91 98765 43210",
             avatar="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
             points=42,
-            badges=["badge-first-report", "badge-five-reports"]
+            badges=["badge-first-report", "badge-five-reports"],
+            is_verified=True
         )
         db.add(citizen_user)
         
