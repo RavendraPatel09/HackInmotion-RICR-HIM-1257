@@ -60,12 +60,18 @@ export const NotificationCenter: React.FC = () => {
     }
   };
 
+  const isLanding = window.location.pathname === '/';
+
   return (
     <div className="relative">
       {/* Trigger Bell Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+        className={`relative p-2 rounded-xl transition-colors ${
+          isLanding 
+            ? 'text-slate-300 hover:text-white hover:bg-slate-800/40' 
+            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+        }`}
         title="Notifications"
       >
         <Bell className="w-5 h-5" />

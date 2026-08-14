@@ -23,6 +23,7 @@ import {
   Bell,
   Database,
   Info,
+  WifiOff,
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -37,10 +38,67 @@ const AVATAR_PRESETS = [
 
 export const Profile: React.FC = () => {
   const { user, loginCustom, logout } = useAuth();
-  const { issues } = useIssues();
+  const { issues, addIssue } = useIssues();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<'account' | 'activity' | 'support' | 'feedback' | 'settings'>('account');
+  const [offlineDrafts, setOfflineDrafts] = useState<any[]>([]);
+
+  useEffect(() => {
+    const raw = localStorage.getItem('nagarsathi_offline_drafts');
+    if (raw) {
+      try {
+        setOfflineDrafts(JSON.parse(raw));
+      } catch (e) {
+        setOfflineDrafts([]);
+      }
+    }
+  }, []);
+
+  const handleSyncDraft = (draft: any) => {
+    const trackingId = 'NS-' + Math.floor(100000 + Math.random() * 900000);
+    const newIssue = {
+      id: draft.id.replace('draft-', ''),
+      trackingId,
+      title: draft.title,
+      description: draft.description,
+      category: draft.category,
+      department: 'roads-infra' as any,
+      status: 'Reported' as any,
+      priority: 'Medium' as any,
+      lat: draft.lat,
+      lng: draft.lng,
+      address: draft.address,
+      reportedBy: user?.name || 'Citizen',
+      reportedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      statusHistory: [
+        {
+          status: 'Reported' as any,
+          timestamp: new Date().toISOString(),
+          note: 'Issue submitted from offline draft sync by citizen.',
+          updatedBy: user?.name || 'Citizen',
+        },
+      ],
+      upvotes: 1,
+      upvotedBy: [user?.id || 'guest'],
+      escalated: false,
+      language: 'en' as any,
+    };
+
+    addIssue(newIssue);
+    const updated = offlineDrafts.filter((d) => d.id !== draft.id);
+    setOfflineDrafts(updated);
+    localStorage.setItem('nagarsathi_offline_drafts', JSON.stringify(updated));
+    showToast(`Offline report "${draft.title}" synced successfully online!`, 'success');
+  };
+
+  const handleRemoveDraft = (draftId: string) => {
+    const updated = offlineDrafts.filter((d) => d.id !== draftId);
+    setOfflineDrafts(updated);
+    localStorage.setItem('nagarsathi_offline_drafts', JSON.stringify(updated));
+    showToast('Offline draft removed.', 'info');
+  };
 
   // Accordion state for FAQs
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
@@ -510,6 +568,45 @@ export const Profile: React.FC = () => {
                 ) : (
                   <div className="p-8 text-center bg-white border border-slate-200 rounded-2xl text-slate-400 text-xs font-semibold">
                     No issues bookmarked yet.
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Offline Saved Drafts */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
+                <WifiOff className="w-5 h-5 text-indigo-650" /> Offline Saved Drafts ({offlineDrafts.length})
+              </h2>
+
+              <div className="space-y-3">
+                {offlineDrafts.length > 0 ? (
+                  offlineDrafts.map((draft) => (
+                    <div key={draft.id} className="p-4 bg-white rounded-2xl border border-slate-200 flex items-center justify-between gap-4 shadow-xs">
+                      <div>
+                        <h4 className="font-extrabold text-xs text-slate-900 leading-tight">{draft.title}</h4>
+                        <p className="text-[10px] text-slate-450 mt-1 font-bold">{draft.address.split(',')[0]} &bull; {draft.category}</p>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          onClick={() => handleSyncDraft(draft)}
+                          className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-black rounded-xl transition-colors"
+                        >
+                          Sync Online
+                        </button>
+                        <button
+                          onClick={() => handleRemoveDraft(draft.id)}
+                          className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+                          title="Delete draft"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-8 text-center bg-white border border-slate-200 rounded-2xl text-slate-400 text-xs font-semibold">
+                    No offline drafts saved.
                   </div>
                 )}
               </div>
