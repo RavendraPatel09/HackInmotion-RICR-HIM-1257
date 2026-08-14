@@ -7,7 +7,7 @@ client = TestClient(app)
 def test_full_civic_journey():
     # 1. Register a new citizen
     random_id = uuid.uuid4().hex[:6]
-    email = f"user_{random_id}@nagarsathi.com"
+    email = f"user_{random_id}@nagarsathi.demo"
     reg_response = client.post("/api/auth/register", json={
         "name": "Test Citizen",
         "email": email,
