@@ -130,7 +130,7 @@ export const Landing: React.FC = () => {
   }, [displayIssues]);
 
   const handleCategoryClick = (catId: string) => {
-    navigate(`/reports?category=${catId}`);
+    navigate(`/citizen/issues?category=${catId}`);
   };
 
   const handleCommunityUpvote = async (issueId: string, e: React.MouseEvent) => {
@@ -286,23 +286,6 @@ export const Landing: React.FC = () => {
                 <span className="bg-gradient-to-r from-amber-500 via-white to-emerald-500 bg-clip-text text-transparent">
                   YOUR VOICE.
                 </span>
-                <span className="text-xl sm:text-2xl font-black tricolor-text-animate font-serif block italic mt-3 flex items-center gap-2">
-                  Hamara Shehar, Hamari Awaaz
-                  <svg className="w-6 h-6 text-[#000080]/80 dark:text-cyan-400/80 spin-slow shrink-0" viewBox="0 0 100 100" fill="none" stroke="currentColor">
-                    <circle cx="50" cy="50" r="45" strokeWidth="2" />
-                    <circle cx="50" cy="50" r="8" fill="currentColor" />
-                    {Array.from({ length: 24 }).map((_, i) => (
-                      <line
-                        key={i}
-                        x1="50"
-                        y1="50"
-                        x2={50 + 45 * Math.cos((i * 2 * Math.PI) / 24)}
-                        y2={50 + 45 * Math.sin((i * 2 * Math.PI) / 24)}
-                        strokeWidth="1.5"
-                      />
-                    ))}
-                  </svg>
-                </span>
               </h1>
               <p className="gsap-reveal text-lg font-bold text-slate-200">
                 Your Impact. Report It. Track It. Fix It.
@@ -315,7 +298,7 @@ export const Landing: React.FC = () => {
             {/* CTAs */}
             <div className="gsap-reveal flex flex-wrap items-center gap-4 pt-2">
               <Link
-                to="/report"
+                to="/citizen/report"
                 className="relative group overflow-hidden px-7 py-4 rounded-2xl bg-indigo-650 hover:bg-indigo-500 text-white font-extrabold text-xs shadow-[0_4px_20px_rgba(79,70,229,0.35)] flex items-center justify-center gap-2 transition-all duration-300"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-amber-500 to-indigo-650 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
@@ -615,7 +598,7 @@ export const Landing: React.FC = () => {
               recentIssues.map((issue) => (
                 <div
                   key={issue.id}
-                  onClick={() => navigate('/reports')}
+                  onClick={() => navigate('/citizen/issues')}
                   className="p-5 bg-[#121B2B] border border-slate-800/80 hover:border-indigo-500 rounded-2xl cursor-pointer transition-all duration-250 flex flex-col justify-between h-48 group shadow-lg"
                 >
                   <div className="space-y-2.5">
