@@ -50,7 +50,14 @@ export const MapFilters: React.FC<MapFiltersProps> = ({ onFilterChange, filters,
   return (
     <div className="bg-white dark:bg-[#0e1714] rounded-xl shadow-sm border border-[#D6E2DE] dark:border-[#1e332f] p-4 flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-[#10201C] dark:text-[#f2f7f5] text-sm">Filters</h3>
+        <div className="flex items-center gap-2">
+          <h3 className="font-semibold text-[#10201C] dark:text-[#f2f7f5] text-sm">Filters</h3>
+          {issueCount !== undefined && (
+            <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#E6F1EE] dark:bg-[#142e2a] text-[#053229] dark:text-[#0ca688] font-bold">
+              {issueCount}
+            </span>
+          )}
+        </div>
         <button 
           onClick={clearFilters}
           className="text-xs text-[#536761] dark:text-[#a3c4b9] hover:text-[#053229] dark:hover:text-[#0ca688] flex items-center gap-1 font-bold"

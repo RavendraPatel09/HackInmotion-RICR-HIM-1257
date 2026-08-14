@@ -6,8 +6,8 @@ import { INDIAN_LOCATIONS, getSelectedLocation, saveSelectedLocation } from '../
 import { showToast } from '../components/ui/Toast';
 import { useNavigate } from 'react-router-dom';
 import { 
-  User, Mail, Phone, Sun, Moon, Laptop, Bell, 
-  MapPin, ShieldAlert, Key, LogOut, CheckCircle2, ChevronRight 
+  User, Sun, Moon, Laptop, Bell, 
+  MapPin, Key, LogOut 
 } from 'lucide-react';
 
 const AVATAR_PRESETS = [

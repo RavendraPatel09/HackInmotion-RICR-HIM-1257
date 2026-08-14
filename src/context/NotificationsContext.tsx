@@ -16,6 +16,7 @@ interface NotificationsContextType {
   markAsRead: (id: string) => void;
   markAllAsRead: () => void;
   clearNotifications: () => void;
+  deleteNotification: (id: string) => void;
 }
 
 const NotificationsContext = createContext<NotificationsContextType | undefined>(undefined);
@@ -51,8 +52,6 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
       _issueId?: string,
       _trackingId?: string
     ) => {
-      // Backend automatically generates notifications on main actions,
-      // but if frontend requests explicit client-side notify, we load from backend.
       await loadNotifications();
     },
     [loadNotifications]
@@ -85,6 +84,10 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [loadNotifications]);
 
+  const deleteNotification = useCallback((id: string) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  }, []);
+
   return (
     <NotificationsContext.Provider
       value={{
@@ -94,6 +97,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
         markAsRead,
         markAllAsRead,
         clearNotifications,
+        deleteNotification,
       }}
     >
       {children}

@@ -25,7 +25,7 @@ import { Notifications } from './pages/Notifications';
 import { NotFound } from './pages/NotFound';
 
 const HomeSelector: React.FC = () => {
-  const { isAuthenticated, isCitizen, isAdmin } = useAuth();
+  const { isAuthenticated, isAdmin } = useAuth();
   if (!isAuthenticated) {
     return <Landing />;
   }

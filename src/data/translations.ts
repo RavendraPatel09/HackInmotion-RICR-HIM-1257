@@ -29,7 +29,6 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     topPriority: 'Top Community Priority',
     recentActivity: 'Recent Activity',
     transparencyScoreLabel: 'City Transparency Score',
-    landing: { tagline: 'Your City. Your Voice. Your Change.' },
     'landing.tagline': 'Your City. Your Voice. Your Change.',
 
     // Reporting Steps

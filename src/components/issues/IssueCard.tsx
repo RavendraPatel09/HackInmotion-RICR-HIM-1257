@@ -26,13 +26,14 @@ import {
 
 interface IssueCardProps {
   issue: Issue;
+  initiallyExpanded?: boolean;
   onAdminAction?: (issue: Issue) => void;
 }
 
-export const IssueCard: React.FC<IssueCardProps> = ({ issue, onAdminAction }) => {
+export const IssueCard: React.FC<IssueCardProps> = ({ issue, initiallyExpanded = false, onAdminAction }) => {
   const { user, isAdmin } = useAuth();
   const { upvoteIssue, confirmResolution, reopenIssue } = useIssues();
-  const [expanded, setExpanded] = useState<boolean>(false);
+  const [expanded, setExpanded] = useState<boolean>(initiallyExpanded);
 
   const dept = getDepartmentById(issue.department);
   const isUpvoted = user ? issue.upvotedBy.includes(user.id) : false;

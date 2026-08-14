@@ -7,7 +7,6 @@ import {
   PlusCircle,
   FileText,
   Map,
-  MapPin,
   ShieldCheck,
   LayoutDashboard,
   ListTodo,
@@ -21,11 +20,11 @@ import {
 interface SidebarProps {
   isExpanded: boolean;
   isHidden: boolean;
-  onToggle: () => void;
+  onToggle?: () => void;
   onHide: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ isExpanded, isHidden, onToggle, onHide }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ isExpanded, isHidden, onHide }) => {
   const { user, isCitizen, isAdmin } = useAuth();
   const location = useLocation();
 

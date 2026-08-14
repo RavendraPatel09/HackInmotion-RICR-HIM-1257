@@ -63,7 +63,7 @@ function clusterMarkers(issues: Issue[], zoom: number) {
     clusters.get(key)!.push(issue);
   });
   
-  return Array.from(clusters.entries()).map(([key, items]) => {
+  return Array.from(clusters.entries()).map(([, items]) => {
     if (items.length === 1) return { type: 'marker' as const, issue: items[0] };
     const avgLat = items.reduce((sum, i) => sum + i.lat, 0) / items.length;
     const avgLng = items.reduce((sum, i) => sum + i.lng, 0) / items.length;
@@ -106,7 +106,7 @@ class MapErrorBoundary extends React.Component<{children: React.ReactNode}, {has
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error: any) {
+  static getDerivedStateFromError(_error: any) {
     return { hasError: true };
   }
 

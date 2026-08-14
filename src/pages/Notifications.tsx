@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNotifications } from '../context/NotificationsContext';
 import { 
-  Bell, Check, Trash2, Eye, EyeOff, AlertTriangle, 
-  MapPin, ShieldAlert, CheckCircle, Info, MessageSquare, PlusCircle
+  Bell, Check, Trash2, AlertTriangle, 
+  CheckCircle, Info, MessageSquare, PlusCircle
 } from 'lucide-react';
 import { showToast } from '../components/ui/Toast';
 import { formatRelativeTime } from '../utils/dateUtils';

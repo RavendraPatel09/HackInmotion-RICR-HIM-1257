@@ -99,8 +99,6 @@ export interface Issue {
   satisfactionRating?: number;
   satisfactionComment?: string;
   isAnonymous?: boolean;
-  city?: string;
-  state?: string;
 }
 
 export interface Ward {

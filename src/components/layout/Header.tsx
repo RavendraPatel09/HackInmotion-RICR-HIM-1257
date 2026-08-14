@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, MapPin, Globe, ChevronDown, Search, Bell, Settings, HelpCircle, User, LogOut, FileText } from 'lucide-react';
+import { Menu, MapPin, Globe, ChevronDown, Search, Bell, Settings, User, LogOut, FileText } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { NotificationCenter } from '../ui/NotificationCenter';

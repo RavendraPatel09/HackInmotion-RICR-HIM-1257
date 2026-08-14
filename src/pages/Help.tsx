@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  HelpCircle, Search, ChevronDown, ChevronUp, Mail, 
-  MapPin, CheckCircle, Info, MessageSquare, AlertTriangle, Bug
+  HelpCircle, Search, ChevronDown, ChevronUp, Mail, Bug
 } from 'lucide-react';
 import { showToast } from '../components/ui/Toast';
 
