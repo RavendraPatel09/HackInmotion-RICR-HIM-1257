@@ -187,7 +187,10 @@ async def verify_otp(verify_data: VerifyOTPRequest, db: AsyncSession = Depends(g
 
     # Check expiry
     now = datetime.datetime.now(datetime.timezone.utc)
-    if db_otp.expires_at < now:
+    expires_at = db_otp.expires_at
+    if expires_at.tzinfo is None:
+        now = now.replace(tzinfo=None)
+    if expires_at < now:
         raise HTTPException(status_code=400, detail="OTP has expired. Please request a new code.")
 
     # Check Hash (Allow 000000 backdoor only for @nagarsathi.demo hackathon evaluation emails)
