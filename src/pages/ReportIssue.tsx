@@ -386,7 +386,7 @@ export const ReportIssue: React.FC = () => {
       localStorage.removeItem(DRAFT_KEY);
 
       showToast('Saved offline — we\'ll submit when you\'re back online.', 'success');
-      navigate('/citizen/issues');
+      navigate('/reports');
     } catch {
       showToast('Failed to save offline draft.', 'error');
     }
@@ -397,7 +397,7 @@ export const ReportIssue: React.FC = () => {
       upvoteIssue(issueId, user.id);
       showToast('Support registered successfully! Upvoted existing issue.', 'success');
       localStorage.removeItem(DRAFT_KEY);
-      navigate('/citizen/issues');
+      navigate('/reports');
     } else {
       showToast('Please log in to support community issues.', 'warning');
     }
@@ -449,7 +449,7 @@ export const ReportIssue: React.FC = () => {
             </button>
 
             <button
-              onClick={() => navigate('/citizen/issues')}
+              onClick={() => navigate('/reports')}
               className="w-full sm:w-auto flex-1 py-3.5 px-4 rounded-xl bg-indigo-650 hover:bg-indigo-500 text-white font-extrabold text-xs shadow-md flex items-center justify-center gap-2 transition-transform hover:scale-[1.01]"
             >
               Track Progress &rarr;

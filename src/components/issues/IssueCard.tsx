@@ -27,12 +27,13 @@ import {
 interface IssueCardProps {
   issue: Issue;
   onAdminAction?: (issue: Issue) => void;
+  initiallyExpanded?: boolean;
 }
 
-export const IssueCard: React.FC<IssueCardProps> = ({ issue, onAdminAction }) => {
+export const IssueCard: React.FC<IssueCardProps> = ({ issue, onAdminAction, initiallyExpanded }) => {
   const { user, isAdmin } = useAuth();
   const { upvoteIssue, confirmResolution, reopenIssue } = useIssues();
-  const [expanded, setExpanded] = useState<boolean>(false);
+  const [expanded, setExpanded] = useState<boolean>(initiallyExpanded || false);
 
   const dept = getDepartmentById(issue.department);
   const isUpvoted = user ? issue.upvotedBy.includes(user.id) : false;
@@ -106,11 +107,11 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue, onAdminAction }) =>
         .share({
           title: `NagarSathi Report: ${issue.title}`,
           text: `Track civic issue ${issue.trackingId} on NagarSathi Smart City Platform.`,
-          url: window.location.origin + `/citizen/issues?tracking=${issue.trackingId}`,
+          url: window.location.origin + `/reports?tracking=${issue.trackingId}`,
         })
         .catch(() => {});
     } else {
-      navigator.clipboard.writeText(`${window.location.origin}/citizen/issues?tracking=${issue.trackingId}`);
+      navigator.clipboard.writeText(`${window.location.origin}/reports?tracking=${issue.trackingId}`);
       showToast('Tracking link copied to clipboard!', 'info');
     }
   };
