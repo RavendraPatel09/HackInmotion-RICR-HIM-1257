@@ -65,8 +65,7 @@ export const TransparencyScore: React.FC = () => {
         {transparencies.map((dept) => (
           <motion.div
             key={dept.departmentId}
-            whileHover={{ y: -4 }}
-            className="p-6 rounded-2xl bg-white border border-slate-200 space-y-5 shadow-lg"
+            className="p-6 rounded-2xl bg-white dark:bg-[#0e1714] border border-slate-200 dark:border-[#1e332f] space-y-5 shadow-lg premium-card-hover"
           >
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-base text-slate-900">{dept.departmentName}</h3>
