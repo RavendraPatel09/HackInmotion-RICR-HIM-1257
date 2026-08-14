@@ -24,7 +24,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const toggleLanguage = () => {
-    setLanguageState((prev) => (prev === 'en' ? 'hi' : 'en'));
+    // No-op for expanded languages. Use setLanguage with LanguageSelector.
   };
 
   const t = (key: string): string => {

@@ -64,7 +64,7 @@ export const Navbar: React.FC = () => {
         
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           {/* Brand Logo & Name */}
-          <Link to={isAdmin ? '/admin' : '/citizen'} className="flex items-center gap-2.5 group shrink-0">
+          <Link to="/" className="flex items-center gap-2.5 group shrink-0">
             <img
               src={logoImg}
               alt="NagarSathi Logo"
@@ -92,11 +92,11 @@ export const Navbar: React.FC = () => {
 
             {isCitizen && (
               <>
-                <Link to="/citizen/report" className={getLinkStyle('/citizen/report', 'bg-indigo-600 text-white')}>
+                <Link to="/report" className={getLinkStyle('/report', 'bg-indigo-600 text-white')}>
                   <PlusCircle className="w-3.5 h-3.5 shrink-0" />
                   Report Issue
                 </Link>
-                <Link to="/citizen/issues" className={getLinkStyle('/citizen/issues')}>
+                <Link to="/reports" className={getLinkStyle('/reports')}>
                   My Issues
                 </Link>
               </>

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export type ThemeMode = 'light' | 'dark';
+export type ThemeMode = 'light' | 'dark' | 'system';
 
 interface ThemeContextType {
   theme: ThemeMode;
@@ -10,25 +10,56 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
-const THEME_KEY = 'cityfix_theme';
+const THEME_KEY = 'nagarsathi_theme';
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setThemeState] = useState<ThemeMode>('light');
+  const [theme, setThemeState] = useState<ThemeMode>(() => {
+    return (localStorage.getItem(THEME_KEY) as ThemeMode) || 'light';
+  });
+
+  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
-    const root = document.documentElement;
-    root.classList.add('light');
-    root.classList.remove('dark');
-    localStorage.setItem(THEME_KEY, 'light');
-  }, []);
+    const handleThemeChange = () => {
+      const root = document.documentElement;
+      let target: 'light' | 'dark' = 'light';
+      
+      if (theme === 'system') {
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        target = systemPrefersDark ? 'dark' : 'light';
+      } else {
+        target = theme;
+      }
+      
+      setResolvedTheme(target);
+      if (target === 'dark') {
+        root.classList.add('dark');
+        root.classList.remove('light');
+      } else {
+        root.classList.add('light');
+        root.classList.remove('dark');
+      }
+    };
 
-  const setTheme = (_newTheme: ThemeMode) => {
-    // Force light mode
-    setThemeState('light');
+    handleThemeChange();
+    localStorage.setItem(THEME_KEY, theme);
+
+    if (theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const listener = () => {
+        handleThemeChange();
+      };
+      mediaQuery.addEventListener('change', listener);
+      return () => mediaQuery.removeEventListener('change', listener);
+    }
+  }, [theme]);
+
+  const setTheme = (newTheme: ThemeMode) => {
+    setThemeState(newTheme);
   };
 
   const toggleTheme = () => {
-    // No-op to disable theme switching
+    setThemeState((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
   return (
@@ -37,7 +68,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         theme,
         setTheme,
         toggleTheme,
-        isDark: theme === 'dark',
+        isDark: resolvedTheme === 'dark',
       }}
     >
       {children}

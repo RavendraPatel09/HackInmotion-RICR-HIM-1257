@@ -9,34 +9,45 @@ export const MobileBottomNav: React.FC = () => {
   const { t } = useLanguage();
   const location = useLocation();
 
-  const isNavActive = (path: string) => location.pathname === path;
+  const isNavActive = (path: string) => {
+    if (path === '/') {
+      return location.pathname === '/' || location.pathname === '/citizen';
+    }
+    if (path === '/report') {
+      return location.pathname === '/report' || location.pathname === '/citizen/report';
+    }
+    if (path === '/reports') {
+      return location.pathname === '/reports' || location.pathname === '/citizen/issues';
+    }
+    return location.pathname === path;
+  };
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-950/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-4 py-2 flex items-center justify-around shadow-2xl transition-colors">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-[#D6E2DE] px-4 py-2 flex items-center justify-around shadow-2xl transition-colors">
       {isCitizen && (
         <>
           <Link
-            to="/citizen"
+            to="/"
             className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition-colors ${
-              isNavActive('/citizen') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'
+              isNavActive('/') ? 'text-[#053229]' : 'text-[#73827D]'
             }`}
           >
             <Home className="w-5 h-5" />
             <span>{t('home')}</span>
           </Link>
           <Link
-            to="/citizen/report"
+            to="/report"
             className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition-colors ${
-              isNavActive('/citizen/report') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'
+              isNavActive('/report') ? 'text-[#053229]' : 'text-[#73827D]'
             }`}
           >
             <PlusCircle className="w-5 h-5" />
             <span>{t('reportIssue')}</span>
           </Link>
           <Link
-            to="/citizen/issues"
+            to="/reports"
             className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition-colors ${
-              isNavActive('/citizen/issues') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'
+              isNavActive('/reports') ? 'text-[#053229]' : 'text-[#73827D]'
             }`}
           >
             <ListTodo className="w-5 h-5" />
@@ -50,7 +61,7 @@ export const MobileBottomNav: React.FC = () => {
           <Link
             to="/admin"
             className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition-colors ${
-              isNavActive('/admin') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'
+              isNavActive('/admin') ? 'text-[#053229]' : 'text-[#73827D]'
             }`}
           >
             <Home className="w-5 h-5" />
@@ -59,7 +70,7 @@ export const MobileBottomNav: React.FC = () => {
           <Link
             to="/admin/queue"
             className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition-colors ${
-              isNavActive('/admin/queue') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'
+              isNavActive('/admin/queue') ? 'text-[#053229]' : 'text-[#73827D]'
             }`}
           >
             <ListTodo className="w-5 h-5" />
@@ -68,7 +79,7 @@ export const MobileBottomNav: React.FC = () => {
           <Link
             to="/admin/analytics"
             className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition-colors ${
-              isNavActive('/admin/analytics') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'
+              isNavActive('/admin/analytics') ? 'text-[#053229]' : 'text-[#73827D]'
             }`}
           >
             <BarChart3 className="w-5 h-5" />
@@ -80,7 +91,7 @@ export const MobileBottomNav: React.FC = () => {
       <Link
         to="/map"
         className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition-colors ${
-          isNavActive('/map') ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'
+          isNavActive('/map') ? 'text-[#053229]' : 'text-[#73827D]'
         }`}
       >
         <Map className="w-5 h-5" />
@@ -90,7 +101,7 @@ export const MobileBottomNav: React.FC = () => {
       <Link
         to="/transparency"
         className={`flex flex-col items-center gap-0.5 text-[10px] font-bold transition-colors ${
-          isNavActive('/transparency') ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'
+          isNavActive('/transparency') ? 'text-emerald-700' : 'text-[#73827D]'
         }`}
       >
         <ShieldCheck className="w-5 h-5" />

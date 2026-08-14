@@ -7,12 +7,12 @@ export const StatusBadge: React.FC<{ status: IssueStatus; className?: string }> 
   className = '',
 }) => {
   const styles: Record<IssueStatus, string> = {
-    Reported: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-    Acknowledged: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
-    'In Progress': 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-    Resolved: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    Verified: 'bg-teal-500/15 text-teal-300 border-teal-500/30 font-semibold',
-    Reopened: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+    Reported: 'bg-[#EEF2F1] text-[#40534D] border-[#D6E2DE]',
+    Acknowledged: 'bg-[#FFF4D9] text-[#8A6419] border-[#F5DFA0]',
+    'In Progress': 'bg-[#E7F0F8] text-[#245B7A] border-[#B3D4E8]',
+    Resolved: 'bg-[#E5F4EC] text-[#17623F] border-[#A8DBC2]',
+    Verified: 'bg-[#E8F1EE] text-[#245A4C] border-[#BFD5CE]',
+    Reopened: 'bg-[#FEE8E8] text-[#C94B4B] border-[#F5B8B8]',
   };
 
   return (
@@ -32,10 +32,10 @@ export const PriorityBadge: React.FC<{ priority: Priority; className?: string }>
   className = '',
 }) => {
   const styles: Record<Priority, string> = {
-    Low: 'bg-slate-800 text-slate-300 border-slate-700',
-    Medium: 'bg-sky-950/60 text-sky-300 border-sky-800/40',
-    High: 'bg-amber-950/60 text-amber-300 border-amber-800/40',
-    Critical: 'bg-rose-950/80 text-rose-300 border-rose-800/60 font-semibold animate-pulse',
+    Low: 'bg-[#F1F7F5] text-[#536761] border-[#D6E2DE]',
+    Medium: 'bg-[#E7F0F8] text-[#245B7A] border-[#B3D4E8]',
+    High: 'bg-[#FFF4D9] text-[#8A6419] border-[#F5DFA0]',
+    Critical: 'bg-[#FEE8E8] text-[#C94B4B] border-[#F5B8B8] font-semibold',
   };
 
   return (
@@ -56,7 +56,7 @@ export const CategoryBadge: React.FC<{ category: IssueCategory; className?: stri
   const cfg = CATEGORIES[category] || CATEGORIES.roads;
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-medium bg-slate-800/80 text-slate-200 border border-slate-700/60 ${className}`}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-medium bg-white text-[#10201C] border border-[#D6E2DE] ${className}`}
     >
       <span
         className="w-2 h-2 rounded-full"

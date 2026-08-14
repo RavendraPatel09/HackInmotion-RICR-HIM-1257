@@ -1,4 +1,4 @@
-export type Language = 'en' | 'hi';
+export type Language = 'en' | 'hi' | 'mr' | 'bn' | 'gu' | 'ta' | 'te' | 'kn' | 'ml' | 'pa';
 
 export const TRANSLATIONS: Record<Language, Record<string, string>> = {
   en: {
@@ -29,6 +29,8 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     topPriority: 'Top Community Priority',
     recentActivity: 'Recent Activity',
     transparencyScoreLabel: 'City Transparency Score',
+    landing: { tagline: 'Your City. Your Voice. Your Change.' },
+    'landing.tagline': 'Your City. Your Voice. Your Change.',
 
     // Reporting Steps
     step1Title: 'Step 1: Select Location',
@@ -100,6 +102,45 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     saveStatusUpdate: 'Update Issue Status',
     notifyDepartment: 'Notify Department',
     departmentNotified: 'Department notification queued for priority team.',
+    
+    // Phase 4 & 6 Additions
+    'nearby.title': 'Nearby Civic Reports',
+    'nearby.subtitle': 'Explore civic issues reported across your selected area and across India.',
+    'nearby.showingNear': 'Showing reports near',
+    'nearby.viewAllIndia': 'View All India',
+    'map.title': 'Interactive Civic Map',
+    'map.subtitle': 'Real-time civic issues across India',
+    'map.loading': 'Loading map...',
+    'map.error': 'Map unavailable',
+    'map.errorDesc': 'We couldn\'t load the interactive map. You can still browse civic reports from the list.',
+    'map.retry': 'Retry',
+    'map.legend': 'Map Legend',
+    'filter.allStates': 'All States',
+    'filter.allCities': 'All Cities',
+    'filter.issueType': 'Issue Type',
+    'filter.status': 'Status',
+    'filter.severity': 'Severity',
+    'filter.search': 'Search location...',
+    'filter.clearAll': 'Clear All',
+    'empty.noReports': 'No civic reports found',
+    'empty.tryChanging': 'Try changing your location or filters.',
+    'sidebar.home': 'Home',
+    'sidebar.report': 'Report Issue',
+    'sidebar.myReports': 'My Reports',
+    'sidebar.cityMap': 'City Map',
+    'sidebar.nearby': 'Nearby Issues',
+    'sidebar.transparency': 'Transparency',
+    'sidebar.community': 'Community',
+    'sidebar.notifications': 'Notifications',
+    'sidebar.settings': 'Settings',
+    'sidebar.help': 'Help & Support',
+    'header.selectCity': 'Select City',
+    'metrics.reportsSubmitted': 'Reports Submitted',
+    'metrics.issuesResolved': 'Issues Resolved',
+    'metrics.resolutionRate': 'Resolution Rate',
+    'metrics.avgResolutionTime': 'Avg. Resolution Time',
+    'metrics.days': 'days',
+    'profile.citizen': 'Citizen'
   },
   hi: {
     // Nav & General
@@ -129,6 +170,7 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     topPriority: 'शीर्ष सामुदायिक प्राथमिकता',
     recentActivity: 'हाल की गतिविधियां',
     transparencyScoreLabel: 'नगर निगम पारदर्शिता स्कोर',
+    'landing.tagline': 'आपका शहर। आपकी आवाज़। आपका बदलाव।',
 
     // Reporting Steps
     step1Title: 'चरण 1: स्थान चुनें',
@@ -200,5 +242,131 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     saveStatusUpdate: 'स्थिति अपडेट करें',
     notifyDepartment: 'विभाग को सूचित करें',
     departmentNotified: 'प्राथमिकता टीम के लिए विभाग अधिसूचना भेजी गई।',
+    
+    // Phase 4 & 6 Additions
+    'nearby.title': 'आस-पास की नागरिक शिकायतें',
+    'nearby.subtitle': 'अपने चयनित क्षेत्र और पूरे भारत में दर्ज नागरिक समस्याओं का अन्वेषण करें।',
+    'nearby.showingNear': 'के पास की शिकायतें दिखा रहे हैं',
+    'nearby.viewAllIndia': 'पूरे भारत की शिकायतें देखें',
+    'map.title': 'इंटरैक्टिव नागरिक नक्शा',
+    'map.subtitle': 'पूरे भारत में वास्तविक समय की नागरिक समस्याएं',
+    'map.loading': 'नक्शा लोड हो रहा है...',
+    'map.error': 'नक्शा उपलब्ध नहीं',
+    'map.errorDesc': 'हम इंटरैक्टिव नक्शा लोड नहीं कर पाए। आप अभी भी सूची से नागरिक शिकायतें देख सकते हैं।',
+    'map.retry': 'पुनः प्रयास करें',
+    'map.legend': 'नक्शा संकेत',
+    'filter.allStates': 'सभी राज्य',
+    'filter.allCities': 'सभी शहर',
+    'filter.issueType': 'समस्या प्रकार',
+    'filter.status': 'स्थिति',
+    'filter.severity': 'गंभीरता',
+    'filter.search': 'स्थान खोजें...',
+    'filter.clearAll': 'सब हटाएं',
+    'empty.noReports': 'कोई नागरिक शिकायत नहीं मिली',
+    'empty.tryChanging': 'अपना स्थान या फ़िल्टर बदलें।',
+    'sidebar.home': 'होम',
+    'sidebar.report': 'शिकायत दर्ज करें',
+    'sidebar.myReports': 'मेरी शिकायतें',
+    'sidebar.cityMap': 'शहर का नक्शा',
+    'sidebar.nearby': 'आस-पास की समस्याएं',
+    'sidebar.transparency': 'पारदर्शिता',
+    'sidebar.community': 'समुदाय',
+    'sidebar.notifications': 'सूचनाएं',
+    'sidebar.settings': 'सेटिंग्स',
+    'sidebar.help': 'सहायता',
+    'header.selectCity': 'शहर चुनें',
+    'metrics.reportsSubmitted': 'दर्ज शिकायतें',
+    'metrics.issuesResolved': 'समस्याएं हल',
+    'metrics.resolutionRate': 'समाधान दर',
+    'metrics.avgResolutionTime': 'औसत समाधान समय',
+    'metrics.days': 'दिन',
+    'profile.citizen': 'नागरिक'
   },
+  mr: {
+    appName: 'नगरसाथी',
+    home: 'मुख्यपृष्ठ',
+    reportIssue: 'तक्रार नोंदवा',
+    myIssues: 'माझ्या तक्रारी',
+    cityMap: 'शहर नकाशा',
+    transparency: 'पारदर्शकता',
+    login: 'लॉग इन',
+    logout: 'लॉग आउट',
+    heroTitle: 'तुमचं शहर सुधारा.',
+    statusReported: 'नोंदवले',
+    statusInProgress: 'प्रगतीपथावर',
+    statusResolved: 'निराकरण',
+    'sidebar.home': 'मुख्यपृष्ठ',
+    'sidebar.report': 'तक्रार नोंदवा',
+    'sidebar.myReports': 'माझ्या तक्रारी',
+    'sidebar.cityMap': 'शहर नकाशा',
+    'sidebar.nearby': 'जवळच्या नागरी तक्रारी',
+    'nearby.title': 'जवळच्या नागरी तक्रारी',
+    'map.title': 'इंटरॅक्टिव्ह नागरी नकाशा',
+    'landing.tagline': 'तुमचं शहर. तुमचा आवाज. तुमचा बदल.',
+    'profile.citizen': 'नागरिक'
+  },
+  bn: {
+    appName: 'নগরসাথী',
+    home: 'হোম',
+    reportIssue: 'অভিযোগ জানান',
+    myIssues: 'আমার অভিযোগ',
+    cityMap: 'শহরের মানচিত্র',
+    heroTitle: 'আপনার শহরকে উন্নত করুন।',
+    'landing.tagline': 'আপনার শহর। আপনার কণ্ঠস্বর। আপনার পরিবর্তন।',
+    'profile.citizen': 'নাগরিক'
+  },
+  gu: {
+    appName: 'નગરસાથી',
+    home: 'હોમ',
+    reportIssue: 'ફરિયાદ નોંધાવો',
+    myIssues: 'મારી ફરિયાદો',
+    heroTitle: 'તમારું શહેર સુધારો.',
+    'landing.tagline': 'તમારું શહેર. તમારો અવાજ. તમારો બદલાવ.',
+    'profile.citizen': 'નાગરિક'
+  },
+  ta: {
+    appName: 'நகர்சாதி',
+    home: 'முகப்பு',
+    reportIssue: 'புகார் பதிவு',
+    myIssues: 'என் புகார்கள்',
+    heroTitle: 'உங்கள் நகரத்தை மேம்படுத்துங்கள்.',
+    'landing.tagline': 'உங்கள் நகரம். உங்கள் குரல். உங்கள் மாற்றம்.',
+    'profile.citizen': 'குடிமகன்'
+  },
+  te: {
+    appName: 'నగర్సాథీ',
+    home: 'హోమ్',
+    reportIssue: 'ఫిర్యాదు చేయండి',
+    myIssues: 'నా ఫిర్యాదులు',
+    heroTitle: 'మీ నగరాన్ని మెరుగుపరచండి.',
+    'landing.tagline': 'మీ నగరం. మీ గొంతు. మీ మార్పు.',
+    'profile.citizen': 'పౌరుడు'
+  },
+  kn: {
+    appName: 'ನಗರಸಾಥಿ',
+    home: 'ಮುಖಪುಟ',
+    reportIssue: 'ದೂರು ದಾಖಲಿಸಿ',
+    myIssues: 'ನನ್ನ ದೂರುಗಳು',
+    heroTitle: 'ನಿಮ್ಮ ನಗರವನ್ನು ಸುಧಾರಿಸಿ.',
+    'landing.tagline': 'ನಿಮ್ಮ ನಗರ. ನಿಮ್ಮ ಧ್ವನಿ. ನಿಮ್ಮ ಬದಲಾವಣೆ.',
+    'profile.citizen': 'ನಾಗರಿಕ'
+  },
+  ml: {
+    appName: 'നഗർസാഥി',
+    home: 'ഹോം',
+    reportIssue: 'പരാതി രജിസ്റ്റർ ചെയ്യുക',
+    myIssues: 'എൻ്റെ പരാതികൾ',
+    heroTitle: 'നിങ്ങളുടെ നഗരം മെച്ചപ്പെടുത്തുക.',
+    'landing.tagline': 'നിങ്ങളുടെ നഗരം. നിങ്ങളുടെ ശബ്ദം. നിങ്ങളുടെ മാറ്റം.',
+    'profile.citizen': 'പൗരൻ'
+  },
+  pa: {
+    appName: 'ਨਗਰਸਾਥੀ',
+    home: 'ਹੋਮ',
+    reportIssue: 'ਸ਼ਿਕਾਇਤ ਦਰਜ ਕਰੋ',
+    myIssues: 'ਮੇਰੀਆਂ ਸ਼ਿਕਾਇਤਾਂ',
+    heroTitle: 'ਆਪਣਾ ਸ਼ਹਿਰ ਸੁਧਾਰੋ।',
+    'landing.tagline': 'ਤੁਹਾਡਾ ਸ਼ਹਿਰ। ਤੁਹਾਡੀ ਆਵਾਜ਼। ਤੁਹਾਡਾ ਬਦਲਾਅ.',
+    'profile.citizen': 'ਨਾਗਰਿਕ'
+  }
 };
