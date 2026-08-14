@@ -48,10 +48,10 @@ export const Footer: React.FC = () => {
             <h4 className={`font-extrabold text-[11px] uppercase tracking-wider ${isLanding ? 'text-white' : 'text-slate-900'}`}>Product</h4>
             <ul className={`space-y-2 text-xs font-semibold ${isLanding ? 'text-slate-400' : 'text-slate-550'}`}>
               <li>
-                <Link to="/report" className="hover:text-indigo-400 transition-colors">Report an Issue</Link>
+                <Link to="/citizen/report" className="hover:text-indigo-400 transition-colors">Report an Issue</Link>
               </li>
               <li>
-                <Link to="/reports" className="hover:text-indigo-400 transition-colors">Track Issues</Link>
+                <Link to="/citizen/issues" className="hover:text-indigo-400 transition-colors">Track Issues</Link>
               </li>
               <li>
                 <Link to="/map" className="hover:text-indigo-400 transition-colors">City Map</Link>
