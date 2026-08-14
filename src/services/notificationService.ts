@@ -129,3 +129,11 @@ export function clearNotificationsFromStorage(): AppNotification[] {
   saveNotifications([]);
   return [];
 }
+
+export function deleteNotificationFromStorage(id: string): AppNotification[] {
+  const current = getNotifications();
+  const updated = current.filter((n) => n.id !== id);
+  saveNotifications(updated);
+  return updated;
+}
+

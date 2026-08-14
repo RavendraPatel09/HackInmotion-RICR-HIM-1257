@@ -130,7 +130,7 @@ export const Landing: React.FC = () => {
   }, [displayIssues]);
 
   const handleCategoryClick = (catId: string) => {
-    navigate(`/citizen/issues?category=${catId}`);
+    navigate(`/reports?category=${catId}`);
   };
 
   const handleCommunityUpvote = async (issueId: string, e: React.MouseEvent) => {
@@ -598,7 +598,7 @@ export const Landing: React.FC = () => {
               recentIssues.map((issue) => (
                 <div
                   key={issue.id}
-                  onClick={() => navigate('/citizen/issues')}
+                  onClick={() => navigate('/reports')}
                   className="p-5 bg-[#121B2B] border border-slate-800/80 hover:border-indigo-500 rounded-2xl cursor-pointer transition-all duration-250 flex flex-col justify-between h-48 group shadow-lg"
                 >
                   <div className="space-y-2.5">

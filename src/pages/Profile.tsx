@@ -556,7 +556,7 @@ export const Profile: React.FC = () => {
                         <p className="text-[10px] text-slate-400 mt-1 font-bold">{issue.address.split(',')[0]} &bull; {issue.category}</p>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <Link to="/citizen/issues" className="px-3 py-1 bg-slate-50 hover:bg-slate-100 text-[11px] font-extrabold border border-slate-200 rounded-xl transition-colors">
+                        <Link to="/reports" className="px-3 py-1 bg-slate-50 hover:bg-slate-100 text-[11px] font-extrabold border border-slate-200 rounded-xl transition-colors">
                           Track
                         </Link>
                         <button onClick={() => handleRemoveBookmark(issue.id)} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Remove bookmark">
@@ -633,7 +633,7 @@ export const Profile: React.FC = () => {
                         <h4 className="font-extrabold text-xs text-slate-900 leading-tight">{issue.title}</h4>
                         <p className="text-[10px] text-slate-400 mt-1 font-bold">{issue.address.split(',')[0]} &bull; {issue.category}</p>
                       </div>
-                      <Link to="/citizen/issues" className="px-3 py-1 bg-slate-50 hover:bg-slate-100 text-[11px] font-extrabold border border-slate-200 rounded-xl transition-colors shrink-0">
+                      <Link to="/reports" className="px-3 py-1 bg-slate-50 hover:bg-slate-100 text-[11px] font-extrabold border border-slate-200 rounded-xl transition-colors shrink-0">
                         View
                       </Link>
                     </div>
@@ -780,7 +780,7 @@ export const Profile: React.FC = () => {
                   type="text"
                   value={problemPage}
                   onChange={(e) => setProblemPage(e.target.value)}
-                  placeholder="e.g. /citizen/issues or Map view"
+                  placeholder="e.g. /reports or Map view"
                   className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 text-xs font-semibold focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 transition-all"
                 />
               </div>
