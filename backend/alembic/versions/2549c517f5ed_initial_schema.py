@@ -99,8 +99,8 @@ def upgrade() -> None:
     sa.Column('department_id', sa.String(), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=True),
     sa.Column('is_verified', sa.Boolean(), nullable=True),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
-    sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
+    sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.ForeignKeyConstraint(['department_id'], ['departments.id'], ondelete='SET NULL'),
     sa.ForeignKeyConstraint(['ward_id'], ['wards.id'], ondelete='SET NULL'),
     sa.PrimaryKeyConstraint('id')
@@ -116,7 +116,7 @@ def upgrade() -> None:
     sa.Column('browser', sa.String(), nullable=True),
     sa.Column('device', sa.String(), nullable=True),
     sa.Column('screenshot_url', sa.String(), nullable=True),
-    sa.Column('timestamp', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('timestamp', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='SET NULL'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -127,7 +127,7 @@ def upgrade() -> None:
     sa.Column('rating', sa.Integer(), nullable=False),
     sa.Column('message', sa.String(), nullable=False),
     sa.Column('category', sa.String(length=50), nullable=False),
-    sa.Column('timestamp', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('timestamp', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='SET NULL'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -138,7 +138,7 @@ def upgrade() -> None:
     sa.Column('title', sa.String(), nullable=False),
     sa.Column('message', sa.String(), nullable=False),
     sa.Column('type', sa.String(length=50), nullable=False),
-    sa.Column('timestamp', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('timestamp', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.Column('read', sa.Boolean(), nullable=True),
     sa.Column('issue_id', sa.String(), nullable=True),
     sa.Column('tracking_id', sa.String(), nullable=True),
@@ -167,8 +167,8 @@ def upgrade() -> None:
     sa.Column('resolution_photo_url', sa.String(), nullable=True),
     sa.Column('resolution_notes', sa.String(), nullable=True),
     sa.Column('reported_by', sa.String(), nullable=False),
-    sa.Column('reported_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
-    sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('reported_at', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
+    sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.Column('upvotes', sa.Integer(), nullable=True),
     sa.Column('is_duplicate_of', sa.String(), nullable=True),
     sa.Column('escalated', sa.Boolean(), nullable=True),
@@ -203,7 +203,7 @@ def upgrade() -> None:
     sa.Column('report_id', sa.String(), nullable=False),
     sa.Column('status', sa.String(length=30), nullable=True),
     sa.Column('breach_time', sa.DateTime(timezone=True), nullable=False),
-    sa.Column('escalated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('escalated_at', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.Column('reason', sa.String(), nullable=True),
     sa.ForeignKeyConstraint(['report_id'], ['reports.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
@@ -216,7 +216,7 @@ def upgrade() -> None:
     sa.Column('filename', sa.String(), nullable=True),
     sa.Column('file_size', sa.Integer(), nullable=True),
     sa.Column('content_type', sa.String(length=50), nullable=True),
-    sa.Column('uploaded_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('uploaded_at', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.ForeignKeyConstraint(['report_id'], ['reports.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -228,7 +228,7 @@ def upgrade() -> None:
     sa.Column('author_name', sa.String(), nullable=False),
     sa.Column('author_role', sa.String(length=20), nullable=False),
     sa.Column('text', sa.String(), nullable=False),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.ForeignKeyConstraint(['author_id'], ['users.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['report_id'], ['reports.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
@@ -238,7 +238,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('report_id', sa.String(), nullable=False),
     sa.Column('status', sa.String(length=30), nullable=False),
-    sa.Column('timestamp', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('timestamp', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.Column('note', sa.String(), nullable=True),
     sa.Column('updated_by', sa.String(), nullable=False),
     sa.Column('photo_url', sa.String(), nullable=True),
@@ -250,7 +250,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('report_id', sa.String(), nullable=False),
     sa.Column('user_id', sa.String(), nullable=False),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.ForeignKeyConstraint(['report_id'], ['reports.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
@@ -261,7 +261,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('report_id', sa.String(), nullable=False),
     sa.Column('user_id', sa.String(), nullable=False),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=True),
     sa.ForeignKeyConstraint(['report_id'], ['reports.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
