@@ -1,7 +1,8 @@
 import uuid
 import random
 import string
-from datetime import datetime, timezone
+import math
+from datetime import datetime, timezone, timedelta
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -117,6 +118,17 @@ async def list_reports(
     reports = result.scalars().all()
     return [to_report_response(r) for r in reports]
 
+def calculate_distance_meters(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
+    R = 6371000.0  # Earth radius in meters
+    phi1 = math.radians(lat1)
+    phi2 = math.radians(lat2)
+    delta_phi = math.radians(lat2 - lat1)
+    delta_lambda = math.radians(lng2 - lng1)
+    
+    a = math.sin(delta_phi / 2.0)**2 + math.cos(phi1) * math.cos(phi2) * math.sin(delta_lambda / 2.0)**2
+    c = 2.0 * math.atan2(math.sqrt(a), math.sqrt(1.0 - a))
+    return R * c
+
 @router.post("", response_model=ReportResponse, status_code=status.HTTP_201_CREATED)
 async def create_report(
     report_in: ReportCreate,
@@ -129,6 +141,30 @@ async def create_report(
     if not cat:
         raise HTTPException(status_code=400, detail="Invalid issue category selected.")
     
+    # Backend Duplicate Detection
+    recent_reports_query = select(Report).filter(
+        Report.category == report_in.category,
+        Report.status.notin_(["Resolved", "Verified"])
+    )
+    res = await db.execute(recent_reports_query)
+    recent_reports = res.scalars().all()
+    
+    is_duplicate_of = None
+    for r in recent_reports:
+        reported_at = r.reported_at
+        if reported_at.tzinfo is None:
+            now_compare = datetime.now()
+        else:
+            now_compare = datetime.now(timezone.utc)
+            
+        if now_compare - reported_at > timedelta(days=14):
+            continue
+            
+        dist = calculate_distance_meters(report_in.lat, report_in.lng, r.lat, r.lng)
+        if dist <= 150.0:
+            is_duplicate_of = r.id
+            break
+
     report_id = f"iss-{uuid.uuid4().hex[:8]}"
     tracking_id = generate_tracking_id()
     
@@ -151,6 +187,7 @@ async def create_report(
         ward_name=report_in.wardName,
         photo_url=report_in.photoUrl,
         reported_by=current_user.id,
+        is_duplicate_of=is_duplicate_of,
         is_anonymous=report_in.isAnonymous or False,
         language="en"
     )
@@ -400,6 +437,35 @@ async def update_report_status(
     report = result.scalars().first()
     if not report:
         raise HTTPException(status_code=404, detail="Report not found.")
+
+    # Enforce RBAC and status lifecycle transitions
+    if current_user.role == "citizen":
+        if report.reported_by != current_user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You can only update reports you filed."
+            )
+        if status_update.status not in ["Verified", "Reopened"]:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Citizens are only allowed to verify or reopen their reports."
+            )
+        if report.status != "Resolved":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="You can only verify or reopen resolved reports."
+            )
+    elif current_user.role in ["admin", "ward-officer"]:
+        if status_update.status not in ["Acknowledged", "In Progress", "Resolved", "Closed"]:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Municipal staff cannot set status to {status_update.status} directly."
+            )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Unauthorized role."
+        )
 
     old_status = report.status
     report.status = status_update.status
