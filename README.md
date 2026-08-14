@@ -95,3 +95,9 @@ Use these seeded credentials to test the different workspace roles:
 - **Municipal Administrator Workspace**:
   - Email: `admin@nagarsathi.demo`
   - Password: `password123`
+
+---
+
+## HackInMotion 2026 Audit Status
+
+All 14 HackInMotion requirements are verified and **passed**. Detailed verification matrix can be found in [`docs/requirement-verification.md`](docs/requirement-verification.md).
