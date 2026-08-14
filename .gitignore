@@ -25,8 +25,8 @@ dist-ssr
 
 # Environments & Virtual Envs
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
 venv/
 __pycache__/
 *.pyc
