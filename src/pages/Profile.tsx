@@ -493,7 +493,7 @@ export const Profile: React.FC = () => {
                 {badges.map((b) => (
                   <PremiumCard
                     key={b.id}
-                    className={`p-4 flex items-center gap-4 relative overflow-hidden premium-card-hover ${
+                    className={`p-4 flex items-center gap-4 relative overflow-hidden ${
                       b.unlocked ? 'border-indigo-250 bg-indigo-50/10' : 'opacity-60 bg-slate-50/50'
                     }`}
                   >
