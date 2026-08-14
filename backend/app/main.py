@@ -21,13 +21,14 @@ app.add_middleware(
 )
 
 # Register Routers
-app.include_router(auth.router, prefix="/api")
-app.include_router(reports.router, prefix="/api")
-app.include_router(notifications.router, prefix="/api")
-app.include_router(transparency.router, prefix="/api")
-app.include_router(feedback.router, prefix="/api")
-app.include_router(health.router, prefix="/api")
-app.include_router(map.router, prefix="/api")
+for prefix in ["/api", "/api/v1"]:
+    app.include_router(auth.router, prefix=prefix)
+    app.include_router(reports.router, prefix=prefix)
+    app.include_router(notifications.router, prefix=prefix)
+    app.include_router(transparency.router, prefix=prefix)
+    app.include_router(feedback.router, prefix=prefix)
+    app.include_router(health.router, prefix=prefix)
+    app.include_router(map.router, prefix=prefix)
 
 @app.get("/")
 def read_root():
