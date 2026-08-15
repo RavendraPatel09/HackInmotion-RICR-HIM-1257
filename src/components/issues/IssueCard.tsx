@@ -147,18 +147,10 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue, initiallyExpanded =
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.98 }}
-      className={`group rounded-2xl border transition-all duration-150 shadow-sm overflow-hidden border-l-4 ${
-        issue.category === 'roads' ? 'border-l-blue-500 bg-[#F4F9FF] border-blue-100 hover:shadow-[0_8px_30px_rgba(59,130,246,0.08)]' :
-        issue.category === 'sanitation' ? 'border-l-emerald-500 bg-[#F5FDF7] border-emerald-100 hover:shadow-[0_8px_30px_rgba(16,185,129,0.08)]' :
-        issue.category === 'electricity' ? 'border-l-amber-500 bg-[#FFFDF4] border-amber-100 hover:shadow-[0_8px_30px_rgba(245,158,11,0.08)]' :
-        issue.category === 'water' ? 'border-l-cyan-500 bg-[#F2FEFF] border-cyan-100 hover:shadow-[0_8px_30px_rgba(6,182,212,0.08)]' :
-        issue.category === 'public-property' ? 'border-l-purple-500 bg-[#FAF8FF] border-purple-100 hover:shadow-[0_8px_30px_rgba(139,92,246,0.08)]' :
-        issue.category === 'drainage' ? 'border-l-indigo-500 bg-[#F2FDFB] border-teal-100 hover:shadow-[0_8px_30px_rgba(20,184,166,0.08)]' :
-        'border-l-slate-400 bg-white border-slate-200'
-      } ${
+      className={`group rounded-2xl border bg-white border-slate-200 transition-all duration-150 shadow-sm overflow-hidden ${
         issue.escalated
-          ? '!border-l-rose-650 bg-[#FFF5F5] border-rose-150 shadow-rose-950/10'
-          : 'hover:-translate-y-[2px] hover:shadow-md'
+          ? 'border-l-4 !border-l-cf-danger bg-cf-danger-bg'
+          : 'hover:-translate-y-[2px] hover:shadow-md hover:border-slate-300'
       }`}
     >
       {/* SLA Escalation or Countdown Header */}
@@ -217,7 +209,7 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue, initiallyExpanded =
         </div>
 
         <div>
-          <h3 className="text-lg font-bold text-slate-900 leading-snug hover:text-indigo-600 transition-colors">
+          <h3 className="text-lg font-bold text-slate-900 leading-snug hover:text-cf-primary-500 transition-colors">
             {issue.title}
           </h3>
           <p className="mt-1.5 text-sm text-slate-650 line-clamp-2 leading-relaxed">
@@ -251,10 +243,10 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue, initiallyExpanded =
         </div>
 
         {issue.status === 'Resolved' && (
-          <div className="p-3.5 rounded-xl bg-indigo-50 border border-indigo-200 space-y-2">
-            <div className="flex items-center justify-between text-xs font-semibold text-indigo-900">
+          <div className="p-3.5 rounded-xl bg-cf-success-bg border border-cf-success-light space-y-2">
+            <div className="flex items-center justify-between text-xs font-bold text-cf-success">
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4" />
                 Department marked this issue as Resolved. Is it fixed?
               </span>
             </div>
@@ -281,11 +273,11 @@ export const IssueCard: React.FC<IssueCardProps> = ({ issue, initiallyExpanded =
               onClick={handleUpvote}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 isUpvoted
-                  ? 'bg-indigo-650 text-white shadow-md shadow-indigo-600/20'
+                  ? 'bg-cf-primary-50 text-cf-primary-600 border border-cf-primary-200'
                   : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
               }`}
             >
-              <ThumbsUp className={`w-3.5 h-3.5 ${isUpvoted ? 'fill-white' : ''}`} />
+              <ThumbsUp className={`w-3.5 h-3.5 ${isUpvoted ? 'fill-cf-primary-500 text-cf-primary-500' : ''}`} />
               <span>{isUpvoted ? "Confirmed" : `I have this problem too (${issue.upvotes})`}</span>
             </button>
 

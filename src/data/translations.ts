@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export type Language = 'en' | 'hi' | 'mr' | 'bn' | 'gu' | 'ta' | 'te' | 'kn' | 'ml' | 'pa';
 
 export const TRANSLATIONS: Record<Language, Record<string, string>> = {
@@ -141,22 +142,145 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'metrics.days': 'days',
     'profile.citizen': 'Citizen'
   },
+=======
+export type Language = 'en' | 'hi' | 'mr' | 'ta' | 'te' | 'bn' | 'gu' | 'kn' | 'ml' | 'pa';
+
+// We provide English and Hindi, and use English as a fallback for the others until they are translated.
+const baseEnglish = {
+  // Nav & General
+  appName: 'NagarSathi',
+  appSubtitle: 'Smart City Issue Reporting & Resolution',
+  home: 'Home',
+  reportIssue: 'Report Issue',
+  myReports: 'My Reports',
+  myIssues: 'My Issues',
+  cityMap: 'City Map',
+  transparency: 'Transparency',
+  adminDashboard: 'Admin Dashboard',
+  queue: 'Queue',
+  adminQueue: 'Department Queue',
+  analytics: 'Analytics',
+  adminAnalytics: 'Analytics & SLA',
+  community: 'Community',
+  notifications: 'Notifications',
+  profile: 'Profile',
+  helpSupport: 'Help & Support',
+  login: 'Log In',
+  logout: 'Log Out',
+  switchRole: 'Switch Role',
+  language: 'Language',
+  
+  // Landing & Citizen Home
+  heroTitle: 'Make Your City Better.',
+  heroSubtitle: 'Report civic issues in 10 seconds. Track real-time progress, upvote community priorities, and ensure local municipal accountability.',
+  reportIn10Sec: 'Report in 10 Seconds',
+  browseMap: 'Explore City Map',
+  myOpenIssues: 'My Open Reports',
+  resolvedIssues: 'Resolved Issues',
+  nearbyIssues: 'Nearby Reports',
+  topPriority: 'Top Community Priority',
+  recentActivity: 'Recent Activity',
+  transparencyScoreLabel: 'City Transparency Score',
+
+  // Reporting Steps
+  step1Title: 'Step 1: Select Location',
+  step2Title: 'Step 2: Category & Photo',
+  step3Title: 'Step 3: Description & Submit',
+  useMyLocation: 'Use My Current Location',
+  locationAccessDenied: 'Location access was not available. Please pick on the map.',
+  pickManually: 'Pick Location Manually',
+  dragMarkerHint: 'Click or drag the marker to specify the exact issue location.',
+  selectCategory: 'Select Issue Category',
+  uploadPhoto: 'Upload Photo of Issue',
+  changePhoto: 'Change Photo',
+  removePhoto: 'Remove Photo',
+  simulatedAiAnalyzing: 'Analyzing photo consistency...',
+  aiSuccess: '✓ Photo appears consistent with this category',
+  aiWarning: '⚠ Please recheck that the photo clearly shows the reported issue.',
+  aiNotice: 'Lightweight client-side heuristic verification — not actual ML.',
+  titleLabel: 'Issue Title',
+  titlePlaceholder: 'e.g. Deep Pothole near Main Market Gate',
+  descriptionLabel: 'Detailed Description',
+  descriptionPlaceholder: 'Describe the problem clearly (size, danger, landmark)...',
+  routingNotice: 'Your report will be automatically routed to:',
+  submittingReport: 'Submitting report to municipal portal...',
+  submitReport: 'Submit Issue Report',
+
+  // Duplicate Modal
+  duplicateDetectedTitle: 'Similar Issue Found Nearby!',
+  duplicateDetectedSub: 'This issue may already have been reported by another citizen.',
+  upvoteInstead: 'Upvote Existing Issue Instead',
+  submitAnyway: 'Submit as New Issue',
+
+  // Success Screen
+  successTitle: 'Issue Reported Successfully!',
+  trackingIdLabel: 'Your Tracking ID',
+  copyTrackingId: 'Copy Tracking ID',
+  shareTracking: 'Share Tracking ID',
+  trackMyIssue: 'Track My Issue',
+  reportAnother: 'Report Another Issue',
+  trackingCopied: 'Tracking ID copied to clipboard!',
+
+  // My Issues & Status
+  searchPlaceholder: 'Search by title, description or tracking ID...',
+  allCategories: 'All Categories',
+  allStatuses: 'All Statuses',
+  sortBy: 'Sort By',
+  newestFirst: 'Newest First',
+  oldestFirst: 'Oldest First',
+  highestPriority: 'Highest Priority',
+  mostUpvoted: 'Most Upvoted',
+  upvote: 'Upvote',
+  upvoted: 'Upvoted',
+  confirmResolutionQuestion: 'Is this issue actually fixed?',
+  confirmYes: 'Yes, Confirm Fixed',
+  reopenNo: 'No, Reopen Issue',
+  statusReported: 'Reported',
+  statusAcknowledged: 'Acknowledged',
+  statusInProgress: 'In Progress',
+  statusResolved: 'Resolved',
+  statusVerified: 'Verified',
+  statusReopened: 'Reopened',
+
+  // Admin & Alerts
+  slaEscalated: 'SLA ESCALATED (> 72 Hours)',
+  needsAttention: 'Needs Immediate Attention',
+  advanceStatus: 'Advance Status',
+  resolutionNotesLabel: 'Resolution Notes & Action Taken',
+  resolutionNotesPlaceholder: 'Detail the repairs made, work order reference, or action taken...',
+  uploadResolutionPhoto: 'Upload Resolution Evidence Photo',
+  saveStatusUpdate: 'Update Issue Status',
+  notifyDepartment: 'Notify Department',
+  departmentNotified: 'Department notification queued for priority team.',
+};
+
+export const TRANSLATIONS: Record<Language, Record<string, string>> = {
+  en: baseEnglish,
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
   hi: {
-    // Nav & General
+    ...baseEnglish,
     appName: 'नगरसाथी',
     appSubtitle: 'स्मार्ट सिटी समस्या रिपोर्टिंग और समाधान मंच',
     home: 'होम',
     reportIssue: 'समस्या दर्ज करें',
+    myReports: 'मेरी रिपोर्ट',
     myIssues: 'मेरी शिकायतें',
     cityMap: 'शहर का नक्शा',
     transparency: 'पारदर्शिता',
     adminDashboard: 'एडमिन डैशबोर्ड',
+    queue: 'कतार',
     adminQueue: 'विभाग कतार',
+    analytics: 'विश्लेषण',
     adminAnalytics: 'विश्लेषण एवं एसएलए',
+    community: 'समुदाय',
+    notifications: 'सूचनाएं',
+    profile: 'प्रोफ़ाइल',
+    helpSupport: 'मदद व समर्थन',
     login: 'लॉग इन',
     logout: 'लॉग आउट',
     switchRole: 'भूमिका बदलें',
     language: 'भाषा',
+<<<<<<< HEAD
     
     // Landing & Citizen Home
     heroTitle: 'अपने शहर को बेहतर बनाएं।',
@@ -368,4 +492,16 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     'landing.tagline': 'ਤੁਹਾਡਾ ਸ਼ਹਿਰ। ਤੁਹਾਡੀ ਆਵਾਜ਼। ਤੁਹਾਡਾ ਬਦਲਾਅ.',
     'profile.citizen': 'ਨਾਗਰਿਕ'
   }
+=======
+    // ...other hindi translations can be added here
+  },
+  mr: baseEnglish,
+  ta: baseEnglish,
+  te: baseEnglish,
+  bn: baseEnglish,
+  gu: baseEnglish,
+  kn: baseEnglish,
+  ml: baseEnglish,
+  pa: baseEnglish,
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
 };

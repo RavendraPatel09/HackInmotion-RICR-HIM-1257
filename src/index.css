@@ -2,6 +2,7 @@
 @import "tailwindcss";
 
 :root {
+<<<<<<< HEAD
   /* Brand */
   --brand-primary: #053229;
   --brand-primary-dark: #03231C;
@@ -94,6 +95,81 @@
   
   /* Ring */
   --ring: rgba(12, 166, 136, 0.25);
+=======
+  /* ── Primary (Peacock Green) ── */
+  --cf-primary-50: #F1F6F5;
+  --cf-primary-100: #E8F3F0;
+  --cf-primary-200: #DCE6E2;
+  --cf-primary-300: #85B3A9;
+  --cf-primary-400: #0B6652;
+  --cf-primary-500: #053229;
+  --cf-primary-600: #07483A;
+  --cf-primary-700: #04261F;
+  --cf-primary-800: #031C16;
+  --cf-primary-900: #020F0C;
+
+  /* ── Accent (Gold/Amber) ── */
+  --cf-accent-50: #FDF9F0;
+  --cf-accent-100: #FAECD5;
+  --cf-accent-500: #D6A84F;
+  --cf-accent-600: #C29643;
+
+  /* ── Neutral ── */
+  --cf-gray-50: #F7F9F8;
+  --cf-gray-100: #F1F4F3;
+  --cf-gray-200: #DCE6E2;
+  --cf-gray-300: #BAC7C3;
+  --cf-gray-400: #8D9E99;
+  --cf-gray-500: #60716C;
+  --cf-gray-600: #4B5A56;
+  --cf-gray-700: #35423E;
+  --cf-gray-800: #212927;
+  --cf-gray-900: #10201C;
+
+  /* ── Semantic ── */
+  --cf-success: #16845B;
+  --cf-success-light: #E4F5ED;
+  --cf-success-bg: #F0FAF5;
+  --cf-warning: #C78A20;
+  --cf-warning-light: #FDF3E1;
+  --cf-warning-bg: #FEF9F0;
+  --cf-danger: #C94B4B;
+  --cf-danger-light: #FCE8E8;
+  --cf-danger-bg: #FEF4F4;
+  --cf-info: #2878A8;
+  --cf-info-light: #E5F3FA;
+  --cf-info-bg: #F2FAFD;
+
+  /* ── Surface tokens ── */
+  --cf-bg: #F7F9F8;
+  --cf-bg-elevated: #FFFFFF;
+  --cf-bg-sunken: #EAEFEC;
+  --cf-text-primary: #10201C;
+  --cf-text-secondary: #60716C;
+  --cf-text-tertiary: #8D9E99;
+  --cf-border: #DCE6E2;
+  --cf-border-strong: #BAC7C3;
+  --cf-ring: rgba(5, 50, 41, 0.2);
+
+  /* ── Typography ── */
+  --cf-font-display: 'Inter', system-ui, -apple-system, sans-serif;
+  --cf-font-body: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* ── Spacing base ── */
+  --cf-space-unit: 8px;
+
+  /* ── Radius ── */
+  --cf-radius-sm: 8px;
+  --cf-radius-md: 12px;
+  --cf-radius-lg: 16px;
+  --cf-radius-xl: 20px;
+  --cf-radius-full: 9999px;
+
+  /* ── Sidebar & Layout ── */
+  --sidebar-width: 256px;
+  --sidebar-collapsed-width: 72px;
+  --header-height: 68px;
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -189,6 +265,7 @@ h1, h2, h3, h4, h5, h6 {
      ═════════════════════════════════════════════════════════════ */
 
   .cf-elevation-1 {
+<<<<<<< HEAD
     box-shadow: 0 1px 3px rgba(5, 50, 41, 0.04), 0 1px 2px rgba(5, 50, 41, 0.03);
   }
 
@@ -198,6 +275,17 @@ h1, h2, h3, h4, h5, h6 {
 
   .cf-elevation-3 {
     box-shadow: 0 20px 40px -8px rgba(5, 50, 41, 0.1), 0 8px 16px -4px rgba(5, 50, 41, 0.06);
+=======
+    box-shadow: 0 4px 20px rgba(5, 50, 41, 0.04), 0 2px 4px rgba(5, 50, 41, 0.02);
+  }
+
+  .cf-elevation-2 {
+    box-shadow: 0 8px 30px rgba(5, 50, 41, 0.06), 0 4px 8px rgba(5, 50, 41, 0.03);
+  }
+
+  .cf-elevation-3 {
+    box-shadow: 0 20px 40px -8px rgba(5, 50, 41, 0.08), 0 8px 16px -4px rgba(5, 50, 41, 0.04);
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
   }
 
   /* ═════════════════════════════════════════════════════════════
@@ -205,6 +293,7 @@ h1, h2, h3, h4, h5, h6 {
      ═════════════════════════════════════════════════════════════ */
 
   .glass-pill {
+<<<<<<< HEAD
     background: rgba(255, 255, 255, 0.82);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -226,18 +315,50 @@ h1, h2, h3, h4, h5, h6 {
     -webkit-backdrop-filter: blur(24px);
     border: 1px solid var(--border-strong);
     box-shadow: 0 25px 50px -12px rgba(5, 50, 41, 0.15);
+=======
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--cf-border);
+    box-shadow: 0 4px 12px rgba(5, 50, 41, 0.04);
+  }
+
+  .glass-card {
+    background: var(--cf-bg-elevated);
+    border: 1px solid var(--cf-border);
+    border-radius: var(--cf-radius-lg);
+    box-shadow: 0 4px 20px rgba(5, 50, 41, 0.06);
+    transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  }
+
+  .glass-modal {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--cf-border);
+    box-shadow: 0 12px 40px rgba(5, 50, 41, 0.1);
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
   }
 
   /* ═════════════════════════════════════════════════════════════
      STATUS BADGE COLORS
      ═════════════════════════════════════════════════════════════ */
 
+<<<<<<< HEAD
   .status-reported { background: #EEF2F1; color: #40534D; border-color: #D6E2DE; }
   .status-acknowledged { background: #FFF4D9; color: #8A6419; border-color: #F5DFA0; }
   .status-in-progress { background: #E7F0F8; color: #245B7A; border-color: #B3D4E8; }
   .status-resolved { background: #E5F4EC; color: #17623F; border-color: #A8DBC2; }
   .status-verified { background: #E8F1EE; color: #245A4C; border-color: #BFD5CE; }
   .status-reopened { background: #FEE8E8; color: #C94B4B; border-color: #F5B8B8; }
+=======
+  .status-reported { background: var(--cf-gray-100); color: var(--cf-gray-600); border-color: var(--cf-gray-200); }
+  .status-acknowledged { background: var(--cf-info-bg); color: var(--cf-info); border-color: var(--cf-info-light); }
+  .status-in-progress { background: var(--cf-warning-bg); color: var(--cf-warning); border-color: var(--cf-warning-light); }
+  .status-resolved { background: var(--cf-success-bg); color: var(--cf-success); border-color: var(--cf-success-light); }
+  .status-verified { background: var(--cf-success-bg); color: var(--cf-success); border-color: var(--cf-success-light); }
+  .status-reopened { background: var(--cf-danger-bg); color: var(--cf-danger); border-color: var(--cf-danger-light); }
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
 
   /* ═════════════════════════════════════════════════════════════
      FOCUS & INTERACTION STATES
@@ -408,3 +529,32 @@ h1, h2, h3, h4, h5, h6 {
 .dialog-modal-overlay {
   z-index: 1200 !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   APP SHELL & LAYOUT CLASSES
+   ═══════════════════════════════════════════════════════════════ */
+
+.app-shell {
+  display: grid;
+  /* By default on desktop, sidebar is expanded */
+  grid-template-columns: var(--sidebar-width) 1fr;
+  min-height: 100vh;
+  transition: grid-template-columns 250ms ease-in-out;
+}
+
+.app-shell.sidebar-collapsed {
+  /* When sidebar is collapsed via UI toggle */
+  grid-template-columns: var(--sidebar-collapsed-width) 1fr;
+}
+
+.app-shell.sidebar-hidden {
+  /* When sidebar is completely hidden (e.g., mobile or full screen view) */
+  grid-template-columns: 0 1fr;
+}
+
+@media (max-width: 768px) {
+  .app-shell {
+    grid-template-columns: 0 1fr;
+  }
+}
+

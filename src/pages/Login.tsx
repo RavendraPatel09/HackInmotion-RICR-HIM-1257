@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useIssues } from '../context/IssuesContext';
-import { CityMap } from '../components/map/CityMap';
 import { showToast } from '../components/ui/Toast';
 import { authApi } from '../services/api';
 import { INDIAN_LOCATIONS } from '../data/locations';
@@ -13,6 +11,7 @@ import {
   CheckCircle2, 
   ArrowRight, 
   Loader2, 
+<<<<<<< HEAD
   Sparkles, 
   Eye, 
   EyeOff, 
@@ -24,17 +23,24 @@ import {
   Timer,
   RefreshCw,
   Info
+=======
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const Login: React.FC = () => {
+<<<<<<< HEAD
   const { user, isAuthenticated, loginWithCredentials, registerWithCredentials, logout } = useAuth();
   const { issues } = useIssues();
+=======
+  const { user, isAuthenticated, loginCustom, logout } = useAuth();
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
   const navigate = useNavigate();
 
   // Tab State: 'signin' | 'register'
   const [authTab, setAuthTab] = useState<'signin' | 'register'>('signin');
   const [selectedRole, setSelectedRole] = useState<'citizen' | 'admin'>('citizen');
+<<<<<<< HEAD
 
   // Login Form State
   const [loginEmail, setLoginEmail] = useState<string>('');
@@ -167,6 +173,11 @@ export const Login: React.FC = () => {
       return;
     }
 
+=======
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const handleDemoLogin = () => {
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
     setIsLoading(true);
     try {
       const payload = {
@@ -263,34 +274,53 @@ export const Login: React.FC = () => {
 
   if (isAuthenticated && user) {
     return (
-      <div className="max-w-md mx-auto my-16 px-4">
+      <div className="min-h-screen w-full grid place-items-center bg-cf-bg px-4">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
+<<<<<<< HEAD
           className="bg-white dark:bg-[#0e1714] p-8 rounded-3xl space-y-6 text-center shadow-xl border border-[#D6E2DE] dark:border-[#1e332f]"
+=======
+          className="glass-card p-10 rounded-2xl max-w-md w-full space-y-8 text-center"
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
         >
-          <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-600 mx-auto flex items-center justify-center">
+          <div className="w-16 h-16 rounded-full bg-cf-success-light text-cf-success mx-auto flex items-center justify-center">
             <CheckCircle2 className="w-8 h-8" />
           </div>
 
+<<<<<<< HEAD
           <div className="space-y-1">
             <h2 className="text-2xl font-black text-[#10201C] dark:text-[#f2f7f5]">You are signed in</h2>
             <p className="text-xs text-[#73827D] dark:text-[#a3c4b9]">
               Authenticated as <strong className="text-[#10201C] dark:text-[#f2f7f5]">{user.name}</strong> ({user.role})
+=======
+          <div className="space-y-2">
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight">You are signed in</h2>
+            <p className="text-sm text-slate-500 font-medium">
+              Authenticated as <strong className="text-slate-900">{user.name}</strong> ({user.role})
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
             </p>
           </div>
 
-          <div className="space-y-3 pt-2">
+          <div className="space-y-4 pt-4">
             <button
               onClick={() => navigate(user.role === 'admin' ? '/admin' : '/citizen')}
+<<<<<<< HEAD
               className="w-full py-3.5 rounded-2xl bg-[#053229] hover:bg-[#07483A] text-white font-extrabold text-xs shadow-lg shadow-[#053229]/20 flex items-center justify-center gap-2 transition-transform hover:scale-[1.02]"
+=======
+              className="w-full py-3.5 rounded-xl bg-cf-primary-500 hover:bg-cf-primary-600 text-white font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-sm"
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
             >
-              Continue to {user.role === 'admin' ? 'Admin Center' : 'Citizen Workspace'} &rarr;
+              Continue to {user.role === 'admin' ? 'Admin Center' : 'Citizen Workspace'} <ArrowRight className="w-4 h-4" />
             </button>
 
             <button
               onClick={() => logout()}
+<<<<<<< HEAD
               className="w-full py-3.5 rounded-2xl bg-slate-100 dark:bg-[#152420] border border-[#D6E2DE] dark:border-[#1e332f] hover:bg-slate-200 text-[#10201C] dark:text-[#f2f7f5] font-extrabold text-xs transition-colors"
+=======
+              className="w-full py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition-colors"
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
             >
               Switch Account / Logout
             </button>
@@ -301,15 +331,23 @@ export const Login: React.FC = () => {
   }
 
   return (
+<<<<<<< HEAD
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[580px]">
         
         {/* Left Panel — Civic Brand Identity & Map Visual */}
+=======
+    <div className="min-h-screen w-full grid place-items-center px-4 bg-cf-bg">
+      <div className="w-full max-w-[1100px] grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+        
+        {/* Left Side: Branding */}
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="hidden lg:block lg:col-span-6 space-y-6"
+          className="space-y-8 hidden lg:block"
         >
+<<<<<<< HEAD
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E6F1EE] dark:bg-[#152420] border border-[#BFD5CE] dark:border-[#1e332f] text-[#053229] dark:text-[#0ca688] text-xs font-black uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
             <span>NagarSathi Municipal Gateway</span>
@@ -317,11 +355,16 @@ export const Login: React.FC = () => {
 
           <div className="space-y-2">
             <div className="flex items-center gap-3">
+=======
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
               <img
                 src={logoImg}
                 alt="NagarSathi Logo"
-                className="w-12 h-12 object-contain rounded-full shadow-md"
+                className="w-16 h-16 object-contain rounded-full shadow-sm"
               />
+<<<<<<< HEAD
               <h1 className="text-4xl font-black tracking-tight text-[#10201C] dark:text-[#f2f7f5]">
                 Nagar<span className="text-[#053229] dark:text-[#0ca688]">Sathi</span>
               </h1>
@@ -400,9 +443,84 @@ export const Login: React.FC = () => {
                   <p className="text-[9px] text-[#73827D] dark:text-[#a3c4b9]">Report &amp; Track</p>
                 </div>
               </div>
+=======
+              <h1 className="text-5xl font-black tracking-tight text-slate-900">
+                Nagar<span className="text-cf-primary-500">Sathi</span>
+              </h1>
+            </div>
+            <h2 className="text-3xl font-bold text-slate-800 leading-snug">
+              Your City. Your Voice. Your Change.
+            </h2>
+          </div>
 
-              <div
+          <p className="text-lg text-slate-600 leading-relaxed max-w-md">
+            Report civic issues, track resolutions, and stay connected with the people and services shaping your city.
+          </p>
+        </motion.div>
+
+        {/* Right Side: Login Box */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="w-full max-w-md mx-auto"
+        >
+          <div className="glass-card p-8 sm:p-10 space-y-8">
+            
+            {/* Mobile Header (Hidden on Desktop) */}
+            <div className="block lg:hidden text-center space-y-4 mb-6">
+              <img
+                src={logoImg}
+                alt="NagarSathi Logo"
+                className="w-12 h-12 object-contain rounded-full shadow-sm mx-auto"
+              />
+              <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+                Nagar<span className="text-cf-primary-500">Sathi</span>
+              </h1>
+            </div>
+
+            <div className="space-y-2 text-center lg:text-left">
+              <h2 className="text-2xl font-bold text-slate-900">Welcome to Nagar Sathi</h2>
+              <p className="text-sm text-slate-500 font-medium">
+                Select how you want to continue
+              </p>
+            </div>
+
+            {/* Persona Selection */}
+            <div className="space-y-4">
+              {/* Citizen Card */}
+              <button
+                type="button"
+                onClick={() => setSelectedRole('citizen')}
+                className={`w-full text-left p-5 rounded-xl border-2 transition-all flex items-start gap-4 ${
+                  selectedRole === 'citizen'
+                    ? 'border-cf-primary-500 bg-cf-primary-50 shadow-sm'
+                    : 'border-slate-200 bg-white hover:border-slate-300'
+                }`}
+              >
+                <div className={`mt-0.5 shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
+                  selectedRole === 'citizen' ? 'bg-cf-primary-500 text-white' : 'bg-slate-100 text-slate-500'
+                }`}>
+                  <User className="w-5 h-5" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className={`font-bold ${selectedRole === 'citizen' ? 'text-cf-primary-600' : 'text-slate-900'}`}>
+                      Citizen
+                    </h3>
+                    {selectedRole === 'citizen' && <CheckCircle2 className="w-5 h-5 text-cf-primary-500" />}
+                  </div>
+                  <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                    Report local issues, track complaints, and stay informed about your neighbourhood.
+                  </p>
+                </div>
+              </button>
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
+
+              {/* Administrator Card */}
+              <button
+                type="button"
                 onClick={() => setSelectedRole('admin')}
+<<<<<<< HEAD
                 className={`p-3.5 rounded-2xl border cursor-pointer transition-all space-y-1.5 ${
                   selectedRole === 'admin'
                     ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-500'
@@ -620,6 +738,45 @@ export const Login: React.FC = () => {
               <div className="text-center text-[10px] text-[#73827D] dark:text-[#a3c4b9] font-bold">
                 * Note: Evaluators can click the above button to bypass live OTP inbox check during testing.
               </div>
+=======
+                className={`w-full text-left p-5 rounded-xl border-2 transition-all flex items-start gap-4 ${
+                  selectedRole === 'admin'
+                    ? 'border-cf-primary-500 bg-cf-primary-50 shadow-sm'
+                    : 'border-slate-200 bg-white hover:border-slate-300'
+                }`}
+              >
+                <div className={`mt-0.5 shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
+                  selectedRole === 'admin' ? 'bg-cf-primary-500 text-white' : 'bg-slate-100 text-slate-500'
+                }`}>
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className={`font-bold ${selectedRole === 'admin' ? 'text-cf-primary-600' : 'text-slate-900'}`}>
+                      Municipal Administrator
+                    </h3>
+                    {selectedRole === 'admin' && <CheckCircle2 className="w-5 h-5 text-cf-primary-500" />}
+                  </div>
+                  <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                    Manage civic issues, monitor service performance, and coordinate resolutions.
+                  </p>
+                </div>
+              </button>
+            </div>
+
+            <div className="pt-2">
+              <button
+                onClick={handleDemoLogin}
+                disabled={isLoading}
+                className="w-full py-4 rounded-xl font-bold text-sm bg-cf-primary-500 hover:bg-cf-primary-600 text-white shadow-sm flex items-center justify-center gap-2 transition-colors"
+              >
+                {isLoading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>Continue as {selectedRole === 'citizen' ? 'Citizen' : 'Administrator'} <ArrowRight className="w-4 h-4" /></>
+                )}
+              </button>
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
             </div>
 
           </div>

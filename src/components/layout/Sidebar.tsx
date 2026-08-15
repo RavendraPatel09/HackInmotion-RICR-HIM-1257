@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+<<<<<<< HEAD
 import logoImg from '../../assets/logo.png';
 import {
   Home,
@@ -158,6 +159,134 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded, isHidden, onHide }
             </div>
           </div>
         )}
+=======
+import { useLanguage } from '../../context/LanguageContext';
+import {
+  Home,
+  PlusCircle,
+  MapPin,
+  Map,
+  FileCheck2,
+  ListTodo,
+  BarChart3,
+  Settings,
+  HelpCircle,
+  Menu,
+  X,
+  Bell,
+  Users
+} from 'lucide-react';
+
+interface SidebarProps {
+  isOpen: boolean;
+  isCollapsed: boolean;
+  setIsOpen: (open: boolean) => void;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ isOpen, isCollapsed, setIsOpen }) => {
+  const { isAdmin, isCitizen } = useAuth();
+  const location = useLocation();
+  const { t } = useLanguage();
+
+  const isNavActive = (path: string) => location.pathname === path;
+
+  // We group the navigation links logically based on user role
+  const mainLinks = [
+    { to: isAdmin ? '/admin' : '/citizen', label: t('navigation.home') || 'Home', icon: Home, show: true },
+    { to: '/citizen/report', label: t('navigation.reportIssue') || 'Report Issue', icon: PlusCircle, show: isCitizen },
+    { to: '/citizen/issues', label: t('navigation.myReports') || 'My Reports', icon: MapPin, show: isCitizen },
+    { to: '/admin/queue', label: t('navigation.queue') || 'Queue', icon: ListTodo, show: isAdmin },
+    { to: '/admin/analytics', label: t('navigation.analytics') || 'Analytics', icon: BarChart3, show: isAdmin },
+  ].filter(l => l.show);
+
+  const communityLinks = [
+    { to: '/map', label: t('navigation.cityMap') || 'City Map', icon: Map, show: true },
+    { to: '/transparency', label: t('navigation.transparency') || 'Transparency', icon: FileCheck2, show: true },
+    { to: '/community', label: t('navigation.community') || 'Community', icon: Users, show: true },
+    { to: '/notifications', label: t('navigation.notifications') || 'Notifications', icon: Bell, show: true },
+  ].filter(l => l.show);
+
+  const accountLinks = [
+    { to: '/profile', label: t('navigation.profile') || 'Profile', icon: Settings, show: true },
+    { to: '/help', label: t('navigation.helpSupport') || 'Help & Support', icon: HelpCircle, show: true },
+  ].filter(l => l.show);
+
+  const renderLinks = (links: typeof mainLinks) => (
+    <ul className="space-y-1">
+      {links.map((link, idx) => {
+        const active = isNavActive(link.to);
+        return (
+          <li key={idx}>
+            <Link
+              to={link.to}
+              onClick={() => setIsOpen(false)} // Close on mobile when clicked
+              title={isCollapsed ? link.label : undefined}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 ${
+                active
+                  ? 'bg-cf-primary-50 text-cf-primary-600 font-bold'
+                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-semibold'
+              } ${isCollapsed ? 'justify-center' : ''}`}
+            >
+              <link.icon className={`w-5 h-5 ${active ? 'text-cf-primary-600' : 'text-slate-500'}`} />
+              {!isCollapsed && <span className="text-sm">{link.label}</span>}
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
+  );
+
+  return (
+    <>
+      {/* Mobile Backdrop */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[1050] md:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+      
+      {/* Sidebar Container */}
+      <aside
+        className={`fixed md:sticky top-0 left-0 z-[1100] h-screen bg-white border-r border-slate-200 transition-all duration-250 ease-in-out flex flex-col shadow-xl md:shadow-none ${
+          isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        }`}
+        style={{ width: isCollapsed ? 'var(--sidebar-collapsed-width)' : 'var(--sidebar-width)' }}
+      >
+        <div className="flex items-center justify-between h-[var(--header-height)] px-4 border-b border-slate-100 shrink-0">
+          {!isCollapsed && (
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-black tracking-tight text-slate-900">
+                Nagar<span className="text-cf-primary-500">Sathi</span>
+              </span>
+            </div>
+          )}
+          {isCollapsed && (
+            <div className="mx-auto font-black text-lg tracking-tight text-cf-primary-500">N</div>
+          )}
+          <button 
+            className="md:hidden p-1.5 text-slate-500 hover:bg-slate-100 rounded-lg"
+            onClick={() => setIsOpen(false)}
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto py-4 px-3 space-y-6 scrollbar-hide">
+          <div>
+            {!isCollapsed && <p className="px-3 mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Main</p>}
+            {renderLinks(mainLinks)}
+          </div>
+          <div>
+            {!isCollapsed && <p className="px-3 mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Community</p>}
+            {renderLinks(communityLinks)}
+          </div>
+          <div>
+            {!isCollapsed && <p className="px-3 mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Account</p>}
+            {renderLinks(accountLinks)}
+          </div>
+        </div>
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
       </aside>
     </>
   );

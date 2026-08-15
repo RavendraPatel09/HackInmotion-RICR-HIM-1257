@@ -6,7 +6,6 @@ import { getStoredLanguage, saveStoredLanguage } from '../services/storage';
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  toggleLanguage: () => void;
   t: (key: string) => string;
 }
 
@@ -23,10 +22,13 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setLanguageState(lang);
   };
 
+<<<<<<< HEAD
   const toggleLanguage = () => {
     // No-op for expanded languages. Use setLanguage with LanguageSelector.
   };
 
+=======
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
   const t = (key: string): string => {
     const langDict = TRANSLATIONS[language] || TRANSLATIONS.en;
     return langDict[key] || TRANSLATIONS.en[key] || key;
@@ -37,7 +39,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       value={{
         language,
         setLanguage,
-        toggleLanguage,
         t,
       }}
     >

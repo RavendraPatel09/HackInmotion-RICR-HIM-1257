@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+<<<<<<< HEAD
 import { Menu, MapPin, Globe, ChevronDown, Search, Bell, Settings, User, LogOut, FileText } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -37,10 +38,42 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
   };
 
   const handleLogout = () => {
+=======
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { NotificationCenter } from '../ui/NotificationCenter';
+import { SearchModal } from '../ui/SearchModal';
+import { LocationSelector } from '../ui/LocationSelector';
+import { LanguageSelector } from '../ui/LanguageSelector';
+import {
+  LogOut,
+  UserCheck,
+  ChevronDown,
+  User as UserIcon,
+  Search,
+  Menu,
+} from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
+
+interface HeaderProps {
+  onMenuClick: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
+  const { user, isAuthenticated, logout, switchRole } = useAuth();
+  const navigate = useNavigate();
+
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState<boolean>(false);
+  const [searchOpen, setSearchOpen] = useState<boolean>(false);
+
+  const handleLogout = () => {
+    setProfileDropdownOpen(false);
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
     logout();
     navigate('/login');
   };
 
+<<<<<<< HEAD
   const languages = [
     { code: 'en', label: 'English' },
     { code: 'hi', label: 'हिन्दी' },
@@ -262,6 +295,112 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
           )}
         </div>
       </header>
+=======
+  return (
+    <>
+      <header className="sticky top-0 z-[1000] w-full bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm h-[var(--header-height)]">
+        <div className="h-full px-4 flex items-center justify-between">
+          {/* Left Area */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onMenuClick}
+              className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+              title="Toggle Menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <div className="hidden sm:block h-6 w-[1px] bg-slate-200 mx-1"></div>
+            <LocationSelector />
+          </div>
+
+          {/* Right Area */}
+          <div className="flex items-center gap-2">
+            {/* Search Button */}
+            <button
+              onClick={() => setSearchOpen(true)}
+              className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+              title="Search"
+            >
+              <Search className="w-4.5 h-4.5" />
+            </button>
+
+            {/* Language Selector */}
+            <LanguageSelector />
+
+            {/* Notification Center */}
+            <NotificationCenter />
+
+            {/* User Dropdown */}
+            {isAuthenticated ? (
+              <div className="relative">
+                <button
+                  onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                  className="flex items-center gap-2 p-1.5 rounded-full hover:bg-slate-100 transition-colors border border-transparent hover:border-slate-200"
+                >
+                  <img
+                    src={user?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'}
+                    alt={user?.name}
+                    className="w-7 h-7 rounded-full object-cover border border-slate-200"
+                  />
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-500 hidden sm:block" />
+                </button>
+
+                {/* Dropdown Box */}
+                <AnimatePresence>
+                  {profileDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-white border border-slate-200 p-3 shadow-xl z-[1100] space-y-3">
+                      <div className="p-2 border-b border-slate-100 space-y-1">
+                        <p className="text-xs font-bold text-slate-900 leading-none">{user?.name}</p>
+                        <p className="text-[10px] text-slate-500 font-medium leading-tight">{user?.email}</p>
+                        <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-cf-primary-50 text-cf-primary-600 border border-cf-primary-200">
+                          {user?.role}
+                        </span>
+                      </div>
+
+                      <div className="space-y-1 text-xs font-semibold">
+                        <button
+                          onClick={() => {
+                            switchRole();
+                            setProfileDropdownOpen(false);
+                          }}
+                          className="w-full px-3 py-2 rounded-xl text-left text-slate-700 hover:bg-slate-50 flex items-center gap-2 transition-colors"
+                        >
+                          <UserCheck className="w-3.5 h-3.5 text-amber-500" /> Switch to {user?.role === 'admin' ? 'Citizen' : 'Admin'}
+                        </button>
+
+                        <Link
+                          to="/profile"
+                          onClick={() => setProfileDropdownOpen(false)}
+                          className="w-full px-3 py-2 rounded-xl text-left text-slate-700 hover:bg-slate-50 flex items-center gap-2 transition-colors"
+                        >
+                          <UserIcon className="w-3.5 h-3.5 text-cf-primary-500" /> View Profile
+                        </Link>
+
+                        <button
+                          onClick={handleLogout}
+                          className="w-full px-3 py-2 rounded-xl text-left text-rose-600 hover:bg-rose-50 flex items-center gap-2 transition-colors"
+                        >
+                          <LogOut className="w-3.5 h-3.5" /> Logout
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                className="px-4 py-1.5 rounded-full bg-cf-primary-600 hover:bg-cf-primary-500 text-white text-xs font-bold shadow-md transition-all"
+              >
+                Login
+              </Link>
+            )}
+          </div>
+        </div>
+      </header>
+
+      <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
     </>
   );
 };

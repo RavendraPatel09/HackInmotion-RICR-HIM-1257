@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+<<<<<<< HEAD
 import { useLocation } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
@@ -113,6 +114,74 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
       </main>
 
       <MobileBottomNav />
+=======
+import { Header } from './Header';
+import { Sidebar } from './Sidebar';
+import { MobileBottomNav } from './MobileBottomNav';
+import { Footer } from './Footer';
+import { ToastContainer } from '../ui/Toast';
+import { useLocation } from 'react-router-dom';
+
+export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const location = useLocation();
+
+  // Hide sidebar on specific routes like login, landing, etc. if needed
+  const isAuthOrLandingPage = location.pathname === '/' || location.pathname === '/login';
+
+  // For mobile, close sidebar on route change
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
+
+  const toggleSidebarDesktop = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
+  const toggleSidebarMobile = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  return (
+    <div
+      className={`app-shell font-sans text-slate-900 bg-cf-bg transition-colors ${
+        isAuthOrLandingPage
+          ? 'sidebar-hidden'
+          : sidebarCollapsed
+          ? 'sidebar-collapsed'
+          : ''
+      }`}
+    >
+      {/* Sidebar - Desktop logic handles collapsed/hidden states via CSS Grid, 
+          Mobile logic handles open/close drawer via state */}
+      {!isAuthOrLandingPage && (
+        <Sidebar 
+          isOpen={sidebarOpen} 
+          isCollapsed={sidebarCollapsed} 
+          setIsOpen={setSidebarOpen} 
+        />
+      )}
+
+      {/* Main Content Area */}
+      <div className="flex flex-col min-h-screen w-full min-w-0">
+        <Header onMenuClick={() => {
+          if (window.innerWidth < 768) {
+            toggleSidebarMobile();
+          } else {
+            toggleSidebarDesktop();
+          }
+        }} />
+        
+        <main className="flex-1 flex flex-col w-full min-w-0">
+          {children}
+        </main>
+        
+        <Footer />
+        <MobileBottomNav />
+      </div>
+
+>>>>>>> 35d6887 (feat: Refactor Login page and add Header, Sidebar, LanguageSelector, and LocationSelector components)
       <ToastContainer />
     </div>
   );
